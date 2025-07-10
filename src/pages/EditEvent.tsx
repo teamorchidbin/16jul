@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Copy, Eye, Settings, Clock, Zap, Shield, Smartphone, Workflow, Webhook, RotateCcw } from 'lucide-react';
@@ -12,7 +11,6 @@ import { EventWebhooks } from '../components/EventWebhooks';
 import { RecurringEvent } from '../components/RecurringEvent';
 import { Switch } from '../components/ui/switch';
 import { mockTeams } from '../data/mockData';
-
 const tabs = [{
   id: 'setup',
   name: 'Event Setup',
@@ -46,22 +44,20 @@ const tabs = [{
   name: 'Webhooks',
   icon: Webhook
 }];
-
 export const EditEvent = () => {
-  const { eventId, tab } = useParams();
+  const {
+    eventId,
+    tab
+  } = useParams();
   const [activeTab, setActiveTab] = useState(tab || 'setup');
   const [eventEnabled, setEventEnabled] = useState(true);
   const navigate = useNavigate();
 
   // Find the actual event from mockData
-  const currentEvent = mockTeams
-    .flatMap(team => team.eventTypes)
-    .find(event => event.id === eventId);
-
+  const currentEvent = mockTeams.flatMap(team => team.eventTypes).find(event => event.id === eventId);
   const handleBack = () => {
     navigate('/');
   };
-
   const renderTabContent = () => {
     switch (activeTab) {
       case 'setup':
@@ -84,16 +80,9 @@ export const EditEvent = () => {
         return <EventSetup />;
     }
   };
-
-  return (
-    <div className="min-h-screen bg-background">
+  return <div className="min-h-screen bg-background">
       {/* Header */}
-      <div className="bg-background border-b border-border px-8 py-6">
-        <div className="flex-1">
-          <h1 className="text-xl font-semibold text-foreground">Event Types</h1>
-          <p className="text-sm text-muted-foreground mt-1">Create events to share for people to book on your calendar.</p>
-        </div>
-      </div>
+      
 
       {/* Event Header */}
       <div className="bg-card border-b border-border px-8 py-6">
@@ -132,20 +121,10 @@ export const EditEvent = () => {
         {/* Sidebar */}
         <div className="w-64 bg-card border-r border-border min-h-screen sticky top-0">
           <nav className="p-6 space-y-1">
-            {tabs.map(tabItem => (
-              <button
-                key={tabItem.id}
-                onClick={() => setActiveTab(tabItem.id)}
-                className={`w-full flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors ${
-                  activeTab === tabItem.id
-                    ? 'bg-primary text-primary-foreground'
-                    : 'text-muted-foreground hover:bg-muted hover:text-foreground'
-                }`}
-              >
+            {tabs.map(tabItem => <button key={tabItem.id} onClick={() => setActiveTab(tabItem.id)} className={`w-full flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors ${activeTab === tabItem.id ? 'bg-primary text-primary-foreground' : 'text-muted-foreground hover:bg-muted hover:text-foreground'}`}>
                 <tabItem.icon className="mr-3 h-4 w-4" />
                 {tabItem.name}
-              </button>
-            ))}
+              </button>)}
           </nav>
         </div>
 
@@ -154,6 +133,5 @@ export const EditEvent = () => {
           {renderTabContent()}
         </div>
       </div>
-    </div>
-  );
+    </div>;
 };
