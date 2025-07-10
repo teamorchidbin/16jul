@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Plus, Mail, MessageSquare, Clock } from 'lucide-react';
 import { Switch } from './ui/switch';
+
 const workflowTemplates = [{
   id: 'sms-reminder',
   name: 'SMS Reminder - 10 minutes before',
@@ -26,34 +27,52 @@ const workflowTemplates = [{
   action: 'Send Email',
   timing: 'Immediately after'
 }];
+
 export const EventWorkflows = () => {
   const [activeWorkflows, setActiveWorkflows] = useState<string[]>([]);
-  const toggleWorkflow = (workflowId: string) => {
-    setActiveWorkflows(prev => prev.includes(workflowId) ? prev.filter(id => id !== workflowId) : [...prev, workflowId]);
-  };
-  return <div className="p-8 max-w-6xl mx-auto space-y-8">
-      
 
-      <div className="space-y-6">
+  const toggleWorkflow = (workflowId: string) => {
+    setActiveWorkflows(prev => 
+      prev.includes(workflowId) 
+        ? prev.filter(id => id !== workflowId) 
+        : [...prev, workflowId]
+    );
+  };
+
+  return (
+    <div className="p-6 max-w-6xl mx-auto space-y-6">
+      <div className="space-y-4">
         <div className="flex items-center justify-between">
           <h3 className="text-lg font-semibold text-foreground">Available Workflows</h3>
-          <button className="flex items-center px-4 py-2 text-sm bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors font-medium">
+          <button className="flex items-center px-3 py-2 text-sm bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors font-medium">
             <Plus className="h-4 w-4 mr-2" />
             Create Custom Workflow
           </button>
         </div>
 
-        <div className="space-y-4">
-          {workflowTemplates.map(workflow => <div key={workflow.id} className={`w-full p-6 border rounded-lg transition-all ${activeWorkflows.includes(workflow.id) ? 'border-[#008c44]/30 bg-[#008c44]/5' : 'border-border bg-card hover:border-border/60'}`}>
-              <div className="flex items-start justify-between mb-4">
-                <div className="flex items-center space-x-4">
-                  <div className={`w-12 h-12 rounded-lg flex items-center justify-center ${activeWorkflows.includes(workflow.id) ? 'bg-[#008c44]/10' : 'bg-muted'}`}>
-                    <workflow.icon className={`h-6 w-6 ${activeWorkflows.includes(workflow.id) ? 'text-[#008c44]' : 'text-muted-foreground'}`} />
+        <div className="space-y-3">
+          {workflowTemplates.map(workflow => (
+            <div 
+              key={workflow.id} 
+              className={`w-full p-4 border rounded-lg transition-all ${
+                activeWorkflows.includes(workflow.id) 
+                  ? 'border-[#008c44]/30 bg-[#008c44]/5' 
+                  : 'border-border bg-card hover:border-border/60'
+              }`}
+            >
+              <div className="flex items-start justify-between mb-3">
+                <div className="flex items-center space-x-3">
+                  <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${
+                    activeWorkflows.includes(workflow.id) ? 'bg-[#008c44]/10' : 'bg-muted'
+                  }`}>
+                    <workflow.icon className={`h-5 w-5 ${
+                      activeWorkflows.includes(workflow.id) ? 'text-[#008c44]' : 'text-muted-foreground'
+                    }`} />
                   </div>
                   <div className="flex-1">
                     <h4 className="font-semibold text-foreground mb-1">{workflow.name}</h4>
-                    <p className="text-muted-foreground mb-3">{workflow.description}</p>
-                    <div className="flex items-center space-x-4 text-xs text-muted-foreground">
+                    <p className="text-muted-foreground mb-2 text-sm">{workflow.description}</p>
+                    <div className="flex items-center space-x-3 text-xs text-muted-foreground">
                       <span className="flex items-center">
                         <Clock className="h-3 w-3 mr-1" />
                         {workflow.trigger}
@@ -67,22 +86,29 @@ export const EventWorkflows = () => {
                 </div>
               </div>
               
-              <div className="flex items-center justify-between pt-4 border-t border-border">
+              <div className="flex items-center justify-between pt-3 border-t border-border">
                 <span className="text-sm text-muted-foreground">
                   {activeWorkflows.includes(workflow.id) ? 'Enabled' : 'Disabled'}
                 </span>
-                <Switch checked={activeWorkflows.includes(workflow.id)} onCheckedChange={() => toggleWorkflow(workflow.id)} />
+                <Switch 
+                  checked={activeWorkflows.includes(workflow.id)} 
+                  onCheckedChange={() => toggleWorkflow(workflow.id)} 
+                />
               </div>
-            </div>)}
+            </div>
+          ))}
         </div>
 
-        {activeWorkflows.length === 0 && <div className="text-center py-12 bg-muted/20 rounded-lg border border-dashed border-border">
-            <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mx-auto mb-4">
-              <MessageSquare className="h-8 w-8 text-muted-foreground" />
+        {activeWorkflows.length === 0 && (
+          <div className="text-center py-8 bg-muted/20 rounded-lg border border-dashed border-border">
+            <div className="w-12 h-12 bg-muted rounded-full flex items-center justify-center mx-auto mb-3">
+              <MessageSquare className="h-6 w-6 text-muted-foreground" />
             </div>
             <p className="text-muted-foreground font-medium">No workflows are currently active</p>
             <p className="text-muted-foreground/70 text-sm mt-1">Enable workflows above to automate your event processes</p>
-          </div>}
+          </div>
+        )}
       </div>
-    </div>;
+    </div>
+  );
 };

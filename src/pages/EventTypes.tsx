@@ -1,3 +1,4 @@
+
 import React, { useState, useRef, useEffect } from 'react';
 import { Plus, MoreHorizontal, Eye, Edit, Copy as CopyIcon, Code, Trash2, ArrowUp, ArrowDown, Search, Copy } from 'lucide-react';
 import { CreateEventModal } from '../components/CreateEventModal';
@@ -160,20 +161,20 @@ export const EventTypes = () => {
   };
 
   return (
-    <div className="px-8 pt-4 pb-8 space-y-6 w-full max-w-full">
+    <div className="px-6 pt-3 pb-6 space-y-4 w-full max-w-full">
       {/* Team Selector */}
       <div className="flex items-center justify-between space-x-4">
         <div className="flex items-center space-x-4 flex-1 min-w-0">
           <div className="flex items-center bg-muted/50 rounded-lg p-1 flex-shrink-0">
             <button
               onClick={() => setSelectedTeam('personal')}
-              className={`flex items-center px-4 py-2 text-sm font-medium rounded-md transition-all whitespace-nowrap ${
+              className={`flex items-center px-3 py-1.5 text-sm font-medium rounded-md transition-all whitespace-nowrap ${
                 selectedTeam === 'personal'
                   ? 'bg-background text-foreground shadow-sm'
                   : 'text-muted-foreground hover:text-foreground'
               }`}
             >
-              <div className={`h-6 w-6 rounded-full flex items-center justify-center text-xs font-medium mr-2 ${
+              <div className={`h-5 w-5 rounded-full flex items-center justify-center text-xs font-medium mr-2 ${
                 selectedTeam === 'personal' ? 'bg-primary text-primary-foreground' : 'bg-muted-foreground/20'
               }`}>
                 {teamEvents[0].avatar}
@@ -182,20 +183,20 @@ export const EventTypes = () => {
             </button>
           </div>
           
-          <div className="w-px h-6 bg-border flex-shrink-0"></div>
+          <div className="w-px h-5 bg-border flex-shrink-0"></div>
           
           <div className="flex space-x-2 flex-1 overflow-x-auto scrollbar-none">
             {teamEvents.slice(1).map((team) => (
               <button
                 key={team.id}
                 onClick={() => setSelectedTeam(team.id)}
-                className={`flex items-center px-4 py-2 text-sm font-medium rounded-md whitespace-nowrap transition-all flex-shrink-0 min-w-fit ${
+                className={`flex items-center px-3 py-1.5 text-sm font-medium rounded-md whitespace-nowrap transition-all flex-shrink-0 min-w-fit ${
                   selectedTeam === team.id
                     ? 'bg-primary text-primary-foreground shadow-sm'
                     : 'text-muted-foreground hover:text-foreground hover:bg-muted/50'
                 }`}
               >
-                <div className={`h-6 w-6 rounded-full flex items-center justify-center text-xs font-medium mr-2 ${
+                <div className={`h-5 w-5 rounded-full flex items-center justify-center text-xs font-medium mr-2 ${
                   selectedTeam === team.id ? 'bg-primary-foreground text-primary' : 'bg-muted-foreground/20'
                 }`}>
                   {team.avatar}
@@ -217,14 +218,14 @@ export const EventTypes = () => {
               placeholder="Search events..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-4 py-3 border border-border rounded-lg focus:ring-2 focus:ring-ring focus:border-transparent bg-background text-sm"
+              className="w-full pl-10 pr-4 py-2 border border-border rounded-lg focus:ring-2 focus:ring-ring focus:border-transparent bg-background text-sm"
             />
           </div>
           
           <div className="relative">
             <button
               onClick={handleCopyPublicLink}
-              className="flex items-center space-x-2 px-4 py-2 bg-muted/70 text-muted-foreground text-sm rounded-md hover:bg-muted transition-colors"
+              className="flex items-center space-x-2 px-3 py-1.5 bg-muted/70 text-muted-foreground text-sm rounded-md hover:bg-muted transition-colors"
             >
               <span className="text-sm">
                 {selectedTeam === 'personal' ? 'cal.id/sanskar' : `cal.id/${currentTeam.url}`}
@@ -242,7 +243,7 @@ export const EventTypes = () => {
         <div className="relative">
           <button
             onClick={() => setShowNewDropdown(!showNewDropdown)}
-            className="inline-flex items-center px-6 py-3 bg-primary text-primary-foreground text-sm font-medium rounded-lg hover:bg-primary/90 transition-colors"
+            className="inline-flex items-center px-4 py-2 bg-primary text-primary-foreground text-sm font-medium rounded-lg hover:bg-primary/90 transition-colors"
           >
             <Plus className="h-4 w-4 mr-2" />
             New
@@ -262,7 +263,7 @@ export const EventTypes = () => {
                     }}
                     className="w-full text-left px-3 py-2 text-sm hover:bg-muted transition-colors flex items-center"
                   >
-                    <div className="h-6 w-6 rounded-full bg-muted flex items-center justify-center text-xs font-medium mr-2">
+                    <div className="h-5 w-5 rounded-full bg-muted flex items-center justify-center text-xs font-medium mr-2">
                       {team.avatar}
                     </div>
                     {team.name}
@@ -275,7 +276,7 @@ export const EventTypes = () => {
       </div>
 
       {/* Event Types List */}
-      <div className="space-y-4">
+      <div className="space-y-3">
         {filteredEvents.map((event) => {
           const isEventActive = eventStates[event.id] ?? event.isActive;
           return (
@@ -287,37 +288,37 @@ export const EventTypes = () => {
             >
               {/* Move buttons - Fixed positioning to be half on tile, half outside */}
               {hoveredEvent === event.id && (
-                <div className="absolute -left-8 top-1/2 transform -translate-y-1/2 flex flex-col space-y-1 z-10 animate-scale-in">
+                <div className="absolute -left-6 top-1/2 transform -translate-y-1/2 flex flex-col space-y-1 z-10 animate-scale-in">
                   <button 
                     onClick={(e) => {
                       e.stopPropagation();
                       handleArrowClick(event.id, 'up');
                     }}
-                    className="p-2 bg-background border border-border rounded-lg hover:bg-muted shadow-md transition-all transform hover:scale-105"
+                    className="p-1.5 bg-background border border-border rounded-lg hover:bg-muted shadow-md transition-all transform hover:scale-105"
                   >
-                    <ArrowUp className="h-4 w-4 text-muted-foreground" />
+                    <ArrowUp className="h-3 w-3 text-muted-foreground" />
                   </button>
                   <button 
                     onClick={(e) => {
                       e.stopPropagation();
                       handleArrowClick(event.id, 'down');
                     }}
-                    className="p-2 bg-background border border-border rounded-lg hover:bg-muted shadow-md transition-all transform hover:scale-105"
+                    className="p-1.5 bg-background border border-border rounded-lg hover:bg-muted shadow-md transition-all transform hover:scale-105"
                   >
-                    <ArrowDown className="h-4 w-4 text-muted-foreground" />
+                    <ArrowDown className="h-3 w-3 text-muted-foreground" />
                   </button>
                 </div>
               )}
 
               <div 
                 onClick={() => handleEventClick(event.id)}
-                className={`bg-card border border-border rounded-lg p-6 hover:border-border/60 transition-all hover:shadow-sm cursor-pointer ${
+                className={`bg-card border border-border rounded-lg p-4 hover:border-border/60 transition-all hover:shadow-sm cursor-pointer ${
                   !isEventActive ? 'opacity-50' : ''
                 }`}
               >
                 <div className="flex items-start justify-between">
                   <div className="flex-1 min-w-0">
-                    <div className="flex items-center mb-3 space-x-3">
+                    <div className="flex items-center mb-2 space-x-3">
                       <h3 className="text-lg font-semibold text-foreground">
                         {event.title}
                       </h3>
@@ -327,7 +328,7 @@ export const EventTypes = () => {
                             e.stopPropagation();
                             handleCopyLink(event.id, event.url);
                           }}
-                          className="flex items-center space-x-2 px-3 py-1 bg-muted/70 text-muted-foreground text-sm rounded hover:bg-muted transition-colors"
+                          className="flex items-center space-x-2 px-2 py-1 bg-muted/70 text-muted-foreground text-sm rounded hover:bg-muted transition-colors"
                         >
                           <Copy className="h-3 w-3" />
                           <span className="text-sm">Copy</span>
@@ -339,28 +340,28 @@ export const EventTypes = () => {
                         )}
                       </div>
                     </div>
-                    <p className="text-muted-foreground text-sm mb-4 line-clamp-2">{event.description}</p>
+                    <p className="text-muted-foreground text-sm mb-3 line-clamp-2">{event.description}</p>
                     <div className="flex items-center">
                       {event.durations?.map((duration) => (
-                        <span key={duration} className="inline-flex items-center px-3 py-1 bg-muted text-foreground text-sm rounded mr-2">
+                        <span key={duration} className="inline-flex items-center px-2 py-1 bg-muted text-foreground text-sm rounded mr-2">
                           {duration}m
                         </span>
                       ))}
                     </div>
                   </div>
                   
-                  <div className="flex items-center space-x-3 ml-6" onClick={(e) => e.stopPropagation()}>
+                  <div className="flex items-center space-x-2 ml-4" onClick={(e) => e.stopPropagation()}>
                     <Switch 
                       checked={isEventActive} 
                       onCheckedChange={(checked) => handleToggleEvent(event.id, checked)}
                     />
-                    <button className="p-2 hover:bg-muted rounded-md transition-colors">
+                    <button className="p-1.5 hover:bg-muted rounded-md transition-colors">
                       <Eye className="h-4 w-4 text-muted-foreground" />
                     </button>
                     <div className="relative">
                       <button
                         onClick={() => setShowMoreOptions(showMoreOptions === event.id ? null : event.id)}
-                        className="p-2 hover:bg-muted rounded-md transition-colors"
+                        className="p-1.5 hover:bg-muted rounded-md transition-colors"
                       >
                         <MoreHorizontal className="h-4 w-4 text-muted-foreground" />
                       </button>

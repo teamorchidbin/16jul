@@ -11,6 +11,7 @@ import { EventWebhooks } from '../components/EventWebhooks';
 import { RecurringEvent } from '../components/RecurringEvent';
 import { Switch } from '../components/ui/switch';
 import { mockTeams } from '../data/mockData';
+
 const tabs = [{
   id: 'setup',
   name: 'Event Setup',
@@ -44,6 +45,7 @@ const tabs = [{
   name: 'Webhooks',
   icon: Webhook
 }];
+
 export const EditEvent = () => {
   const {
     eventId,
@@ -53,7 +55,7 @@ export const EditEvent = () => {
   const [eventEnabled, setEventEnabled] = useState(true);
   const navigate = useNavigate();
 
-  // Find the actual event from mockData
+  // Find the actual event from mockData using the eventId from URL
   const currentEvent = mockTeams.flatMap(team => team.eventTypes).find(event => event.id === eventId);
   const handleBack = () => {
     navigate('/');
@@ -81,22 +83,27 @@ export const EditEvent = () => {
     }
   };
   return <div className="min-h-screen bg-background">
-      {/* Header */}
-      
+      {/* Non-sticky Header matching EventTypes page */}
+      <div className="bg-background border-b border-border px-6 py-4">
+        <div className="space-y-1">
+          <h1 className="text-2xl font-bold text-foreground">Event Types</h1>
+          <p className="text-muted-foreground">Create events to share for people to book on your calendar.</p>
+        </div>
+      </div>
 
       {/* Event Header */}
-      <div className="bg-card border-b border-border px-8 py-6">
+      <div className="bg-card border-b border-border px-6 py-4">
         <div className="flex items-center justify-between w-full">
           <div className="flex items-center">
-            <button onClick={handleBack} className="mr-4 p-2 hover:bg-muted rounded-lg transition-colors">
+            <button onClick={handleBack} className="mr-3 p-1.5 hover:bg-muted rounded-lg transition-colors">
               <ArrowLeft className="h-5 w-5 text-muted-foreground" />
             </button>
             <div>
-              <div className="flex items-center space-x-4 mb-2">
+              <div className="flex items-center space-x-3 mb-1">
                 <h1 className="text-xl font-semibold text-foreground">
                   {currentEvent?.title || 'Event Not Found'}
                 </h1>
-                <div className="flex items-center space-x-2 px-3 py-1 bg-muted/70 text-muted-foreground text-sm rounded-md">
+                <div className="flex items-center space-x-2 px-2 py-1 bg-muted/70 text-muted-foreground text-sm rounded-md">
                   <span>cal.id/sanskar/{currentEvent?.url?.split('/').pop() || 'unknown'}</span>
                   <Copy className="h-3 w-3" />
                 </div>
@@ -106,7 +113,7 @@ export const EditEvent = () => {
               </div>
             </div>
           </div>
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center space-x-3">
             <div className="flex items-center space-x-2">
               <Switch checked={eventEnabled} onCheckedChange={setEventEnabled} />
               <span className="text-sm text-muted-foreground">
@@ -119,12 +126,22 @@ export const EditEvent = () => {
 
       <div className="flex w-full">
         {/* Sidebar */}
-        <div className="w-64 bg-card border-r border-border min-h-screen sticky top-0">
-          <nav className="p-6 space-y-1">
-            {tabs.map(tabItem => <button key={tabItem.id} onClick={() => setActiveTab(tabItem.id)} className={`w-full flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors ${activeTab === tabItem.id ? 'bg-primary text-primary-foreground' : 'text-muted-foreground hover:bg-muted hover:text-foreground'}`}>
-                <tabItem.icon className="mr-3 h-4 w-4" />
+        <div className="w-56 bg-card border-r border-border min-h-screen sticky top-0">
+          <nav className="p-4 space-y-1">
+            {tabs.map(tabItem => (
+              <button
+                key={tabItem.id}
+                onClick={() => setActiveTab(tabItem.id)}
+                className={`w-full flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-colors ${
+                  activeTab === tabItem.id
+                    ? 'bg-primary text-primary-foreground'
+                    : 'text-muted-foreground hover:bg-muted hover:text-foreground'
+                }`}
+              >
+                <tabItem.icon className="mr-2 h-4 w-4" />
                 {tabItem.name}
-              </button>)}
+              </button>
+            ))}
           </nav>
         </div>
 
