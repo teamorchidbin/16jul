@@ -122,7 +122,7 @@ export const EventAvailability = () => {
         <div className="bg-card border border-border rounded-lg p-6">
           <div className="space-y-4">
             {currentSchedule.workingHours.map((schedule, index) => <div key={index} className="flex items-center justify-between py-3">
-                <div className="w-28 text-foreground font-medium">
+                <div className="w-28 text-foreground w-28 ">
                   {schedule.day}
                 </div>
                 <div className="flex items-center space-x-4 text-muted-foreground">
