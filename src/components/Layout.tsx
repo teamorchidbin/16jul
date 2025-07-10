@@ -13,7 +13,7 @@ export const Layout = () => {
     <div className={darkMode ? 'dark' : ''}>
       <div className="min-h-screen bg-background text-foreground flex">
         <Sidebar darkMode={darkMode} setDarkMode={setDarkMode} />
-        <div className="flex-1 ml-64">
+        <div className="flex-1 ml-56">
           <Header showEventTypesHeader={isEventTypesPage} />
           <main className="relative z-0">
             <Outlet />
