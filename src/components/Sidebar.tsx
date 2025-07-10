@@ -25,7 +25,7 @@ export const Sidebar = ({ darkMode, setDarkMode }: SidebarProps) => {
   };
 
   return (
-    <div className="fixed inset-y-0 left-0 z-50 w-64 bg-card border-r border-border">
+    <div className="fixed inset-y-0 left-0 z-50 w-64 bg-card border-r border-border flex flex-col">
       <div className="flex h-20 items-center px-6 border-b border-border">
         <img 
           src="https://cdn.prod.website-files.com/5e53d34464688e6f5960a338/682f1bb36cedcb0cd39a7027_Onehash-CalId-logo%20icon.svg" 
@@ -54,8 +54,9 @@ export const Sidebar = ({ darkMode, setDarkMode }: SidebarProps) => {
         ))}
       </nav>
       
-      <div className="p-4">
-        <div className="flex items-center justify-center space-x-2">
+      {/* Moved to bottom left */}
+      <div className="p-4 border-t border-border">
+        <div className="flex items-center space-x-2">
           <button
             onClick={handleDarkModeToggle}
             className="p-2.5 bg-muted/50 hover:bg-muted rounded-lg transition-all duration-200 animate-button-press"

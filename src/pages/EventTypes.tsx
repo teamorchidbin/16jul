@@ -5,6 +5,16 @@ import { useNavigate } from 'react-router-dom';
 import { mockTeams } from '../data/mockData';
 import { Switch } from '../components/ui/switch';
 
+interface EventType {
+  id: string;
+  title: string;
+  description: string;
+  url: string;
+  durations: number[];
+  bookingsToday: number;
+  isActive: boolean;
+}
+
 export const EventTypes = () => {
   const [selectedTeam, setSelectedTeam] = useState('personal');
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
@@ -43,7 +53,7 @@ export const EventTypes = () => {
     console.log('Creating event with data:', eventData);
     
     const newEventId = `event-${Date.now()}`;
-    const newEvent = {
+    const newEvent: EventType = {
       id: newEventId,
       title: eventData.title || 'New Event',
       description: eventData.description || 'A new event',
@@ -275,9 +285,9 @@ export const EventTypes = () => {
               onMouseEnter={() => setHoveredEvent(event.id)}
               onMouseLeave={() => setHoveredEvent(null)}
             >
-              {/* Move buttons */}
+              {/* Move buttons - Fixed positioning to be half on tile, half outside */}
               {hoveredEvent === event.id && (
-                <div className="absolute -left-12 top-1/2 transform -translate-y-1/2 flex flex-col space-y-1 z-10 animate-scale-in">
+                <div className="absolute -left-8 top-1/2 transform -translate-y-1/2 flex flex-col space-y-1 z-10 animate-scale-in">
                   <button 
                     onClick={(e) => {
                       e.stopPropagation();
