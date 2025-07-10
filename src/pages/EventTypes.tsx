@@ -207,7 +207,7 @@ export const EventTypes = () => {
       </div>
 
       {/* Event Types List */}
-      <div className="space-y-1">
+      <div className="space-y-2">
         {filteredEvents.map(event => {
         const isEventActive = eventStates[event.id] ?? event.isActive;
         return <div key={event.id} className="relative group animate-fade-in" onMouseEnter={() => setHoveredEvent(event.id)} onMouseLeave={() => setHoveredEvent(null)}>
