@@ -10,6 +10,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '../../components/ui/pop
 import { Calendar as CalendarIcon, Trash2 } from 'lucide-react';
 import { format } from 'date-fns';
 import { cn } from '../../lib/utils';
+import { DateRange } from 'react-day-picker';
 
 export const General = () => {
   const [dynamicGroupLinks, setDynamicGroupLinks] = useState(true);
@@ -17,7 +18,7 @@ export const General = () => {
   const [monthlyDigest, setMonthlyDigest] = useState(true);
   const [scheduleTimezoneOpen, setScheduleTimezoneOpen] = useState(false);
   const [noEndDate, setNoEndDate] = useState(false);
-  const [dateRange, setDateRange] = useState<{ from: Date; to: Date }>({
+  const [dateRange, setDateRange] = useState<DateRange>({
     from: new Date(2025, 6, 11), // July 11, 2025
     to: new Date(2025, 6, 11)
   });
@@ -30,9 +31,11 @@ export const General = () => {
   ]);
 
   const handleAddTravelSchedule = () => {
+    if (!dateRange?.from) return;
+    
     const newSchedule = {
       id: Date.now(),
-      dateRange: `${format(dateRange.from, 'MMMM dd')} - ${format(dateRange.to, 'MMMM dd')}`,
+      dateRange: `${format(dateRange.from, 'MMMM dd')} - ${format(dateRange.to || dateRange.from, 'MMMM dd')}`,
       timezone: 'Asia/Kolkata'
     };
     setTravelSchedules([...travelSchedules, newSchedule]);
@@ -106,13 +109,21 @@ export const General = () => {
                         <PopoverTrigger asChild>
                           <Button variant="outline" className="w-full justify-start text-left font-normal">
                             <CalendarIcon className="mr-2 h-4 w-4" />
-                            {format(dateRange.from, 'MMM dd, yyyy')} - {format(dateRange.to, 'MMM dd, yyyy')}
+                            {dateRange?.from ? (
+                              dateRange.to ? (
+                                `${format(dateRange.from, 'MMM dd, yyyy')} - ${format(dateRange.to, 'MMM dd, yyyy')}`
+                              ) : (
+                                format(dateRange.from, 'MMM dd, yyyy')
+                              )
+                            ) : (
+                              <span>Pick a date range</span>
+                            )}
                           </Button>
                         </PopoverTrigger>
                         <PopoverContent className="w-auto p-0" align="start">
                           <Calendar
                             mode="range"
-                            defaultMonth={dateRange.from}
+                            defaultMonth={dateRange?.from}
                             selected={dateRange}
                             onSelect={(range) => range && setDateRange(range)}
                             numberOfMonths={1}
@@ -207,7 +218,7 @@ export const General = () => {
         </div>
 
         {/* Settings toggles - Separated section */}
-        <div className="pt-6 border-t space-y-6">
+        <div className="pt-8 border-t space-y-6">
           <div className="flex items-center justify-between">
             <div>
               <h3 className="font-medium">Dynamic group links</h3>
