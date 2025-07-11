@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
@@ -9,40 +10,44 @@ import { Upload } from 'lucide-react';
 export const Appearance = () => {
   const [customBrandColors, setCustomBrandColors] = useState(true);
   const [disableBranding, setDisableBranding] = useState(false);
-  const [lightBrandColor, setLightBrandColor] = useState('007ee5');
-  const [darkBrandColor, setDarkBrandColor] = useState('fafafa');
+  const [lightBrandColor, setLightBrandColor] = useState('#007ee5');
+  const [darkBrandColor, setDarkBrandColor] = useState('#fafafa');
   
   const [monthLayout, setMonthLayout] = useState(true);
   const [weeklyLayout, setWeeklyLayout] = useState(true);
   const [columnLayout, setColumnLayout] = useState(true);
+  const [defaultView, setDefaultView] = useState('month');
 
   const themeOptions = [
-    { name: 'System default', selected: false },
-    { name: 'Light', selected: true },
-    { name: 'Dark', selected: false }
+    { name: 'System default', selected: false, image: '/lovable-uploads/b849b475-852b-4552-92f1-185302b164ba.png' },
+    { name: 'Light', selected: true, image: '/lovable-uploads/b849b475-852b-4552-92f1-185302b164ba.png' },
+    { name: 'Dark', selected: false, image: '/lovable-uploads/b849b475-852b-4552-92f1-185302b164ba.png' }
   ];
 
   const bookingThemes = [
-    { name: 'System default', selected: true },
-    { name: 'Light', selected: false },
-    { name: 'Dark', selected: false }
+    { name: 'System default', selected: true, image: '/lovable-uploads/b849b475-852b-4552-92f1-185302b164ba.png' },
+    { name: 'Light', selected: false, image: '/lovable-uploads/b849b475-852b-4552-92f1-185302b164ba.png' },
+    { name: 'Dark', selected: false, image: '/lovable-uploads/b849b475-852b-4552-92f1-185302b164ba.png' }
   ];
 
   const layoutOptions = [
     { 
       name: 'Month', 
       checked: monthLayout, 
-      onChange: (checked: boolean | "indeterminate") => setMonthLayout(checked === true)
+      onChange: (checked: boolean | "indeterminate") => setMonthLayout(checked === true),
+      image: '/lovable-uploads/b849b475-852b-4552-92f1-185302b164ba.png'
     },
     { 
       name: 'Weekly', 
       checked: weeklyLayout, 
-      onChange: (checked: boolean | "indeterminate") => setWeeklyLayout(checked === true)
+      onChange: (checked: boolean | "indeterminate") => setWeeklyLayout(checked === true),
+      image: '/lovable-uploads/b849b475-852b-4552-92f1-185302b164ba.png'
     },
     { 
       name: 'Column', 
       checked: columnLayout, 
-      onChange: (checked: boolean | "indeterminate") => setColumnLayout(checked === true)
+      onChange: (checked: boolean | "indeterminate") => setColumnLayout(checked === true),
+      image: '/lovable-uploads/b849b475-852b-4552-92f1-185302b164ba.png'
     }
   ];
 
@@ -65,8 +70,8 @@ export const Appearance = () => {
               <div className="grid grid-cols-3 gap-4">
                 {themeOptions.map((theme, index) => (
                   <div key={index} className={`border-2 rounded-lg p-4 cursor-pointer ${theme.selected ? 'border-primary' : 'border-border'}`}>
-                    <div className="w-full h-24 bg-muted rounded mb-2 flex items-center justify-center">
-                      <div className="w-8 h-8 bg-background rounded"></div>
+                    <div className="w-full h-24 bg-muted rounded mb-2 overflow-hidden">
+                      <img src={theme.image} alt={theme.name} className="w-full h-full object-cover" />
                     </div>
                     <p className="text-sm text-center">{theme.name}</p>
                   </div>
@@ -86,8 +91,8 @@ export const Appearance = () => {
               <div className="grid grid-cols-3 gap-4">
                 {bookingThemes.map((theme, index) => (
                   <div key={index} className={`border-2 rounded-lg p-4 cursor-pointer ${theme.selected ? 'border-primary' : 'border-border'}`}>
-                    <div className="w-full h-24 bg-muted rounded mb-2 flex items-center justify-center">
-                      <div className="w-8 h-8 bg-background rounded"></div>
+                    <div className="w-full h-24 bg-muted rounded mb-2 overflow-hidden">
+                      <img src={theme.image} alt={theme.name} className="w-full h-full object-cover" />
                     </div>
                     <p className="text-sm text-center">{theme.name}</p>
                   </div>
@@ -109,7 +114,9 @@ export const Appearance = () => {
               <div className="grid grid-cols-3 gap-4 mb-4">
                 {layoutOptions.map((layout, index) => (
                   <div key={index} className="border rounded-lg p-4">
-                    <div className="w-full h-24 bg-muted rounded mb-2"></div>
+                    <div className="w-full h-24 bg-muted rounded mb-2 overflow-hidden">
+                      <img src={layout.image} alt={layout.name} className="w-full h-full object-cover" />
+                    </div>
                     <div className="flex items-center space-x-2">
                       <Checkbox 
                         checked={layout.checked}
@@ -124,9 +131,27 @@ export const Appearance = () => {
               <div>
                 <Label className="text-sm font-medium">Default view</Label>
                 <div className="grid grid-cols-3 gap-4 mt-2">
-                  <Button variant="outline" className="justify-start">Month</Button>
-                  <Button variant="ghost" className="justify-start">Weekly</Button>
-                  <Button variant="ghost" className="justify-start">Column</Button>
+                  <Button 
+                    variant={defaultView === 'month' ? 'default' : 'outline'} 
+                    className="justify-start"
+                    onClick={() => setDefaultView('month')}
+                  >
+                    Month
+                  </Button>
+                  <Button 
+                    variant={defaultView === 'weekly' ? 'default' : 'outline'} 
+                    className="justify-start"
+                    onClick={() => setDefaultView('weekly')}
+                  >
+                    Weekly
+                  </Button>
+                  <Button 
+                    variant={defaultView === 'column' ? 'default' : 'outline'} 
+                    className="justify-start"
+                    onClick={() => setDefaultView('column')}
+                  >
+                    Column
+                  </Button>
                 </div>
               </div>
             </div>
@@ -151,7 +176,12 @@ export const Appearance = () => {
                   <div className="space-y-2">
                     <Label>Brand Color (Light Theme)</Label>
                     <div className="flex items-center space-x-2">
-                      <div className="w-8 h-8 bg-blue-500 rounded"></div>
+                      <input
+                        type="color"
+                        value={lightBrandColor}
+                        onChange={(e) => setLightBrandColor(e.target.value)}
+                        className="w-8 h-8 rounded border"
+                      />
                       <Input 
                         value={lightBrandColor}
                         onChange={(e) => setLightBrandColor(e.target.value)}
@@ -163,7 +193,12 @@ export const Appearance = () => {
                   <div className="space-y-2">
                     <Label>Brand Color (Dark Theme)</Label>
                     <div className="flex items-center space-x-2">
-                      <div className="w-8 h-8 bg-gray-100 rounded border"></div>
+                      <input
+                        type="color"
+                        value={darkBrandColor}
+                        onChange={(e) => setDarkBrandColor(e.target.value)}
+                        className="w-8 h-8 rounded border"
+                      />
                       <Input 
                         value={darkBrandColor}
                         onChange={(e) => setDarkBrandColor(e.target.value)}
@@ -181,7 +216,7 @@ export const Appearance = () => {
             <div className="space-y-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <h2 className="text-lg font-medium">Disable OneHash branding</h2>
+                  <h2 className="text-base font-medium">Disable OneHash branding</h2>
                   <p className="text-sm text-muted-foreground">Removes any OneHash related brandings, i.e. 'Powered by OneHash.'</p>
                 </div>
                 <Switch 
@@ -193,7 +228,7 @@ export const Appearance = () => {
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
                   <div>
-                    <h2 className="text-lg font-medium">Custom brand logo</h2>
+                    <h2 className="text-base font-medium">Custom brand logo</h2>
                     <p className="text-sm text-muted-foreground">Add your own brand logo into your booking page.</p>
                   </div>
                   <Button variant="outline">Preview</Button>
@@ -212,7 +247,7 @@ export const Appearance = () => {
 
               <div className="space-y-4">
                 <div>
-                  <h2 className="text-lg font-medium">Custom brand favicon</h2>
+                  <h2 className="text-base font-medium">Custom brand favicon</h2>
                   <p className="text-sm text-muted-foreground">Add your own brand favicon into your booking page.</p>
                 </div>
                 
