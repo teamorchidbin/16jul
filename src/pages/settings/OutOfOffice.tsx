@@ -66,7 +66,7 @@ export const OutOfOffice = () => {
   };
 
   const handleDeleteOOO = (id: string) => {
-    setOooSchedules(oooSchedules.filter(schedule => schedule.id !== id));
+    setOOOSchedules(oooSchedules.filter(schedule => schedule.id !== id));
   };
 
   const selectedRange = dateRange.from && dateRange.to ? { from: dateRange.from, to: dateRange.to } : dateRange.from ? { from: dateRange.from, to: dateRange.from } : undefined;
