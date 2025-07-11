@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Button } from '../../components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../components/ui/select';
@@ -52,8 +51,9 @@ export const General = () => {
         </div>
 
         <div className="space-y-8">
-          {/* Language */}
-          <div className="border rounded-lg p-6">
+          {/* Main Settings Section */}
+          <div className="border rounded-lg p-6 space-y-6">
+            {/* Language */}
             <div className="space-y-2">
               <Label>Language</Label>
               <Select defaultValue="english">
@@ -67,10 +67,8 @@ export const General = () => {
                 </SelectContent>
               </Select>
             </div>
-          </div>
 
-          {/* Timezone */}
-          <div className="border rounded-lg p-6">
+            {/* Timezone */}
             <div className="space-y-4">
               <Label>Timezone</Label>
               <Select defaultValue="asia-kolkata">
@@ -184,10 +182,8 @@ export const General = () => {
                 ))}
               </div>
             </div>
-          </div>
 
-          {/* Time format */}
-          <div className="border rounded-lg p-6">
+            {/* Time format */}
             <div className="space-y-2">
               <Label>Time format</Label>
               <Select defaultValue="12-hour">
@@ -203,10 +199,8 @@ export const General = () => {
                 This is an internal setting and will not affect how times are displayed on public booking pages for you or anyone booking you.
               </p>
             </div>
-          </div>
 
-          {/* Start of week */}
-          <div className="border rounded-lg p-6">
+            {/* Start of week */}
             <div className="space-y-2">
               <Label>Start of week</Label>
               <Select defaultValue="monday">
@@ -256,13 +250,6 @@ export const General = () => {
                 onCheckedChange={setMonthlyDigest}
               />
             </div>
-          </div>
-
-          {/* Update button */}
-          <div className="text-center">
-            <Button className="bg-blue-600 hover:bg-blue-700">
-              Update
-            </Button>
           </div>
         </div>
       </div>

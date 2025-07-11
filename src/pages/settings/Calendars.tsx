@@ -25,15 +25,9 @@ export const Calendars = () => {
   return (
     <div className="min-h-screen bg-background flex justify-center">
       <div className="p-8 max-w-4xl w-full">
-        <div className="mb-8 text-center flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-semibold mb-2">Calendars</h1>
-            <p className="text-muted-foreground">Configure how your event types interact with your calendars</p>
-          </div>
-          <Button onClick={handleAddCalendar} className="bg-blue-600 hover:bg-blue-700">
-            <Plus className="h-4 w-4 mr-2" />
-            Add Calendar
-          </Button>
+        <div className="mb-8 text-center">
+          <h1 className="text-2xl font-semibold mb-2">Calendars</h1>
+          <p className="text-muted-foreground">Configure how your event types interact with your calendars</p>
         </div>
 
         <div className="space-y-8">
@@ -65,9 +59,9 @@ export const Calendars = () => {
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <h2 className="text-lg font-medium">Check for conflicts</h2>
-                <Button variant="outline" onClick={handleAddCalendar}>
+                <Button onClick={handleAddCalendar} className="bg-blue-600 hover:bg-blue-700">
                   <Plus className="h-4 w-4 mr-2" />
-                  Add
+                  Add Calendar
                 </Button>
               </div>
               <p className="text-muted-foreground">

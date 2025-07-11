@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
@@ -109,8 +108,9 @@ export const Profile = () => {
         </div>
 
         <div className="space-y-8 mb-12">
-          {/* Profile Picture */}
-          <div className="border rounded-lg p-6">
+          {/* Profile Information Section */}
+          <div className="border rounded-lg p-6 space-y-8">
+            {/* Profile Picture */}
             <div className="space-y-4">
               <Label className="text-base font-medium">Profile Picture</Label>
               <div className="flex items-center space-x-4">
@@ -123,10 +123,8 @@ export const Profile = () => {
                 </div>
               </div>
             </div>
-          </div>
 
-          {/* Username */}
-          <div className="border rounded-lg p-6">
+            {/* Username */}
             <div className="space-y-2">
               <Label htmlFor="username">Username</Label>
               <div className="flex">
@@ -136,18 +134,14 @@ export const Profile = () => {
                 <Input id="username" value="sanskar" className="rounded-l-none" />
               </div>
             </div>
-          </div>
 
-          {/* Full Name */}
-          <div className="border rounded-lg p-6">
+            {/* Full Name */}
             <div className="space-y-2">
               <Label htmlFor="fullName">Full Name</Label>
               <Input id="fullName" value={fullName} onChange={e => setFullName(e.target.value)} />
             </div>
-          </div>
 
-          {/* Email */}
-          <div className="border rounded-lg p-6">
+            {/* Email */}
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
               <div className="space-y-2">
@@ -224,10 +218,8 @@ export const Profile = () => {
                 </Dialog>
               </div>
             </div>
-          </div>
 
-          {/* Phone Number */}
-          <div className="border rounded-lg p-6">
+            {/* Phone Number */}
             <div className="space-y-2">
               <div className="flex items-center space-x-1">
                 <Label htmlFor="phone">Phone Number</Label>
@@ -272,10 +264,8 @@ export const Profile = () => {
                 </Button>
               </div>
             </div>
-          </div>
 
-          {/* About */}
-          <div className="border rounded-lg p-6">
+            {/* About */}
             <div className="space-y-2">
               <Label htmlFor="about">About</Label>
               <div className="border rounded-md">
@@ -322,7 +312,7 @@ export const Profile = () => {
         </div>
 
         {/* Danger Zone */}
-        <div className="border rounded-lg p-6 border-destructive/20">
+        <div className="border rounded-lg p-6 border-destructive/30 bg-destructive/5">
           <div className="mb-6">
             <h2 className="text-lg font-medium mb-2 text-destructive">Danger zone</h2>
             <p className="text-sm text-muted-foreground">Be careful. Account deletion cannot be undone.</p>

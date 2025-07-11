@@ -45,15 +45,9 @@ export const Conferencing = () => {
   return (
     <div className="min-h-screen bg-background flex justify-center">
       <div className="p-8 max-w-4xl w-full">
-        <div className="mb-8 text-center flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-semibold mb-2">Conferencing</h1>
-            <p className="text-muted-foreground">Add your favourite video conferencing apps for your meetings</p>
-          </div>
-          <Button onClick={handleAddApp} className="bg-blue-600 hover:bg-blue-700">
-            <Plus className="h-4 w-4 mr-2" />
-            Add
-          </Button>
+        <div className="mb-8 text-center">
+          <h1 className="text-2xl font-semibold mb-2">Conferencing</h1>
+          <p className="text-muted-foreground">Add your favourite video conferencing apps for your meetings</p>
         </div>
 
         <div className="space-y-4">
@@ -97,6 +91,19 @@ export const Conferencing = () => {
               </div>
             </div>
           ))}
+        </div>
+
+        {/* Dotted line separator */}
+        <div className="flex justify-center my-8">
+          <div className="w-full max-w-xs border-t border-dotted border-gray-300"></div>
+        </div>
+
+        {/* Add new app button */}
+        <div className="text-center">
+          <Button onClick={handleAddApp} className="bg-blue-600 hover:bg-blue-700">
+            <Plus className="h-4 w-4 mr-2" />
+            Add a new app
+          </Button>
         </div>
       </div>
     </div>
