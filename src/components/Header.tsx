@@ -1,27 +1,60 @@
 
 import React, { useState } from 'react';
-import { ChevronDown, Moon, HelpCircle, MapPin, LogOut, User, Bell } from 'lucide-react';
+import { ChevronDown, Moon, HelpCircle, MapPin, LogOut, User, Bell, Copy, Eye } from 'lucide-react';
 import { NotificationDropdown } from './NotificationDropdown';
+import { Switch } from './ui/switch';
 
 interface HeaderProps {
   showEventTypesHeader?: boolean;
+  eventData?: {
+    title: string;
+    url: string;
+    enabled: boolean;
+    onEnabledChange: (enabled: boolean) => void;
+  };
 }
 
-export const Header = ({ showEventTypesHeader = false }: HeaderProps) => {
+export const Header = ({ showEventTypesHeader = false, eventData }: HeaderProps) => {
   const [showProfileDropdown, setShowProfileDropdown] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
 
   return (
     <header className="h-20 border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-50">
       <div className="h-full px-8 flex items-center justify-between w-full">
-        {showEventTypesHeader && (
+        {showEventTypesHeader && !eventData && (
           <div className="flex-1">
             <h1 className="text-xl font-semibold text-foreground">Event Types</h1>
             <p className="text-sm text-muted-foreground mt-1">Create events to share for people to book on your calendar.</p>
           </div>
         )}
         
+        {eventData && (
+          <div className="flex-1">
+            <div className="flex items-center space-x-3 mb-1">
+              <h1 className="text-xl font-semibold text-foreground">
+                {eventData.title}
+              </h1>
+              <div className="flex items-center space-x-2 px-2 py-1 bg-muted/70 text-muted-foreground text-sm rounded-md">
+                <span>cal.id/sanskar/{eventData.url}</span>
+                <Copy className="h-3 w-3" />
+              </div>
+              <button className="text-sm text-primary hover:text-primary/80 flex items-center transition-colors">
+                <Eye className="h-4 w-4 mr-1" />
+              </button>
+            </div>
+          </div>
+        )}
+        
         <div className="flex items-center space-x-4 ml-auto">
+          {eventData && (
+            <div className="flex items-center space-x-2">
+              <Switch checked={eventData.enabled} onCheckedChange={eventData.onEnabledChange} />
+              <span className="text-sm text-muted-foreground">
+                {eventData.enabled ? 'Enabled' : 'Disabled'}
+              </span>
+            </div>
+          )}
+          
           {/* Notifications */}
           <div className="relative">
             <button
