@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Button } from '../../components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../components/ui/select';
@@ -10,27 +9,26 @@ import { Calendar } from '../../components/ui/calendar';
 import { Calendar as CalendarIcon, Trash2 } from 'lucide-react';
 import { format } from 'date-fns';
 import { cn } from '../../lib/utils';
-
 export const General = () => {
   const [dynamicGroupLinks, setDynamicGroupLinks] = useState(true);
   const [searchEngineIndexing, setSearchEngineIndexing] = useState(true);
   const [monthlyDigest, setMonthlyDigest] = useState(true);
   const [scheduleTimezoneOpen, setScheduleTimezoneOpen] = useState(false);
   const [noEndDate, setNoEndDate] = useState(false);
-  const [dateRange, setDateRange] = useState<{ from?: Date; to?: Date }>({});
+  const [dateRange, setDateRange] = useState<{
+    from?: Date;
+    to?: Date;
+  }>({});
   const [travelSchedules, setTravelSchedules] = useState<Array<{
     id: string;
     dateRange: string;
     timezone: string;
   }>>([]);
-
   const handleAddTravelSchedule = () => {
     if (dateRange.from) {
       const newSchedule = {
         id: Date.now().toString(),
-        dateRange: dateRange.to 
-          ? `${format(dateRange.from, 'MMM dd')} - ${format(dateRange.to, 'MMM dd')}`
-          : format(dateRange.from, 'MMM dd, yyyy'),
+        dateRange: dateRange.to ? `${format(dateRange.from, 'MMM dd')} - ${format(dateRange.to, 'MMM dd')}` : format(dateRange.from, 'MMM dd, yyyy'),
         timezone: 'Asia/Dhaka'
       };
       setTravelSchedules([...travelSchedules, newSchedule]);
@@ -38,13 +36,12 @@ export const General = () => {
       setScheduleTimezoneOpen(false);
     }
   };
-
   const handleDeleteTravelSchedule = (id: string) => {
     setTravelSchedules(travelSchedules.filter(schedule => schedule.id !== id));
   };
-
-  return (
-    <div className="p-8 max-w-4xl" style={{ color: '#202124' }}>
+  return <div className="p-8 max-w-4xl" style={{
+    color: '#202124'
+  }}>
       <div className="mb-8">
         <h1 className="text-2xl font-semibold mb-2">General</h1>
         <p className="text-muted-foreground">Manage settings for your language and timezone</p>
@@ -83,7 +80,7 @@ export const General = () => {
           {/* Travel Schedule Section */}
           <div className="space-y-4 border rounded-lg p-4 bg-muted/20">
             <div className="flex items-center justify-between">
-              <h3 className="font-medium">Travel Schedule</h3>
+              <h3 className="font-medium text-sm">Travel Schedule</h3>
               <Dialog open={scheduleTimezoneOpen} onOpenChange={setScheduleTimezoneOpen}>
                 <DialogTrigger asChild>
                   <Button variant="outline" size="sm" className="flex items-center space-x-2">
@@ -106,25 +103,11 @@ export const General = () => {
                         <PopoverTrigger asChild>
                           <Button variant="outline" className="w-full justify-start text-left">
                             <CalendarIcon className="mr-2 h-4 w-4" />
-                            {dateRange.from ? (
-                              dateRange.to ? (
-                                `${format(dateRange.from, 'MMM dd, yyyy')} - ${format(dateRange.to, 'MMM dd, yyyy')}`
-                              ) : (
-                                format(dateRange.from, 'MMM dd, yyyy')
-                              )
-                            ) : (
-                              'Jul 11, 2025 - Jul 11, 2025'
-                            )}
+                            {dateRange.from ? dateRange.to ? `${format(dateRange.from, 'MMM dd, yyyy')} - ${format(dateRange.to, 'MMM dd, yyyy')}` : format(dateRange.from, 'MMM dd, yyyy') : 'Jul 11, 2025 - Jul 11, 2025'}
                           </Button>
                         </PopoverTrigger>
                         <PopoverContent className="w-auto p-0" align="start">
-                          <Calendar
-                            mode="range"
-                            selected={dateRange}
-                            onSelect={(range) => setDateRange(range || {})}
-                            initialFocus
-                            className={cn("p-3 pointer-events-auto")}
-                          />
+                          <Calendar mode="range" selected={dateRange} onSelect={range => setDateRange(range || {})} initialFocus className={cn("p-3 pointer-events-auto")} />
                         </PopoverContent>
                       </Popover>
                     </div>
@@ -163,21 +146,15 @@ export const General = () => {
             </div>
 
             {/* Display existing travel schedules */}
-            {travelSchedules.map((schedule) => (
-              <div key={schedule.id} className="flex items-center justify-between p-3 bg-background border rounded-lg">
+            {travelSchedules.map(schedule => <div key={schedule.id} className="flex items-center justify-between p-3 bg-background border rounded-lg">
                 <div>
                   <div className="font-medium">{schedule.dateRange}</div>
                   <div className="text-sm text-muted-foreground">{schedule.timezone}</div>
                 </div>
-                <Button 
-                  variant="ghost" 
-                  size="sm"
-                  onClick={() => handleDeleteTravelSchedule(schedule.id)}
-                >
+                <Button variant="ghost" size="sm" onClick={() => handleDeleteTravelSchedule(schedule.id)}>
                   <Trash2 className="h-4 w-4" />
                 </Button>
-              </div>
-            ))}
+              </div>)}
           </div>
         </div>
 
@@ -194,7 +171,7 @@ export const General = () => {
             </SelectContent>
           </Select>
           <p className="text-sm text-muted-foreground">
-            This is an internal setting and will not affect how times are displayed on public booking pages.
+            This is an internal setting and will not affect how times are displayed on public booking pages for you or anyone booking you.
           </p>
         </div>
 
@@ -220,10 +197,7 @@ export const General = () => {
               <h3 className="font-medium">Dynamic group links</h3>
               <p className="text-sm text-muted-foreground">Allow attendees to book you through dynamic group bookings</p>
             </div>
-            <Switch 
-              checked={dynamicGroupLinks}
-              onCheckedChange={setDynamicGroupLinks}
-            />
+            <Switch checked={dynamicGroupLinks} onCheckedChange={setDynamicGroupLinks} />
           </div>
 
           <div className="flex items-center justify-between">
@@ -231,10 +205,7 @@ export const General = () => {
               <h3 className="font-medium">Allow search engine indexing</h3>
               <p className="text-sm text-muted-foreground">Allow search engines to access your public content</p>
             </div>
-            <Switch 
-              checked={searchEngineIndexing}
-              onCheckedChange={setSearchEngineIndexing}
-            />
+            <Switch checked={searchEngineIndexing} onCheckedChange={setSearchEngineIndexing} />
           </div>
 
           <div className="flex items-center justify-between">
@@ -242,10 +213,7 @@ export const General = () => {
               <h3 className="font-medium">Monthly digest email</h3>
               <p className="text-sm text-muted-foreground">Monthly digest email for teams</p>
             </div>
-            <Switch 
-              checked={monthlyDigest}
-              onCheckedChange={setMonthlyDigest}
-            />
+            <Switch checked={monthlyDigest} onCheckedChange={setMonthlyDigest} />
           </div>
         </div>
 
@@ -256,6 +224,5 @@ export const General = () => {
           </Button>
         </div>
       </div>
-    </div>
-  );
+    </div>;
 };
