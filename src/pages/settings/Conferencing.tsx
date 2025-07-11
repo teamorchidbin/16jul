@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { Button } from '../../components/ui/button';
-import { Plus, Settings, ExternalLink } from 'lucide-react';
+import { Plus, Settings } from 'lucide-react';
 
 export const Conferencing = () => {
   const [conferencingApps] = useState([
@@ -11,7 +11,8 @@ export const Conferencing = () => {
       description: 'Video conferencing',
       icon: '📹',
       color: 'bg-blue-500',
-      installed: true
+      installed: true,
+      isDefault: true
     },
     {
       id: 2,
@@ -19,15 +20,26 @@ export const Conferencing = () => {
       description: 'Video conferencing',
       icon: '🎥',
       color: 'bg-green-500',
-      installed: false
+      installed: true,
+      isDefault: false
     },
     {
       id: 3,
-      name: 'Microsoft Teams',
+      name: 'Facetime',
       description: 'Video conferencing',
-      icon: '💼',
-      color: 'bg-purple-500',
-      installed: false
+      icon: '📱',
+      color: 'bg-gray-500',
+      installed: false,
+      isDefault: false
+    },
+    {
+      id: 4,
+      name: 'Jitsi Video',
+      description: 'Video conferencing',
+      icon: '🎬',
+      color: 'bg-orange-500',
+      installed: false,
+      isDefault: false
     }
   ]);
 
@@ -54,22 +66,38 @@ export const Conferencing = () => {
                   </div>
                 </div>
                 
-                <div className="flex items-center justify-between">
+                <div className="space-y-2">
                   {app.installed ? (
-                    <span className="text-sm text-green-600 font-medium">Installed</span>
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm text-green-600 font-medium">Installed</span>
+                      <div className="flex space-x-2">
+                        <Button variant="outline" size="sm">
+                          <Settings className="h-4 w-4 mr-2" />
+                          Settings
+                        </Button>
+                        {app.isDefault ? (
+                          <Button variant="default" size="sm" disabled>
+                            Default
+                          </Button>
+                        ) : (
+                          <Button variant="outline" size="sm">
+                            Set as Default
+                          </Button>
+                        )}
+                      </div>
+                    </div>
                   ) : (
-                    <span className="text-sm text-muted-foreground">Not installed</span>
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm text-muted-foreground">Not installed</span>
+                      <Button variant="outline" size="sm">
+                        Install
+                      </Button>
+                    </div>
                   )}
                   
-                  {app.installed ? (
-                    <Button variant="outline" size="sm">
-                      <Settings className="h-4 w-4 mr-2" />
-                      Settings
-                    </Button>
-                  ) : (
-                    <Button variant="outline" size="sm">
-                      <ExternalLink className="h-4 w-4 mr-2" />
-                      Install
+                  {app.installed && (
+                    <Button variant="destructive" size="sm" className="w-full mt-2">
+                      Remove App
                     </Button>
                   )}
                 </div>
@@ -79,7 +107,7 @@ export const Conferencing = () => {
 
           {/* Vertical dotted line */}
           <div className="flex justify-center my-8">
-            <div className="w-px h-16 border-l-2 border-dotted border-gray-300"></div>
+            <div className="w-px h-16 border-l-4 border-dotted border-gray-300"></div>
           </div>
 
           {/* Add New App Button */}

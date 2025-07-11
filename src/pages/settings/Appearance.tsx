@@ -19,15 +19,15 @@ export const Appearance = () => {
   const [defaultView, setDefaultView] = useState('month');
 
   const themeOptions = [
-    { name: 'System default', selected: false, image: '/lovable-uploads/b849b475-852b-4552-92f1-185302b164ba.png' },
-    { name: 'Light', selected: true, image: '/lovable-uploads/b849b475-852b-4552-92f1-185302b164ba.png' },
-    { name: 'Dark', selected: false, image: '/lovable-uploads/b849b475-852b-4552-92f1-185302b164ba.png' }
+    { name: 'System default', selected: false, image: '/lovable-uploads/836ff3f8-9c01-4824-87ee-cb55f5d1de44.png' },
+    { name: 'Light', selected: true, image: '/lovable-uploads/359ae3dc-e188-432c-bfe8-975b576e073a.png' },
+    { name: 'Dark', selected: false, image: '/lovable-uploads/b2998ace-808f-41d1-affe-28a5275649f1.png' }
   ];
 
   const bookingThemes = [
-    { name: 'System default', selected: true, image: '/lovable-uploads/b849b475-852b-4552-92f1-185302b164ba.png' },
-    { name: 'Light', selected: false, image: '/lovable-uploads/b849b475-852b-4552-92f1-185302b164ba.png' },
-    { name: 'Dark', selected: false, image: '/lovable-uploads/b849b475-852b-4552-92f1-185302b164ba.png' }
+    { name: 'System default', selected: true, image: '/lovable-uploads/836ff3f8-9c01-4824-87ee-cb55f5d1de44.png' },
+    { name: 'Light', selected: false, image: '/lovable-uploads/359ae3dc-e188-432c-bfe8-975b576e073a.png' },
+    { name: 'Dark', selected: false, image: '/lovable-uploads/b2998ace-808f-41d1-affe-28a5275649f1.png' }
   ];
 
   const layoutOptions = [
@@ -35,19 +35,19 @@ export const Appearance = () => {
       name: 'Month', 
       checked: monthLayout, 
       onChange: (checked: boolean | "indeterminate") => setMonthLayout(checked === true),
-      image: '/lovable-uploads/b849b475-852b-4552-92f1-185302b164ba.png'
+      image: '/lovable-uploads/7adc3e4a-6c37-4058-be71-591e83f35731.png'
     },
     { 
       name: 'Weekly', 
       checked: weeklyLayout, 
       onChange: (checked: boolean | "indeterminate") => setWeeklyLayout(checked === true),
-      image: '/lovable-uploads/b849b475-852b-4552-92f1-185302b164ba.png'
+      image: '/lovable-uploads/400903b2-a89f-4b36-9dac-3b74abaad938.png'
     },
     { 
       name: 'Column', 
       checked: columnLayout, 
       onChange: (checked: boolean | "indeterminate") => setColumnLayout(checked === true),
-      image: '/lovable-uploads/b849b475-852b-4552-92f1-185302b164ba.png'
+      image: '/lovable-uploads/1f362857-f00f-437a-9e9d-6533171745eb.png'
     }
   ];
 
@@ -180,7 +180,7 @@ export const Appearance = () => {
                         type="color"
                         value={lightBrandColor}
                         onChange={(e) => setLightBrandColor(e.target.value)}
-                        className="w-8 h-8 rounded border"
+                        className="w-8 h-8 rounded border cursor-pointer"
                       />
                       <Input 
                         value={lightBrandColor}
@@ -197,7 +197,7 @@ export const Appearance = () => {
                         type="color"
                         value={darkBrandColor}
                         onChange={(e) => setDarkBrandColor(e.target.value)}
-                        className="w-8 h-8 rounded border"
+                        className="w-8 h-8 rounded border cursor-pointer"
                       />
                       <Input 
                         value={darkBrandColor}
@@ -216,8 +216,8 @@ export const Appearance = () => {
             <div className="space-y-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <h2 className="text-base font-medium">Disable OneHash branding</h2>
-                  <p className="text-sm text-muted-foreground">Removes any OneHash related brandings, i.e. 'Powered by OneHash.'</p>
+                  <h2 className="text-sm font-medium">Disable OneHash branding</h2>
+                  <p className="text-xs text-muted-foreground">Removes any OneHash related brandings, i.e. 'Powered by OneHash.'</p>
                 </div>
                 <Switch 
                   checked={disableBranding}
@@ -228,15 +228,19 @@ export const Appearance = () => {
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
                   <div>
-                    <h2 className="text-base font-medium">Custom brand logo</h2>
-                    <p className="text-sm text-muted-foreground">Add your own brand logo into your booking page.</p>
+                    <h2 className="text-sm font-medium">Custom brand logo</h2>
+                    <p className="text-xs text-muted-foreground">Add your own brand logo into your booking page.</p>
                   </div>
                   <Button variant="outline">Preview</Button>
                 </div>
                 
                 <div className="flex items-center space-x-4">
-                  <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center">
-                    <span className="text-sm font-medium text-blue-600">OneHash</span>
+                  <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center overflow-hidden">
+                    <img 
+                      src="https://cdn.prod.website-files.com/5e53d34464688e6f5960a338/610a36c2792530d601aaf35f_OneHash_Logo.svg" 
+                      alt="OneHash Logo" 
+                      className="w-12 h-12 object-contain"
+                    />
                   </div>
                   <Button variant="outline">
                     <Upload className="h-4 w-4 mr-2" />
@@ -247,12 +251,18 @@ export const Appearance = () => {
 
               <div className="space-y-4">
                 <div>
-                  <h2 className="text-base font-medium">Custom brand favicon</h2>
-                  <p className="text-sm text-muted-foreground">Add your own brand favicon into your booking page.</p>
+                  <h2 className="text-sm font-medium">Custom brand favicon</h2>
+                  <p className="text-xs text-muted-foreground">Add your own brand favicon into your booking page.</p>
                 </div>
                 
                 <div className="flex items-center space-x-4">
-                  <div className="w-16 h-16 bg-gradient-to-br from-red-500 via-yellow-500 via-green-500 to-blue-500 rounded-full"></div>
+                  <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center overflow-hidden">
+                    <img 
+                      src="https://cdn.prod.website-files.com/5e53d34464688e6f5960a338/65d0f96d6759233ecabe6ea5_OneHash.svg" 
+                      alt="OneHash Favicon" 
+                      className="w-8 h-8 object-contain"
+                    />
+                  </div>
                   <Button variant="outline">
                     <Upload className="h-4 w-4 mr-2" />
                     Upload favicon
