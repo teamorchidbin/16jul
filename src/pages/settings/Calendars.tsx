@@ -141,6 +141,19 @@ export const Calendars = () => {
             </div>
           </div>
         </div>
+
+        {/* Vertical dotted line */}
+        <div className="flex justify-center my-8">
+          <div className="h-12 border-l-2 border-dotted border-gray-400" style={{ borderWidth: '3px', borderSpacing: '8px' }}></div>
+        </div>
+
+        {/* Add new app button */}
+        <div className="text-center">
+          <Button onClick={handleAddCalendar} className="bg-blue-600 hover:bg-blue-700">
+            <Plus className="h-4 w-4 mr-2" />
+            Add Calendar
+          </Button>
+        </div>
       </div>
     </div>
   );

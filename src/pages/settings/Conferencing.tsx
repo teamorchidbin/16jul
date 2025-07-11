@@ -23,6 +23,12 @@ export const Conferencing = () => {
       isDefault: true
     },
     {
+      name: 'Zoom',
+      description: 'Zoom is a video conferencing platform that allows users to meet online, with or without video.',
+      icon: '📹',
+      color: 'bg-blue-600'
+    },
+    {
       name: 'Jitsi Video',
       description: 'Jitsi is a free open-source video conferencing software for web and mobile. Make a ...',
       icon: '🔗',
@@ -93,9 +99,9 @@ export const Conferencing = () => {
           ))}
         </div>
 
-        {/* Dotted line separator */}
+        {/* Vertical dotted line */}
         <div className="flex justify-center my-8">
-          <div className="w-full max-w-xs border-t border-dotted border-gray-300"></div>
+          <div className="h-12 border-l-2 border-dotted border-gray-400" style={{ borderWidth: '3px', borderSpacing: '8px' }}></div>
         </div>
 
         {/* Add new app button */}
