@@ -11,7 +11,7 @@ export const Webhooks = () => {
         <p className="text-muted-foreground">Receive meeting data in real-time when something happens in OneHash Cal</p>
       </div>
 
-      <div className="flex flex-col items-center justify-center py-16 text-center">
+      <div className="flex flex-col items-center justify-center py-16">
         <div className="w-20 h-20 bg-muted rounded-full flex items-center justify-center mb-6">
           <Link className="h-10 w-10 text-muted-foreground" />
         </div>

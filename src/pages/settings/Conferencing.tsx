@@ -1,13 +1,9 @@
 
-import React, { useState } from 'react';
+import React from 'react';
 import { Button } from '../../components/ui/button';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '../../components/ui/dropdown-menu';
-import { MoreHorizontal, Plus, Video, Settings, Trash2 } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { MoreHorizontal, Plus, Video } from 'lucide-react';
 
 export const Conferencing = () => {
-  const navigate = useNavigate();
-
   const conferencingApps = [
     {
       name: 'Facetime',
@@ -30,18 +26,6 @@ export const Conferencing = () => {
     }
   ];
 
-  const handleAddApp = () => {
-    navigate('/apps');
-  };
-
-  const handleSetAsDefault = (appName: string) => {
-    console.log(`Setting ${appName} as default`);
-  };
-
-  const handleRemoveApp = (appName: string) => {
-    console.log(`Removing ${appName}`);
-  };
-
   return (
     <div className="p-8 max-w-4xl">
       <div className="mb-8 flex items-center justify-between">
@@ -49,7 +33,7 @@ export const Conferencing = () => {
           <h1 className="text-2xl font-semibold mb-2">Conferencing</h1>
           <p className="text-muted-foreground">Add your favourite video conferencing apps for your meetings</p>
         </div>
-        <Button onClick={handleAddApp} className="bg-blue-600 hover:bg-blue-700">
+        <Button>
           <Plus className="h-4 w-4 mr-2" />
           Add
         </Button>
@@ -73,23 +57,9 @@ export const Conferencing = () => {
                   <p className="text-sm text-muted-foreground">{app.description}</p>
                 </div>
               </div>
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="sm">
-                    <MoreHorizontal className="h-4 w-4" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
-                  <DropdownMenuItem onClick={() => handleSetAsDefault(app.name)}>
-                    <Settings className="h-4 w-4 mr-2" />
-                    Set as default
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => handleRemoveApp(app.name)}>
-                    <Trash2 className="h-4 w-4 mr-2" />
-                    Remove app
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
+              <Button variant="ghost" size="sm">
+                <MoreHorizontal className="h-4 w-4" />
+              </Button>
             </div>
           </div>
         ))}

@@ -3,34 +3,33 @@ import React, { useState } from 'react';
 import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
 import { Label } from '../../components/ui/label';
+import { Textarea } from '../../components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../components/ui/select';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '../../components/ui/dialog';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '../../components/ui/dropdown-menu';
-import { MoreHorizontal, Bold, Italic, Link, Upload, Trash2 } from 'lucide-react';
-
-const countryCodes = [
-  { country: 'India', code: '+91' },
-  { country: 'United States', code: '+1' },
-  { country: 'United Kingdom', code: '+44' },
-  { country: 'United Arab Emirates', code: '+971' },
-  { country: 'Canada', code: '+1' },
-  { country: 'Australia', code: '+61' },
-];
+import { Bold, Italic, Link, MoreHorizontal, Plus, Trash2, Info } from 'lucide-react';
 
 export const Profile = () => {
+  const [fullName, setFullName] = useState('Sanskar Yadav');
   const [emails, setEmails] = useState([
-    { email: 'sanskarix@gmail.com', isPrimary: true },
+    { email: 'sanskarix@gmail.com', isPrimary: true }
   ]);
-  const [showAddEmail, setShowAddEmail] = useState(false);
-  const [newEmail, setNewEmail] = useState('');
-  const [selectedCountry, setSelectedCountry] = useState('India');
-  const [phoneNumber, setPhoneNumber] = useState('');
-  const [phoneError, setPhoneError] = useState(false);
+  const [phone, setPhone] = useState('');
+  const [countryCode, setCountryCode] = useState('+91');
+  const [about, setAbout] = useState('Head of Growth @OneHash | Building the craziest tools on the Internet 🚀');
   const [verificationCode, setVerificationCode] = useState('');
-  const [codeSent, setCodeSent] = useState(false);
-  const [about, setAbout] = useState('');
+  const [isCodeSent, setIsCodeSent] = useState(false);
+  const [newEmail, setNewEmail] = useState('');
+  const [isAddEmailOpen, setIsAddEmailOpen] = useState(false);
+  const [phoneError, setPhoneError] = useState(false);
 
-  const selectedCountryCode = countryCodes.find(c => c.country === selectedCountry)?.code || '+91';
+  const countries = [
+    { code: '+91', name: '🇮🇳 India' },
+    { code: '+1', name: '🇺🇸 USA' },
+    { code: '+44', name: '🇬🇧 UK' },
+    { code: '+971', name: '🇦🇪 UAE' },
+    { code: '+61', name: '🇦🇺 Australia' },
+    { code: '+1', name: '🇨🇦 Canada' },
+  ];
 
   const handlePhoneChange = (value: string) => {
     const numbersOnly = value.replace(/\D/g, '');
@@ -38,26 +37,13 @@ export const Profile = () => {
       setPhoneError(true);
     } else {
       setPhoneError(false);
-      setPhoneNumber(numbersOnly);
     }
+    setPhone(numbersOnly);
   };
 
   const handleSendCode = () => {
-    if (phoneNumber && !phoneError) {
-      setCodeSent(true);
-    }
-  };
-
-  const handleMakePrimary = (emailToMakePrimary: string) => {
-    setEmails(emails.map(e => ({
-      ...e,
-      isPrimary: e.email === emailToMakePrimary
-    })).sort((a, b) => b.isPrimary ? 1 : -1));
-  };
-
-  const handleDeleteEmail = (emailToDelete: string) => {
-    if (emails.length > 1) {
-      setEmails(emails.filter(e => e.email !== emailToDelete));
+    if (phone && !phoneError) {
+      setIsCodeSent(true);
     }
   };
 
@@ -65,260 +51,257 @@ export const Profile = () => {
     if (newEmail) {
       setEmails([...emails, { email: newEmail, isPrimary: false }]);
       setNewEmail('');
-      setShowAddEmail(false);
+      setIsAddEmailOpen(false);
     }
   };
 
-  const insertFormatting = (tag: string) => {
-    const textarea = document.querySelector('textarea') as HTMLTextAreaElement;
-    if (!textarea) return;
-    
-    const start = textarea.selectionStart;
-    const end = textarea.selectionEnd;
-    const selectedText = about.substring(start, end);
-    
-    let formattedText = '';
-    switch (tag) {
-      case 'bold':
-        formattedText = `**${selectedText}**`;
-        break;
-      case 'italic':
-        formattedText = `*${selectedText}*`;
-        break;
-      case 'link':
-        formattedText = `[${selectedText}](url)`;
-        break;
-      default:
-        formattedText = selectedText;
+  const handleMakePrimary = (index: number) => {
+    if (emails.length > 1) {
+      const updatedEmails = emails.map((email, i) => ({
+        ...email,
+        isPrimary: i === index
+      }));
+      const primaryEmail = updatedEmails.splice(index, 1)[0];
+      setEmails([primaryEmail, ...updatedEmails]);
     }
-    
-    const newText = about.substring(0, start) + formattedText + about.substring(end);
-    setAbout(newText);
-    
-    setTimeout(() => {
-      textarea.focus();
-      textarea.setSelectionRange(start + formattedText.length, start + formattedText.length);
-    }, 0);
+  };
+
+  const handleDeleteEmail = (index: number) => {
+    if (emails.length > 1) {
+      setEmails(emails.filter((_, i) => i !== index));
+    }
   };
 
   return (
     <div className="p-8 max-w-4xl" style={{ color: '#202124' }}>
       <div className="mb-8">
         <h1 className="text-2xl font-semibold mb-2">Profile</h1>
-        <p className="text-muted-foreground">Manage settings for your Cal.com profile</p>
+        <p className="text-muted-foreground">Manage settings for your Cal ID</p>
       </div>
 
-      <div className="space-y-8">
-        {/* Profile Information */}
-        <div className="space-y-6">
-          <div className="space-y-2">
-            <Label>Full name</Label>
-            <Input defaultValue="Sanskar Yadav" />
+      <div className="space-y-8 mb-12">
+        {/* Profile Picture */}
+        <div className="space-y-4">
+          <Label className="text-base font-medium">Profile Picture</Label>
+          <div className="flex items-center space-x-4">
+            <div className="w-16 h-16 rounded-full bg-muted flex items-center justify-center overflow-hidden">
+              <img src="/lovable-uploads/b849b475-852b-4552-92f1-185302b164ba.png" alt="Profile" className="w-full h-full object-cover" />
+            </div>
+            <div className="space-x-2">
+              <Button variant="outline">Upload Avatar</Button>
+              <Button variant="outline">Remove</Button>
+            </div>
           </div>
+        </div>
 
+        {/* Username */}
+        <div className="space-y-2">
+          <Label htmlFor="username">Username</Label>
+          <div className="flex">
+            <div className="flex items-center px-3 bg-muted border border-r-0 rounded-l-md text-sm text-muted-foreground">
+              cal.id/
+            </div>
+            <Input id="username" value="sanskar" className="rounded-l-none" />
+          </div>
+        </div>
+
+        {/* Full Name */}
+        <div className="space-y-2">
+          <Label htmlFor="fullName">Full Name</Label>
+          <Input id="fullName" value={fullName} onChange={e => setFullName(e.target.value)} />
+        </div>
+
+        {/* Email */}
+        <div className="space-y-2">
+          <Label htmlFor="email">Email</Label>
           <div className="space-y-2">
-            <Label>Email</Label>
-            <div className="space-y-2">
-              {emails.map((emailObj, index) => (
-                <div key={index} className="flex items-center space-x-2">
-                  <div className="flex-1 flex items-center space-x-2">
-                    <Input value={emailObj.email} readOnly />
-                    {emailObj.isPrimary && (
-                      <span className="text-xs bg-muted px-2 py-1 rounded">Primary</span>
+            {emails.map((emailItem, index) => (
+              <div key={index} className="flex items-center space-x-2">
+                <div className="flex-1 relative">
+                  <Input value={emailItem.email} readOnly />
+                  <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center space-x-2">
+                    {emailItem.isPrimary && (
+                      <span className="text-xs text-blue-600 bg-blue-50 px-2 py-1 rounded">Primary</span>
                     )}
+                    <Dialog>
+                      <DialogTrigger asChild>
+                        <Button variant="ghost" size="sm">
+                          <MoreHorizontal className="h-4 w-4" />
+                        </Button>
+                      </DialogTrigger>
+                      <DialogContent className="sm:max-w-md">
+                        <div className="space-y-2">
+                          <Button
+                            variant="ghost"
+                            className="w-full justify-start"
+                            onClick={() => handleMakePrimary(index)}
+                            disabled={emails.length === 1 || emailItem.isPrimary}
+                          >
+                            Make Primary
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            className="w-full justify-start text-destructive"
+                            onClick={() => handleDeleteEmail(index)}
+                            disabled={emails.length === 1}
+                          >
+                            Delete
+                          </Button>
+                        </div>
+                      </DialogContent>
+                    </Dialog>
                   </div>
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button variant="ghost" size="sm">
-                        <MoreHorizontal className="h-4 w-4" />
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end" className="w-40">
-                      <DropdownMenuItem
-                        onClick={() => handleMakePrimary(emailObj.email)}
-                        disabled={emailObj.isPrimary || emails.length === 1}
-                        className={emailObj.isPrimary || emails.length === 1 ? 'opacity-50' : ''}
-                      >
-                        Make Primary
-                      </DropdownMenuItem>
-                      <DropdownMenuItem
-                        onClick={() => handleDeleteEmail(emailObj.email)}
-                        disabled={emails.length === 1}
-                        className={emails.length === 1 ? 'opacity-50' : ''}
-                      >
-                        Delete
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
                 </div>
-              ))}
-              <Button variant="outline" onClick={() => setShowAddEmail(true)}>
-                Add Email
-              </Button>
-            </div>
-          </div>
-
-          <div className="space-y-2">
-            <Label>About</Label>
-            <div className="space-y-2">
-              <div className="flex space-x-1">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => insertFormatting('bold')}
-                >
-                  <Bold className="h-4 w-4" />
-                </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => insertFormatting('italic')}
-                >
-                  <Italic className="h-4 w-4" />
-                </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => insertFormatting('link')}
-                >
-                  <Link className="h-4 w-4" />
-                </Button>
               </div>
-              <textarea
-                className="w-full min-h-[100px] p-3 border border-input rounded-md resize-none"
-                placeholder="A little something about yourself"
-                value={about}
-                onChange={(e) => setAbout(e.target.value)}
-              />
-            </div>
+            ))}
+            <Dialog open={isAddEmailOpen} onOpenChange={setIsAddEmailOpen}>
+              <DialogTrigger asChild>
+                <Button variant="outline" size="sm">
+                  <Plus className="h-4 w-4 mr-1" />
+                  Add Email
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="sm:max-w-md">
+                <DialogHeader>
+                  <DialogTitle>Add Email</DialogTitle>
+                </DialogHeader>
+                <div className="space-y-4">
+                  <p className="text-sm text-muted-foreground">
+                    Add an email address to replace your primary or to use as an alternative email on your event types.
+                    You may need to log out and back in to see any change take effect.
+                  </p>
+                  <div className="space-y-2">
+                    <Label htmlFor="newEmail">Email Address</Label>
+                    <Input
+                      id="newEmail"
+                      type="email"
+                      value={newEmail}
+                      onChange={(e) => setNewEmail(e.target.value)}
+                      placeholder="Enter email address"
+                    />
+                  </div>
+                  <Button onClick={handleAddEmail} className="w-full">
+                    Add
+                  </Button>
+                </div>
+              </DialogContent>
+            </Dialog>
           </div>
+        </div>
 
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label>Country</Label>
-              <Select value={selectedCountry} onValueChange={setSelectedCountry}>
-                <SelectTrigger>
+        {/* Phone Number */}
+        <div className="space-y-2">
+          <div className="flex items-center space-x-1">
+            <Label htmlFor="phone">Phone Number</Label>
+            <Info className="h-4 w-4 text-muted-foreground" />
+          </div>
+          <div className="grid grid-cols-2 gap-2">
+            <div className="flex">
+              <Select value={countryCode} onValueChange={setCountryCode}>
+                <SelectTrigger className="w-32 rounded-r-none">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  {countryCodes.map((country) => (
-                    <SelectItem key={country.country} value={country.country}>
-                      {country.country}
+                  {countries.map((country) => (
+                    <SelectItem key={country.code} value={country.code}>
+                      {country.name} {country.code}
                     </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
-            </div>
-
-            <div className="space-y-2">
-              <Label>Phone Number</Label>
-              <div className="flex space-x-2">
-                <div className="flex-1 flex">
-                  <div className="px-3 py-2 bg-muted border border-r-0 rounded-l-md text-sm">
-                    {selectedCountryCode}
-                  </div>
-                  <Input
-                    className={`rounded-l-none ${phoneError ? 'border-red-500' : ''}`}
-                    placeholder="Phone number"
-                    value={phoneNumber}
-                    onChange={(e) => handlePhoneChange(e.target.value)}
-                  />
-                </div>
-                <Button 
-                  variant="outline" 
-                  size="sm"
-                  onClick={handleSendCode}
-                  disabled={!phoneNumber || phoneError}
-                >
-                  Send code
-                </Button>
-              </div>
-            </div>
-          </div>
-
-          <div className="space-y-2">
-            <Label>Verification Code</Label>
-            <div className="flex space-x-2">
               <Input
-                placeholder="Enter verification code"
-                value={verificationCode}
-                onChange={(e) => setVerificationCode(e.target.value)}
-                disabled={!codeSent}
+                id="phone"
+                value={phone}
+                onChange={(e) => handlePhoneChange(e.target.value)}
+                className={`rounded-l-none ${phoneError ? 'border-red-500' : ''}`}
+                style={phoneError ? { borderColor: '#f1352c' } : {}}
+                placeholder="Phone number"
               />
-              <Button 
-                disabled={!verificationCode || !codeSent}
-              >
-                Verify
-              </Button>
             </div>
+            <Button variant="outline" size="sm" onClick={handleSendCode} disabled={!phone || phoneError}>
+              Send code
+            </Button>
           </div>
-
-          <div className="space-y-2">
-            <Label>Avatar</Label>
-            <div className="flex items-center space-x-4">
-              <div className="w-16 h-16 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-semibold text-xl">
-                SY
-              </div>
-              <Button variant="outline">
-                <Upload className="h-4 w-4 mr-2" />
-                Upload
-              </Button>
-            </div>
+          <div className="grid grid-cols-2 gap-2">
+            <Input
+              placeholder="Verification code"
+              value={verificationCode}
+              onChange={(e) => setVerificationCode(e.target.value)}
+              disabled={!isCodeSent}
+            />
+            <Button variant="outline" disabled={!verificationCode}>
+              Verify
+            </Button>
           </div>
         </div>
 
-        {/* Danger Zone */}
-        <div className="border-t pt-8">
-          <div className="bg-red-50 border border-red-200 rounded-lg p-6">
-            <h3 className="text-lg font-semibold text-red-800 mb-4">Danger Zone</h3>
-            <div className="space-y-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <h4 className="font-medium text-red-700">Delete Account</h4>
-                  <p className="text-sm text-red-600">Permanently delete your account and all associated data</p>
-                </div>
-                <Button variant="outline" className="border-red-300 text-red-700 hover:bg-red-50">
-                  <Trash2 className="h-4 w-4 mr-2" />
-                  Delete Account
-                </Button>
-              </div>
+        {/* About */}
+        <div className="space-y-2">
+          <Label htmlFor="about">About</Label>
+          <div className="border rounded-md">
+            <div className="flex items-center space-x-2 p-2 border-b">
+              <Button variant="ghost" size="sm" onClick={() => {
+                const textarea = document.getElementById('about') as HTMLTextAreaElement;
+                if (textarea) {
+                  const start = textarea.selectionStart;
+                  const end = textarea.selectionEnd;
+                  const selectedText = textarea.value.substring(start, end);
+                  const newText = textarea.value.substring(0, start) + `**${selectedText}**` + textarea.value.substring(end);
+                  setAbout(newText);
+                }
+              }}>
+                <Bold className="h-4 w-4" />
+              </Button>
+              <Button variant="ghost" size="sm" onClick={() => {
+                const textarea = document.getElementById('about') as HTMLTextAreaElement;
+                if (textarea) {
+                  const start = textarea.selectionStart;
+                  const end = textarea.selectionEnd;
+                  const selectedText = textarea.value.substring(start, end);
+                  const newText = textarea.value.substring(0, start) + `*${selectedText}*` + textarea.value.substring(end);
+                  setAbout(newText);
+                }
+              }}>
+                <Italic className="h-4 w-4" />
+              </Button>
+              <Button variant="ghost" size="sm" onClick={() => {
+                const textarea = document.getElementById('about') as HTMLTextAreaElement;
+                if (textarea) {
+                  const start = textarea.selectionStart;
+                  const end = textarea.selectionEnd;
+                  const selectedText = textarea.value.substring(start, end);
+                  const link = prompt('Enter URL:');
+                  if (link) {
+                    const newText = textarea.value.substring(0, start) + `[${selectedText}](${link})` + textarea.value.substring(end);
+                    setAbout(newText);
+                  }
+                }
+              }}>
+                <Link className="h-4 w-4" />
+              </Button>
             </div>
+            <Textarea
+              id="about"
+              value={about}
+              onChange={(e) => setAbout(e.target.value)}
+              className="border-none resize-none"
+              rows={3}
+            />
           </div>
         </div>
       </div>
 
-      {/* Add Email Dialog */}
-      <Dialog open={showAddEmail} onOpenChange={setShowAddEmail}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Add Email</DialogTitle>
-          </DialogHeader>
-          <div className="space-y-4">
-            <p className="text-sm text-muted-foreground">
-              Add an email address to replace your primary or to use as an alternative email on your event types
-            </p>
-            <p className="text-sm text-muted-foreground">
-              You may need to log out and back in to see any change take effect.
-            </p>
-            <div className="space-y-2">
-              <Label>Email Address</Label>
-              <Input
-                placeholder="Enter email address"
-                value={newEmail}
-                onChange={(e) => setNewEmail(e.target.value)}
-              />
-            </div>
-            <div className="flex space-x-2">
-              <Button variant="outline" onClick={() => setShowAddEmail(false)}>
-                Cancel
-              </Button>
-              <Button onClick={handleAddEmail}>
-                Add
-              </Button>
-            </div>
-          </div>
-        </DialogContent>
-      </Dialog>
+      {/* Danger Zone - Separated */}
+      <div className="pt-8 border-t">
+        <div className="mb-6">
+          <h2 className="text-lg font-medium mb-2" style={{ color: '#f1352c' }}>Danger zone</h2>
+          <p className="text-sm text-muted-foreground">Be careful. Account deletion cannot be undone.</p>
+        </div>
+        <Button variant="outline" className="text-destructive border-destructive hover:bg-destructive hover:text-destructive-foreground">
+          <Trash2 className="h-4 w-4 mr-2" />
+          Delete account
+        </Button>
+      </div>
     </div>
   );
 };
