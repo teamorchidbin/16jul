@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
@@ -6,19 +5,16 @@ import { Label } from '../../components/ui/label';
 import { Textarea } from '../../components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../components/ui/select';
 import { Bold, Italic, Link, MoreHorizontal, Plus, Trash2, Info } from 'lucide-react';
-
 export const Profile = () => {
   const [fullName, setFullName] = useState('Sanskar Yadav');
   const [email, setEmail] = useState('sanskarix@gmail.com');
   const [phone, setPhone] = useState('+91');
   const [about, setAbout] = useState('Head of Growth @OneHash | Building the craziest tools on the Internet 🚀');
   const [verificationCode, setVerificationCode] = useState('');
-
-  return (
-    <div className="p-8 max-w-4xl">
+  return <div className="p-8 max-w-4xl">
       <div className="mb-8">
         <h1 className="text-2xl font-semibold mb-2">Profile</h1>
-        <p className="text-muted-foreground">Manage settings for your OneHash Cal profile</p>
+        <p className="text-muted-foreground">Manage settings for your Cal ID</p>
       </div>
 
       <div className="space-y-8">
@@ -27,11 +23,7 @@ export const Profile = () => {
           <Label className="text-base font-medium">Profile Picture</Label>
           <div className="flex items-center space-x-4">
             <div className="w-16 h-16 rounded-full bg-muted flex items-center justify-center overflow-hidden">
-              <img 
-                src="/lovable-uploads/b849b475-852b-4552-92f1-185302b164ba.png" 
-                alt="Profile" 
-                className="w-full h-full object-cover"
-              />
+              <img src="/lovable-uploads/b849b475-852b-4552-92f1-185302b164ba.png" alt="Profile" className="w-full h-full object-cover" />
             </div>
             <div className="space-x-2">
               <Button variant="outline">Upload Avatar</Button>
@@ -47,22 +39,14 @@ export const Profile = () => {
             <div className="flex items-center px-3 bg-muted border border-r-0 rounded-l-md text-sm text-muted-foreground">
               cal.id/
             </div>
-            <Input 
-              id="username" 
-              value="sanskar" 
-              className="rounded-l-none"
-            />
+            <Input id="username" value="sanskar" className="rounded-l-none" />
           </div>
         </div>
 
         {/* Full Name */}
         <div className="space-y-2">
           <Label htmlFor="fullName">Full Name</Label>
-          <Input 
-            id="fullName" 
-            value={fullName}
-            onChange={(e) => setFullName(e.target.value)}
-          />
+          <Input id="fullName" value={fullName} onChange={e => setFullName(e.target.value)} />
         </div>
 
         {/* Email */}
@@ -70,11 +54,7 @@ export const Profile = () => {
           <Label htmlFor="email">Email</Label>
           <div className="flex items-center space-x-2">
             <div className="flex-1 relative">
-              <Input 
-                id="email" 
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-              />
+              <Input id="email" value={email} onChange={e => setEmail(e.target.value)} />
               <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center space-x-2">
                 <span className="text-xs text-blue-600 bg-blue-50 px-2 py-1 rounded">Primary</span>
                 <Button variant="ghost" size="sm">
@@ -107,23 +87,14 @@ export const Profile = () => {
                   <SelectItem value="+44">🇬🇧 +44</SelectItem>
                 </SelectContent>
               </Select>
-              <Input 
-                id="phone" 
-                value={phone}
-                onChange={(e) => setPhone(e.target.value)}
-                className="rounded-l-none"
-              />
+              <Input id="phone" value={phone} onChange={e => setPhone(e.target.value)} className="rounded-l-none" />
             </div>
             <Button variant="outline" className="justify-start">
               Send code
             </Button>
           </div>
           <div className="grid grid-cols-2 gap-2">
-            <Input 
-              placeholder="Verification code"
-              value={verificationCode}
-              onChange={(e) => setVerificationCode(e.target.value)}
-            />
+            <Input placeholder="Verification code" value={verificationCode} onChange={e => setVerificationCode(e.target.value)} />
             <Button variant="outline">Verify</Button>
           </div>
         </div>
@@ -143,13 +114,7 @@ export const Profile = () => {
                 <Link className="h-4 w-4" />
               </Button>
             </div>
-            <Textarea 
-              id="about"
-              value={about}
-              onChange={(e) => setAbout(e.target.value)}
-              className="border-none resize-none"
-              rows={3}
-            />
+            <Textarea id="about" value={about} onChange={e => setAbout(e.target.value)} className="border-none resize-none" rows={3} />
           </div>
         </div>
 
@@ -165,6 +130,5 @@ export const Profile = () => {
           </Button>
         </div>
       </div>
-    </div>
-  );
+    </div>;
 };
