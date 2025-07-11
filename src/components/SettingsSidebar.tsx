@@ -6,7 +6,7 @@ import { ArrowLeft, User, Settings, Calendar, Video, Palette, Clock, Shield, Loc
 export const SettingsSidebar = () => {
   const navigation = [
     {
-      title: 'Navigation',
+      title: '',
       items: [
         { name: 'Back', href: '/', icon: ArrowLeft },
       ]
@@ -51,7 +51,7 @@ export const SettingsSidebar = () => {
   ];
 
   return (
-    <div className="fixed inset-y-0 left-0 z-50 w-64 bg-card border-r border-border flex flex-col">
+    <div className="fixed inset-y-0 left-0 z-50 w-64 bg-card border-r border-border flex flex-col overflow-hidden">
       {/* Logo */}
       <div className="flex h-20 items-center px-6 border-b border-border">
         <img 
@@ -62,12 +62,14 @@ export const SettingsSidebar = () => {
         <span className="ml-3 text-xl font-semibold">Cal ID</span>
       </div>
       
-      <nav className="flex-1 px-4 py-6 space-y-6 overflow-y-auto">
+      <nav className="flex-1 px-4 py-6 space-y-6 overflow-y-auto scrollbar-none">
         {navigation.map((section) => (
           <div key={section.title}>
-            <h3 className="px-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">
-              {section.title}
-            </h3>
+            {section.title && (
+              <h3 className="px-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">
+                {section.title}
+              </h3>
+            )}
             <div className="space-y-1">
               {section.items.map((item) => (
                 <NavLink

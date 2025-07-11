@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { ChevronDown, Bell, User, Moon, HelpCircle, MapPin, LogOut } from 'lucide-react';
+import { ChevronDown, Bell, User, Moon, HelpCircle, MapPin, LogOut, Settings } from 'lucide-react';
 import { NotificationDropdown } from './NotificationDropdown';
 
 export const SettingsHeader = () => {
@@ -48,16 +48,19 @@ export const SettingsHeader = () => {
               <div className="absolute right-0 top-full mt-1 w-48 bg-popover border border-border rounded-lg shadow-lg animate-scale-in z-10">
                 <div className="py-1">
                   <button className="flex items-center w-full px-3 py-2 text-sm hover:bg-muted transition-colors">
-                    <User className="h-4 w-4 mr-2" />
-                    My Profile
+                    <Settings className="h-4 w-4 mr-2" />
+                    Profile Settings
                   </button>
                   <button className="flex items-center w-full px-3 py-2 text-sm hover:bg-muted transition-colors">
                     <Moon className="h-4 w-4 mr-2" />
                     Out of Office
                   </button>
-                  <button className="flex items-center w-full px-3 py-2 text-sm hover:bg-muted transition-colors">
+                  <button 
+                    className="flex items-center w-full px-3 py-2 text-sm hover:bg-muted transition-colors"
+                    onClick={() => window.open('https://roadmap.onehash.ai/', '_blank')}
+                  >
                     <MapPin className="h-4 w-4 mr-2" />
-                    RoadMap
+                    Roadmap
                   </button>
                   <button className="flex items-center w-full px-3 py-2 text-sm hover:bg-muted transition-colors">
                     <HelpCircle className="h-4 w-4 mr-2" />
