@@ -63,10 +63,10 @@ export const Sidebar = ({
       {/* Moved to bottom left */}
       <div className="p-4 border-t border-border">
         <div className="flex items-center space-x-2">
-          <button onClick={handleDarkModeToggle} className="p-2.5 bg-muted/50 hover:bg-muted rounded-lg transition-all duration-200 animate-button-press px-0">
+          <button onClick={handleDarkModeToggle} className="p-2.5 bg-muted/50 hover:bg-muted rounded-lg transition-all duration-200 animate-button-press px-[45px]">
             {darkMode ? <Sun className="h-5 w-5 text-muted-foreground" /> : <Moon className="h-5 w-5 text-muted-foreground px-[45px]" />}
           </button>
-          <button className="p-2.5 bg-muted/50 hover:bg-muted rounded-lg transition-all duration-200 animate-button-press mx-[10px] px-[35px]">
+          <button className="p-2.5 bg-muted/50 hover:bg-muted rounded-lg transition-all duration-200 animate-button-press mx-[10px] px-[45px]">
             <Settings className="h-5 w-5 text-muted-foreground" />
           </button>
         </div>
