@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
@@ -6,6 +5,7 @@ import { Label } from '../../components/ui/label';
 import { Textarea } from '../../components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../components/ui/select';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '../../components/ui/dialog';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '../../components/ui/dropdown-menu';
 import { Bold, Italic, Link, MoreHorizontal, Plus, Trash2, Info } from 'lucide-react';
 
 export const Profile = () => {
@@ -72,6 +72,23 @@ export const Profile = () => {
     }
   };
 
+  const insertMarkdown = (before: string, after: string = '') => {
+    const textarea = document.getElementById('about') as HTMLTextAreaElement;
+    if (textarea) {
+      const start = textarea.selectionStart;
+      const end = textarea.selectionEnd;
+      const selectedText = textarea.value.substring(start, end);
+      const newText = textarea.value.substring(0, start) + before + selectedText + after + textarea.value.substring(end);
+      setAbout(newText);
+      
+      // Set cursor position
+      setTimeout(() => {
+        textarea.focus();
+        textarea.setSelectionRange(start + before.length, end + before.length);
+      }, 0);
+    }
+  };
+
   return (
     <div className="p-8 max-w-4xl" style={{ color: '#202124' }}>
       <div className="mb-8">
@@ -123,33 +140,29 @@ export const Profile = () => {
                     {emailItem.isPrimary && (
                       <span className="text-xs text-blue-600 bg-blue-50 px-2 py-1 rounded">Primary</span>
                     )}
-                    <Dialog>
-                      <DialogTrigger asChild>
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
                         <Button variant="ghost" size="sm">
                           <MoreHorizontal className="h-4 w-4" />
                         </Button>
-                      </DialogTrigger>
-                      <DialogContent className="sm:max-w-md">
-                        <div className="space-y-2">
-                          <Button
-                            variant="ghost"
-                            className="w-full justify-start"
-                            onClick={() => handleMakePrimary(index)}
-                            disabled={emails.length === 1 || emailItem.isPrimary}
-                          >
-                            Make Primary
-                          </Button>
-                          <Button
-                            variant="ghost"
-                            className="w-full justify-start text-destructive"
-                            onClick={() => handleDeleteEmail(index)}
-                            disabled={emails.length === 1}
-                          >
-                            Delete
-                          </Button>
-                        </div>
-                      </DialogContent>
-                    </Dialog>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end">
+                        <DropdownMenuItem
+                          onClick={() => handleMakePrimary(index)}
+                          disabled={emails.length === 1 || emailItem.isPrimary}
+                          className={emails.length === 1 || emailItem.isPrimary ? 'opacity-50' : ''}
+                        >
+                          Make Primary
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
+                          onClick={() => handleDeleteEmail(index)}
+                          disabled={emails.length === 1}
+                          className={`${emails.length === 1 ? 'opacity-50' : 'text-destructive'}`}
+                        >
+                          Delete
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
                   </div>
                 </div>
               </div>
@@ -240,41 +253,16 @@ export const Profile = () => {
           <Label htmlFor="about">About</Label>
           <div className="border rounded-md">
             <div className="flex items-center space-x-2 p-2 border-b">
-              <Button variant="ghost" size="sm" onClick={() => {
-                const textarea = document.getElementById('about') as HTMLTextAreaElement;
-                if (textarea) {
-                  const start = textarea.selectionStart;
-                  const end = textarea.selectionEnd;
-                  const selectedText = textarea.value.substring(start, end);
-                  const newText = textarea.value.substring(0, start) + `**${selectedText}**` + textarea.value.substring(end);
-                  setAbout(newText);
-                }
-              }}>
+              <Button variant="ghost" size="sm" onClick={() => insertMarkdown('**', '**')}>
                 <Bold className="h-4 w-4" />
               </Button>
-              <Button variant="ghost" size="sm" onClick={() => {
-                const textarea = document.getElementById('about') as HTMLTextAreaElement;
-                if (textarea) {
-                  const start = textarea.selectionStart;
-                  const end = textarea.selectionEnd;
-                  const selectedText = textarea.value.substring(start, end);
-                  const newText = textarea.value.substring(0, start) + `*${selectedText}*` + textarea.value.substring(end);
-                  setAbout(newText);
-                }
-              }}>
+              <Button variant="ghost" size="sm" onClick={() => insertMarkdown('*', '*')}>
                 <Italic className="h-4 w-4" />
               </Button>
               <Button variant="ghost" size="sm" onClick={() => {
-                const textarea = document.getElementById('about') as HTMLTextAreaElement;
-                if (textarea) {
-                  const start = textarea.selectionStart;
-                  const end = textarea.selectionEnd;
-                  const selectedText = textarea.value.substring(start, end);
-                  const link = prompt('Enter URL:');
-                  if (link) {
-                    const newText = textarea.value.substring(0, start) + `[${selectedText}](${link})` + textarea.value.substring(end);
-                    setAbout(newText);
-                  }
+                const link = prompt('Enter URL:');
+                if (link) {
+                  insertMarkdown('[', `](${link})`);
                 }
               }}>
                 <Link className="h-4 w-4" />

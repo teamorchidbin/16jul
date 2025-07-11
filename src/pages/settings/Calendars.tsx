@@ -4,11 +4,25 @@ import { Button } from '../../components/ui/button';
 import { Label } from '../../components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../components/ui/select';
 import { Switch } from '../../components/ui/switch';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '../../components/ui/dialog';
 import { Plus, Trash2 } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 export const Calendars = () => {
   const [addingEvents, setAddingEvents] = useState(true);
   const [syncCalendar, setSyncCalendar] = useState(true);
+  const [showRemoveDialog, setShowRemoveDialog] = useState(false);
+  const navigate = useNavigate();
+
+  const handleAddCalendar = () => {
+    // Navigate to apps page
+    navigate('/apps');
+  };
+
+  const handleRemoveApp = () => {
+    setShowRemoveDialog(false);
+    // Handle removal logic here
+  };
 
   return (
     <div className="p-8 max-w-4xl">
@@ -17,7 +31,7 @@ export const Calendars = () => {
           <h1 className="text-2xl font-semibold mb-2">Calendars</h1>
           <p className="text-muted-foreground">Configure how your event types interact with your calendars</p>
         </div>
-        <Button>
+        <Button onClick={handleAddCalendar} className="bg-blue-600 hover:bg-blue-700">
           <Plus className="h-4 w-4 mr-2" />
           Add Calendar
         </Button>
@@ -51,7 +65,7 @@ export const Calendars = () => {
         <div className="space-y-4">
           <div className="flex items-center justify-between">
             <h2 className="text-lg font-medium">Check for conflicts</h2>
-            <Button variant="outline">
+            <Button variant="outline" onClick={handleAddCalendar}>
               <Plus className="h-4 w-4 mr-2" />
               Add
             </Button>
@@ -69,9 +83,31 @@ export const Calendars = () => {
                 <h3 className="font-medium">Google Calendar</h3>
                 <p className="text-sm text-muted-foreground">sanskarix@gmail.com</p>
               </div>
-              <Button variant="ghost" size="sm">
-                <Trash2 className="h-4 w-4" />
-              </Button>
+              <Dialog open={showRemoveDialog} onOpenChange={setShowRemoveDialog}>
+                <DialogTrigger asChild>
+                  <Button variant="ghost" size="sm">
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="sm:max-w-md">
+                  <DialogHeader>
+                    <DialogTitle>Remove App</DialogTitle>
+                  </DialogHeader>
+                  <div className="space-y-4">
+                    <p className="text-sm text-muted-foreground">
+                      Are you sure you want to remove this app?
+                    </p>
+                    <div className="flex space-x-2">
+                      <Button variant="outline" onClick={() => setShowRemoveDialog(false)}>
+                        Close
+                      </Button>
+                      <Button onClick={handleRemoveApp} className="bg-red-600 hover:bg-red-700">
+                        Yes, remove app
+                      </Button>
+                    </div>
+                  </div>
+                </DialogContent>
+              </Dialog>
             </div>
 
             <p className="text-sm text-muted-foreground mb-4">

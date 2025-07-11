@@ -5,7 +5,11 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '.
 import { Label } from '../../components/ui/label';
 import { Switch } from '../../components/ui/switch';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '../../components/ui/dialog';
-import { Calendar } from 'lucide-react';
+import { Popover, PopoverContent, PopoverTrigger } from '../../components/ui/popover';
+import { Calendar } from '../../components/ui/calendar';
+import { Calendar as CalendarIcon, Trash2 } from 'lucide-react';
+import { format } from 'date-fns';
+import { cn } from '../../lib/utils';
 
 export const General = () => {
   const [dynamicGroupLinks, setDynamicGroupLinks] = useState(true);
@@ -13,6 +17,31 @@ export const General = () => {
   const [monthlyDigest, setMonthlyDigest] = useState(true);
   const [scheduleTimezoneOpen, setScheduleTimezoneOpen] = useState(false);
   const [noEndDate, setNoEndDate] = useState(false);
+  const [dateRange, setDateRange] = useState<{ from?: Date; to?: Date }>({});
+  const [travelSchedules, setTravelSchedules] = useState<Array<{
+    id: string;
+    dateRange: string;
+    timezone: string;
+  }>>([]);
+
+  const handleAddTravelSchedule = () => {
+    if (dateRange.from) {
+      const newSchedule = {
+        id: Date.now().toString(),
+        dateRange: dateRange.to 
+          ? `${format(dateRange.from, 'MMM dd')} - ${format(dateRange.to, 'MMM dd')}`
+          : format(dateRange.from, 'MMM dd, yyyy'),
+        timezone: 'Asia/Dhaka'
+      };
+      setTravelSchedules([...travelSchedules, newSchedule]);
+      setDateRange({});
+      setScheduleTimezoneOpen(false);
+    }
+  };
+
+  const handleDeleteTravelSchedule = (id: string) => {
+    setTravelSchedules(travelSchedules.filter(schedule => schedule.id !== id));
+  };
 
   return (
     <div className="p-8 max-w-4xl" style={{ color: '#202124' }}>
@@ -50,59 +79,106 @@ export const General = () => {
               <SelectItem value="europe-london">Europe/London</SelectItem>
             </SelectContent>
           </Select>
-          <Dialog open={scheduleTimezoneOpen} onOpenChange={setScheduleTimezoneOpen}>
-            <DialogTrigger asChild>
-              <Button variant="outline" className="flex items-center space-x-2">
-                <Calendar className="h-4 w-4" />
-                <span>Schedule timezone change</span>
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="sm:max-w-md">
-              <DialogHeader>
-                <DialogTitle>Travel Schedule</DialogTitle>
-              </DialogHeader>
-              <div className="space-y-4">
-                <p className="text-sm text-muted-foreground">
-                  Plan your trip ahead to keep your existing schedule in a different timezone and prevent being booked at midnight.
-                </p>
-                
-                <div className="space-y-2">
-                  <Label>Time range</Label>
-                  <div className="flex items-center space-x-2">
-                    <span className="text-sm bg-muted px-3 py-2 rounded">Jul 11, 2025 - Jul 11, 2025</span>
+
+          {/* Travel Schedule Section */}
+          <div className="space-y-4 border rounded-lg p-4 bg-muted/20">
+            <div className="flex items-center justify-between">
+              <h3 className="font-medium">Travel Schedule</h3>
+              <Dialog open={scheduleTimezoneOpen} onOpenChange={setScheduleTimezoneOpen}>
+                <DialogTrigger asChild>
+                  <Button variant="outline" size="sm" className="flex items-center space-x-2">
+                    <CalendarIcon className="h-4 w-4" />
+                    <span>Add</span>
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="sm:max-w-md">
+                  <DialogHeader>
+                    <DialogTitle>Travel Schedule</DialogTitle>
+                  </DialogHeader>
+                  <div className="space-y-4">
+                    <p className="text-sm text-muted-foreground">
+                      Plan your trip ahead to keep your existing schedule in a different timezone and prevent being booked at midnight.
+                    </p>
+                    
+                    <div className="space-y-2">
+                      <Label>Time range</Label>
+                      <Popover>
+                        <PopoverTrigger asChild>
+                          <Button variant="outline" className="w-full justify-start text-left">
+                            <CalendarIcon className="mr-2 h-4 w-4" />
+                            {dateRange.from ? (
+                              dateRange.to ? (
+                                `${format(dateRange.from, 'MMM dd, yyyy')} - ${format(dateRange.to, 'MMM dd, yyyy')}`
+                              ) : (
+                                format(dateRange.from, 'MMM dd, yyyy')
+                              )
+                            ) : (
+                              'Jul 11, 2025 - Jul 11, 2025'
+                            )}
+                          </Button>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-auto p-0" align="start">
+                          <Calendar
+                            mode="range"
+                            selected={dateRange}
+                            onSelect={(range) => setDateRange(range || {})}
+                            initialFocus
+                            className={cn("p-3 pointer-events-auto")}
+                          />
+                        </PopoverContent>
+                      </Popover>
+                    </div>
+
+                    <div className="flex items-center justify-between">
+                      <Label>Schedule timezone without end date</Label>
+                      <Switch checked={noEndDate} onCheckedChange={setNoEndDate} />
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label>Timezone</Label>
+                      <Select defaultValue="asia-dhaka">
+                        <SelectTrigger>
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="asia-dhaka">Asia/Dhaka</SelectItem>
+                          <SelectItem value="asia-kolkata">Asia/Kolkata</SelectItem>
+                          <SelectItem value="america-new-york">America/New_York</SelectItem>
+                          <SelectItem value="europe-london">Europe/London</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    <div className="flex space-x-2">
+                      <Button variant="outline" onClick={() => setScheduleTimezoneOpen(false)}>
+                        Close
+                      </Button>
+                      <Button onClick={handleAddTravelSchedule}>
+                        Add
+                      </Button>
+                    </div>
                   </div>
-                </div>
+                </DialogContent>
+              </Dialog>
+            </div>
 
-                <div className="flex items-center justify-between">
-                  <Label>Schedule timezone without end date</Label>
-                  <Switch checked={noEndDate} onCheckedChange={setNoEndDate} />
+            {/* Display existing travel schedules */}
+            {travelSchedules.map((schedule) => (
+              <div key={schedule.id} className="flex items-center justify-between p-3 bg-background border rounded-lg">
+                <div>
+                  <div className="font-medium">{schedule.dateRange}</div>
+                  <div className="text-sm text-muted-foreground">{schedule.timezone}</div>
                 </div>
-
-                <div className="space-y-2">
-                  <Label>Timezone</Label>
-                  <Select defaultValue="asia-kolkata">
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="asia-kolkata">Asia/Kolkata</SelectItem>
-                      <SelectItem value="america-new-york">America/New_York</SelectItem>
-                      <SelectItem value="europe-london">Europe/London</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                <div className="flex space-x-2">
-                  <Button variant="outline" onClick={() => setScheduleTimezoneOpen(false)}>
-                    Close
-                  </Button>
-                  <Button onClick={() => setScheduleTimezoneOpen(false)}>
-                    Add
-                  </Button>
-                </div>
+                <Button 
+                  variant="ghost" 
+                  size="sm"
+                  onClick={() => handleDeleteTravelSchedule(schedule.id)}
+                >
+                  <Trash2 className="h-4 w-4" />
+                </Button>
               </div>
-            </DialogContent>
-          </Dialog>
+            ))}
+          </div>
         </div>
 
         {/* Time format */}
@@ -171,6 +247,13 @@ export const General = () => {
               onCheckedChange={setMonthlyDigest}
             />
           </div>
+        </div>
+
+        {/* Update button */}
+        <div className="pt-6">
+          <Button className="bg-blue-600 hover:bg-blue-700">
+            Update
+          </Button>
         </div>
       </div>
     </div>
