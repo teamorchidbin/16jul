@@ -5,9 +5,10 @@ import { Switch } from './ui/switch';
 interface EventSetupProps {
   currentEvent?: any;
   onChange?: () => void;
+  hideHeader?: boolean;
 }
 
-export const EventSetup = ({ currentEvent, onChange }: EventSetupProps) => {
+export const EventSetup = ({ currentEvent, onChange, hideHeader = false }: EventSetupProps) => {
   const [formData, setFormData] = useState({
     title: currentEvent?.title || 'Product Hunt Chats',
     description: currentEvent?.description || 'The essence of Product Hunt reflects in communities- Select a time suitable for you, and let\'s talk products!',
@@ -193,54 +194,6 @@ export const EventSetup = ({ currentEvent, onChange }: EventSetupProps) => {
 
   return (
     <div className="p-6 max-w-4xl space-y-6 mx-0">
-      {/* Event Header Section */}
-      <div className="space-y-4 pb-6 border-b border-border">
-        <div>
-          <label className="block text-sm font-medium text-foreground mb-2">Event Title</label>
-          <input
-            type="text"
-            value={formData.title}
-            onChange={(e) => handleFormChange('title', e.target.value)}
-            className="w-full px-4 py-3 border border-border rounded-lg focus:ring-2 focus:ring-ring focus:border-transparent bg-background text-lg font-semibold"
-          />
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium text-foreground mb-2">Event URL</label>
-          <div className="flex items-center space-x-3">
-            <div className="flex flex-1">
-              <span className="inline-flex items-center px-4 py-3 border border-r-0 border-border bg-muted text-muted-foreground text-sm rounded-l-lg">
-                cal.id/sanskar/
-              </span>
-              <input
-                type="text"
-                value={formData.url}
-                onChange={(e) => handleFormChange('url', e.target.value)}
-                className="flex-1 px-4 py-3 border border-border rounded-r-lg focus:ring-2 focus:ring-ring focus:border-transparent bg-background"
-              />
-            </div>
-            <div className="flex items-center space-x-2 px-3 py-2 bg-muted/70 text-muted-foreground text-sm rounded-md">
-              <Copy className="h-4 w-4" />
-            </div>
-            <button className="text-sm text-primary hover:text-primary/80 flex items-center transition-colors">
-              <Eye className="h-4 w-4" />
-            </button>
-          </div>
-        </div>
-
-        <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-2">
-            <Switch 
-              checked={eventEnabled} 
-              onCheckedChange={setEventEnabled} 
-            />
-            <span className="text-sm font-medium text-foreground">
-              {eventEnabled ? 'Event Enabled' : 'Event Disabled'}
-            </span>
-          </div>
-        </div>
-      </div>
-
       {/* Description Section */}
       <div>
         <label className="block text-sm font-medium text-foreground mb-2">Description</label>

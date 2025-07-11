@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Settings, Clock, Shield, Zap, RotateCcw, Smartphone, Workflow, Webhook } from 'lucide-react';
+import { Header } from '../components/Header';
 import { EventSetup } from '../components/EventSetup';
 import { EventAvailability } from '../components/EventAvailability';
 import { EventLimits } from '../components/EventLimits';
@@ -54,6 +55,11 @@ export const EditEvent = () => {
   // Find the actual event from mockData using the eventId from URL
   const currentEvent = mockTeams.flatMap(team => team.eventTypes).find(event => event.id === eventId);
 
+  // Event state for header
+  const [eventTitle, setEventTitle] = useState(currentEvent?.title || 'Product Hunt Chats');
+  const [eventUrl, setEventUrl] = useState(currentEvent?.url?.split('/').pop() || 'product-hunt-chats');
+  const [eventEnabled, setEventEnabled] = useState(true);
+
   const handleBack = () => {
     navigate('/');
   };
@@ -61,7 +67,7 @@ export const EditEvent = () => {
   const renderTabContent = () => {
     switch (activeTab) {
       case 'setup':
-        return <EventSetup currentEvent={currentEvent} />;
+        return <EventSetup currentEvent={currentEvent} hideHeader={true} />;
       case 'availability':
         return <EventAvailability />;
       case 'limits':
@@ -77,13 +83,24 @@ export const EditEvent = () => {
       case 'webhooks':
         return <EventWebhooks />;
       default:
-        return <EventSetup currentEvent={currentEvent} />;
+        return <EventSetup currentEvent={currentEvent} hideHeader={true} />;
     }
   };
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Simplified Header */}
+      <Header 
+        eventData={{
+          title: eventTitle,
+          url: eventUrl,
+          enabled: eventEnabled,
+          onTitleChange: setEventTitle,
+          onUrlChange: setEventUrl,
+          onEnabledChange: setEventEnabled
+        }}
+      />
+
+      {/* Page Header with Back Button */}
       <div className="bg-card border-b border-border px-6 py-4">
         <div className="flex items-center">
           <button 
