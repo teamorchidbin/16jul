@@ -30,9 +30,21 @@ export const Appearance = () => {
   ];
 
   const layoutOptions = [
-    { name: 'Month', checked: monthLayout, onChange: setMonthLayout },
-    { name: 'Weekly', checked: weeklyLayout, onChange: setWeeklyLayout },
-    { name: 'Column', checked: columnLayout, onChange: setColumnLayout }
+    { 
+      name: 'Month', 
+      checked: monthLayout, 
+      onChange: (checked: boolean | "indeterminate") => setMonthLayout(checked === true)
+    },
+    { 
+      name: 'Weekly', 
+      checked: weeklyLayout, 
+      onChange: (checked: boolean | "indeterminate") => setWeeklyLayout(checked === true)
+    },
+    { 
+      name: 'Column', 
+      checked: columnLayout, 
+      onChange: (checked: boolean | "indeterminate") => setColumnLayout(checked === true)
+    }
   ];
 
   return (

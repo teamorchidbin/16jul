@@ -7,6 +7,10 @@ import { Plus } from 'lucide-react';
 export const ImportCalendly = () => {
   const [notifyBookers, setNotifyBookers] = useState(true);
 
+  const handleNotifyBookersChange = (checked: boolean | "indeterminate") => {
+    setNotifyBookers(checked === true);
+  };
+
   return (
     <div className="p-8 max-w-4xl">
       <div className="mb-8 flex items-center justify-between">
@@ -24,7 +28,7 @@ export const ImportCalendly = () => {
         <div className="flex items-center space-x-2">
           <Checkbox 
             checked={notifyBookers}
-            onCheckedChange={setNotifyBookers}
+            onCheckedChange={handleNotifyBookersChange}
           />
           <span className="text-sm">Notify past bookers about your migration</span>
         </div>
