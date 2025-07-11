@@ -1,84 +1,23 @@
 
 import React, { useState } from 'react';
-import { ChevronDown, Moon, HelpCircle, MapPin, LogOut, User, Bell, Copy, Eye } from 'lucide-react';
+import { ChevronDown, Moon, HelpCircle, MapPin, LogOut, User, Bell } from 'lucide-react';
 import { NotificationDropdown } from './NotificationDropdown';
-import { Switch } from './ui/switch';
 
 interface HeaderProps {
   showEventTypesHeader?: boolean;
-  eventData?: {
-    title: string;
-    url: string;
-    enabled: boolean;
-    onTitleChange: (title: string) => void;
-    onUrlChange: (url: string) => void;
-    onEnabledChange: (enabled: boolean) => void;
-  };
 }
 
-export const Header = ({ showEventTypesHeader = false, eventData }: HeaderProps) => {
+export const Header = ({ showEventTypesHeader = false }: HeaderProps) => {
   const [showProfileDropdown, setShowProfileDropdown] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
 
   return (
     <header className="h-20 border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-50">
       <div className="h-full px-8 flex items-center justify-between w-full">
-        {showEventTypesHeader && !eventData && (
+        {showEventTypesHeader && (
           <div className="flex-1">
             <h1 className="text-xl font-semibold text-foreground">Event Types</h1>
             <p className="text-sm text-muted-foreground mt-1">Create events to share for people to book on your calendar.</p>
-          </div>
-        )}
-        
-        {eventData && (
-          <div className="flex-1 space-y-3">
-            {/* Event Title */}
-            <div>
-              <input
-                type="text"
-                value={eventData.title}
-                onChange={(e) => eventData.onTitleChange(e.target.value)}
-                className="text-xl font-semibold text-foreground bg-transparent border-none outline-none focus:ring-0 p-0 w-full"
-                placeholder="Event Title"
-              />
-            </div>
-            
-            {/* URL and Toggle Row */}
-            <div className="flex items-center space-x-4">
-              {/* Event URL */}
-              <div className="flex items-center space-x-2 flex-1">
-                <div className="flex flex-1 max-w-md">
-                  <span className="inline-flex items-center px-3 py-1.5 border border-r-0 border-border bg-muted text-muted-foreground text-sm rounded-l-lg">
-                    cal.id/sanskar/
-                  </span>
-                  <input
-                    type="text"
-                    value={eventData.url}
-                    onChange={(e) => eventData.onUrlChange(e.target.value)}
-                    className="flex-1 px-3 py-1.5 border border-border rounded-r-lg focus:ring-1 focus:ring-ring focus:border-transparent bg-background text-sm"
-                  />
-                </div>
-                <div className="flex items-center space-x-1">
-                  <button className="p-1.5 bg-muted/70 text-muted-foreground text-sm rounded hover:bg-muted transition-colors">
-                    <Copy className="h-3 w-3" />
-                  </button>
-                  <button className="p-1.5 text-primary hover:text-primary/80 transition-colors">
-                    <Eye className="h-3 w-3" />
-                  </button>
-                </div>
-              </div>
-              
-              {/* Toggle */}
-              <div className="flex items-center space-x-2">
-                <Switch 
-                  checked={eventData.enabled} 
-                  onCheckedChange={eventData.onEnabledChange} 
-                />
-                <span className="text-sm font-medium text-foreground whitespace-nowrap">
-                  {eventData.enabled ? 'Enabled' : 'Disabled'}
-                </span>
-              </div>
-            </div>
           </div>
         )}
         

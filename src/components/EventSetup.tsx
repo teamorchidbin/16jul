@@ -1,18 +1,15 @@
 import React, { useState } from 'react';
-import { Bold, Italic, Link, Plus, X, Copy, Eye, Settings } from 'lucide-react';
-import { Switch } from './ui/switch';
-
+import { Bold, Italic, Link, MapPin, Plus, X, Clock, Settings } from 'lucide-react';
 interface EventSetupProps {
-  currentEvent?: any;
   onChange?: () => void;
-  hideHeader?: boolean;
 }
-
-export const EventSetup = ({ currentEvent, onChange, hideHeader = false }: EventSetupProps) => {
+export const EventSetup = ({
+  onChange
+}: EventSetupProps) => {
   const [formData, setFormData] = useState({
-    title: currentEvent?.title || 'Product Hunt Chats',
-    description: currentEvent?.description || 'The essence of Product Hunt reflects in communities- Select a time suitable for you, and let\'s talk products!',
-    url: currentEvent?.url?.split('/').pop() || 'product-hunt-chats',
+    title: 'Product Hunt Chats',
+    description: 'The essence of Product Hunt reflects in communities- Select a time suitable for you, and let\'s talk products!',
+    url: 'product-hunt-chats',
     durations: ['15', '30', '45', '60'],
     defaultDuration: '15',
     allowBookerToSelectDuration: true,
@@ -20,8 +17,6 @@ export const EventSetup = ({ currentEvent, onChange, hideHeader = false }: Event
     customDuration: '',
     showCustomDuration: false
   });
-
-  const [eventEnabled, setEventEnabled] = useState(true);
   const [showLocationDropdown, setShowLocationDropdown] = useState(false);
   const [selectedLocation, setSelectedLocation] = useState('google-meet');
   const [showLinkInput, setShowLinkInput] = useState(false);
@@ -34,7 +29,6 @@ export const EventSetup = ({ currentEvent, onChange, hideHeader = false }: Event
     googleMapsLink: '',
     showGoogleMaps: false
   });
-
   const availableDurations = ['15', '30', '45', '60'];
   const locationOptions = [{
     id: 'conferencing',
@@ -94,7 +88,6 @@ export const EventSetup = ({ currentEvent, onChange, hideHeader = false }: Event
     type: 'option',
     icon: '🏢'
   }];
-
   const handleFormChange = (field: string, value: any) => {
     setFormData(prev => ({
       ...prev,
@@ -102,12 +95,10 @@ export const EventSetup = ({ currentEvent, onChange, hideHeader = false }: Event
     }));
     onChange?.();
   };
-
   const handleDurationToggle = (duration: string) => {
     const newDurations = formData.durations.includes(duration) ? formData.durations.filter(d => d !== duration) : [...formData.durations, duration];
     handleFormChange('durations', newDurations);
   };
-
   const addCustomDuration = () => {
     if (formData.customDuration && !formData.durations.includes(formData.customDuration)) {
       handleFormChange('durations', [...formData.durations, formData.customDuration]);
@@ -118,13 +109,11 @@ export const EventSetup = ({ currentEvent, onChange, hideHeader = false }: Event
       }));
     }
   };
-
   const handleLocationSelect = (locationId: string) => {
     setSelectedLocation(locationId);
     setShowLocationDropdown(false);
     handleFormChange('location', locationId);
   };
-
   const handleLinkInsert = () => {
     if (linkUrl) {
       document.execCommand('createLink', false, linkUrl);
@@ -132,7 +121,6 @@ export const EventSetup = ({ currentEvent, onChange, hideHeader = false }: Event
       setLinkUrl('');
     }
   };
-
   const renderLocationDetails = () => {
     if (['zoom', 'facetime', 'link-meeting'].includes(selectedLocation)) {
       return <div className="mt-4 p-4 bg-muted/30 rounded-lg">
@@ -191,79 +179,58 @@ export const EventSetup = ({ currentEvent, onChange, hideHeader = false }: Event
     }
     return null;
   };
+  return <div className="p-8 max-w-4xl space-y-6 mx-0">
+      <div>
+        <label className="block text-sm font-medium text-foreground mb-2">Title</label>
+        <input type="text" value={formData.title} onChange={e => handleFormChange('title', e.target.value)} className="w-full px-4 py-3 border border-border rounded-lg focus:ring-2 focus:ring-ring focus:border-transparent bg-background" />
+      </div>
 
-  return (
-    <div className="p-6 max-w-4xl space-y-6 mx-0">
-      {/* Description Section */}
       <div>
         <label className="block text-sm font-medium text-foreground mb-2">Description</label>
         <div className="border border-border rounded-lg bg-background">
           <div className="flex items-center space-x-2 p-3 border-b border-border">
-            <button 
-              className="p-2 hover:bg-muted rounded transition-colors" 
-              onClick={() => document.execCommand('bold')}
-            >
+            <button className="p-2 hover:bg-muted rounded transition-colors" onClick={() => document.execCommand('bold')}>
               <Bold className="h-4 w-4 text-muted-foreground" />
             </button>
-            <button 
-              className="p-2 hover:bg-muted rounded transition-colors" 
-              onClick={() => document.execCommand('italic')}
-            >
+            <button className="p-2 hover:bg-muted rounded transition-colors" onClick={() => document.execCommand('italic')}>
               <Italic className="h-4 w-4 text-muted-foreground" />
             </button>
             <div className="relative">
-              <button 
-                className="p-2 hover:bg-muted rounded transition-colors" 
-                onClick={() => setShowLinkInput(!showLinkInput)}
-              >
+              <button className="p-2 hover:bg-muted rounded transition-colors" onClick={() => setShowLinkInput(!showLinkInput)}>
                 <Link className="h-4 w-4 text-muted-foreground" />
               </button>
-              {showLinkInput && (
-                <div className="absolute top-full left-0 mt-1 p-3 bg-popover border border-border rounded-lg shadow-lg z-10 w-64 animate-scale-in">
-                  <input
-                    type="url"
-                    placeholder="Enter URL"
-                    value={linkUrl}
-                    onChange={(e) => setLinkUrl(e.target.value)}
-                    className="w-full px-3 py-2 border border-border rounded mb-2 text-sm bg-background"
-                    autoFocus
-                  />
+              {showLinkInput && <div className="absolute top-full left-0 mt-1 p-3 bg-popover border border-border rounded-lg shadow-lg z-10 w-64 animate-scale-in">
+                  <input type="url" placeholder="Enter URL" value={linkUrl} onChange={e => setLinkUrl(e.target.value)} className="w-full px-3 py-2 border border-border rounded mb-2 text-sm bg-background" autoFocus />
                   <div className="flex justify-end space-x-2">
-                    <button 
-                      onClick={() => setShowLinkInput(false)}
-                      className="px-3 py-1 text-sm text-muted-foreground hover:text-foreground"
-                    >
+                    <button onClick={() => setShowLinkInput(false)} className="px-3 py-1 text-sm text-muted-foreground hover:text-foreground">
                       Cancel
                     </button>
-                    <button 
-                      onClick={() => {
-                        if (linkUrl) {
-                          document.execCommand('createLink', false, linkUrl);
-                          setShowLinkInput(false);
-                          setLinkUrl('');
-                        }
-                      }}
-                      className="px-3 py-1 bg-primary text-primary-foreground rounded text-sm hover:bg-primary/90"
-                    >
+                    <button onClick={handleLinkInsert} className="px-3 py-1 bg-primary text-primary-foreground rounded text-sm hover:bg-primary/90">
                       Insert
                     </button>
                   </div>
-                </div>
-              )}
+                </div>}
             </div>
           </div>
-          <div
-            contentEditable
-            className="w-full p-4 min-h-[100px] focus:outline-none"
-            dangerouslySetInnerHTML={{ __html: formData.description }}
-            onInput={(e) => handleFormChange('description', e.currentTarget.innerHTML)}
-          />
+          <div contentEditable className="w-full p-4 min-h-[100px] focus:outline-none" dangerouslySetInnerHTML={{
+          __html: formData.description
+        }} onInput={e => handleFormChange('description', e.currentTarget.innerHTML)} />
         </div>
         <div className="flex items-center mt-2">
           <input type="checkbox" id="translate" className="mr-2" />
           <label htmlFor="translate" className="text-sm text-muted-foreground">
             Translate description to the visitor's browser language using AI
           </label>
+        </div>
+      </div>
+
+      <div>
+        <label className="block text-sm font-medium text-foreground mb-2">URL</label>
+        <div className="flex">
+          <span className="inline-flex items-center px-4 py-3 border border-r-0 border-border bg-muted text-muted-foreground text-sm rounded-l-lg">
+            cal.id/sanskar/
+          </span>
+          <input type="text" value={formData.url} onChange={e => handleFormChange('url', e.target.value)} className="flex-1 px-4 py-3 border border-border rounded-r-lg focus:ring-2 focus:ring-ring focus:border-transparent bg-background" />
         </div>
       </div>
 
@@ -357,6 +324,5 @@ export const EventSetup = ({ currentEvent, onChange, hideHeader = false }: Event
           <a href="#" className="text-primary hover:text-primary/80 transition-colors">App Store</a>.
         </p>
       </div>
-    </div>
-  );
+    </div>;
 };
