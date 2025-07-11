@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, Settings, Clock, Shield, Zap, RotateCcw, Smartphone, Workflow, Webhook } from 'lucide-react';
 import { EventSetup } from '../components/EventSetup';
 import { EventAvailability } from '../components/EventAvailability';
 import { EventLimits } from '../components/EventLimits';
