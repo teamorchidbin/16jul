@@ -88,7 +88,7 @@ export const Conferencing = () => {
         <div className="text-center">
           <Button onClick={handleAddApp} className="bg-blue-600 hover:bg-blue-700">
             <Plus className="h-4 w-4 mr-2" />
-            Add app
+            Add
           </Button>
         </div>
       </div>
