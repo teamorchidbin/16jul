@@ -67,7 +67,7 @@ const mockMeetings: Meeting[] = [
     ],
     location: {
       type: 'online',
-      name: 'Google Meet',
+      name: 'Google Meet',  
       logo: '📹'
     },
     eventType: '15 Min Meeting',
@@ -237,9 +237,9 @@ export default function Bookings() {
 
   return (
     <div className="px-6 pt-3 pb-6 space-y-4 w-full max-w-full">
-      {/* Tabs and Action Buttons */}
-      <div className="flex items-center justify-between">
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="flex-1">
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+        {/* Tabs and Action Buttons */}
+        <div className="flex items-center justify-between">
           <TabsList className="bg-muted/50 p-1">
             <TabsTrigger value="upcoming" className="px-4 py-2">Upcoming</TabsTrigger>
             <TabsTrigger value="unconfirmed" className="px-4 py-2">Unconfirmed</TabsTrigger>
@@ -247,180 +247,180 @@ export default function Bookings() {
             <TabsTrigger value="past" className="px-4 py-2">Past</TabsTrigger>
             <TabsTrigger value="canceled" className="px-4 py-2">Canceled</TabsTrigger>
           </TabsList>
-        </Tabs>
-        
-        <div className="flex items-center space-x-3 ml-4">
-          <Button
-            variant="outline"
-            onClick={() => setShowFilters(!showFilters)}
-            className="flex items-center space-x-2"
-          >
-            <Filter className="h-4 w-4" />
-            <span>Filters</span>
-          </Button>
-          <Button
-            variant="outline"
-            onClick={handleExport}
-            className="flex items-center space-x-2"
-          >
-            <Download className="h-4 w-4" />
-            <span>Export All</span>
-          </Button>
+          
+          <div className="flex items-center space-x-3 ml-4">
+            <Button
+              variant="outline"
+              onClick={() => setShowFilters(!showFilters)}
+              className="flex items-center space-x-2"
+            >
+              <Filter className="h-4 w-4" />
+              <span>Filters</span>
+            </Button>
+            <Button
+              variant="outline"
+              onClick={handleExport}
+              className="flex items-center space-x-2"
+            >
+              <Download className="h-4 w-4" />
+              <span>Export All</span>
+            </Button>
+          </div>
         </div>
-      </div>
 
-      {/* Filters */}
-      {showFilters && (
-        <div className="flex items-center space-x-4 p-4 bg-muted/30 rounded-lg animate-fade-in">
-          <Popover>
-            <PopoverTrigger asChild>
-              <Button variant="outline" size="sm">Attendee: All</Button>
-            </PopoverTrigger>
-            <PopoverContent className="w-80" align="start">
-              <div className="space-y-3">
-                <div className="relative">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                  <input
-                    type="text"
-                    placeholder="Search"
-                    className="w-full pl-10 pr-4 py-2 border border-border rounded-md text-sm"
-                  />
-                </div>
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center space-x-2">
-                    <div className="h-8 w-8 rounded-full bg-primary flex items-center justify-center">
-                      <span className="text-sm font-medium text-primary-foreground">SY</span>
-                    </div>
-                    <span className="text-sm">Sanskar Yadav</span>
+        {/* Filters */}
+        {showFilters && (
+          <div className="flex items-center space-x-4 p-4 bg-muted/30 rounded-lg animate-fade-in">
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button variant="outline" size="sm">Attendee: All</Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-80" align="start">
+                <div className="space-y-3">
+                  <div className="relative">
+                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                    <input
+                      type="text"
+                      placeholder="Search"
+                      className="w-full pl-10 pr-4 py-2 border border-border rounded-md text-sm"
+                    />
                   </div>
-                  <Checkbox />
-                </div>
-              </div>
-            </PopoverContent>
-          </Popover>
-
-          <Popover>
-            <PopoverTrigger asChild>
-              <Button variant="outline" size="sm">Host: All</Button>
-            </PopoverTrigger>
-            <PopoverContent className="w-80" align="start">
-              <div className="space-y-3">
-                <div className="flex items-center justify-between">
-                  <span className="text-sm">All Users</span>
-                  <Checkbox defaultChecked />
-                </div>
-              </div>
-            </PopoverContent>
-          </Popover>
-
-          <Popover>
-            <PopoverTrigger asChild>
-              <Button variant="outline" size="sm">Event Type: All</Button>
-            </PopoverTrigger>
-            <PopoverContent className="w-80" align="start">
-              <div className="space-y-3">
-                <div className="flex items-center justify-between">
-                  <span className="text-sm">All event types</span>
-                  <Checkbox />
-                </div>
-                <hr />
-                <div>
-                  <p className="text-sm font-medium mb-2">Personal</p>
                   <div className="flex items-center justify-between">
-                    <span className="text-sm">15 Min Meeting</span>
+                    <div className="flex items-center space-x-2">
+                      <div className="h-8 w-8 rounded-full bg-primary flex items-center justify-center">
+                        <span className="text-sm font-medium text-primary-foreground">SY</span>
+                      </div>
+                      <span className="text-sm">Sanskar Yadav</span>
+                    </div>
                     <Checkbox />
                   </div>
                 </div>
-              </div>
-            </PopoverContent>
-          </Popover>
+              </PopoverContent>
+            </Popover>
 
-          <Popover>
-            <PopoverTrigger asChild>
-              <Button variant="outline" size="sm">Teams: All</Button>
-            </PopoverTrigger>
-            <PopoverContent className="w-80" align="start">
-              <div className="space-y-3">
-                <div className="flex items-center justify-between">
-                  <span className="text-sm">All</span>
-                  <Checkbox />
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button variant="outline" size="sm">Host: All</Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-80" align="start">
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm">All Users</span>
+                    <Checkbox defaultChecked />
+                  </div>
                 </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-sm">Personal</span>
-                  <Checkbox />
+              </PopoverContent>
+            </Popover>
+
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button variant="outline" size="sm">Event Type: All</Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-80" align="start">
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm">All event types</span>
+                    <Checkbox />
+                  </div>
+                  <hr />
+                  <div>
+                    <p className="text-sm font-medium mb-2">Personal</p>
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm">15 Min Meeting</span>
+                      <Checkbox />
+                    </div>
+                  </div>
+                </div>
+              </PopoverContent>
+            </Popover>
+
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button variant="outline" size="sm">Teams: All</Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-80" align="start">
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm">All</span>
+                    <Checkbox />
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm">Personal</span>
+                    <Checkbox />
+                  </div>
+                </div>
+              </PopoverContent>
+            </Popover>
+
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button variant="outline" size="sm">
+                  <Calendar className="h-4 w-4 mr-2" />
+                  Jul 14, 2025
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0" align="start">
+                <CalendarComponent
+                  mode="single"
+                  selected={dateRange}
+                  onSelect={setDateRange}
+                  className="rounded-md border"
+                />
+              </PopoverContent>
+            </Popover>
+
+            <Button variant="ghost" size="sm">Clear all filters</Button>
+          </div>
+        )}
+
+        {/* Meetings List */}
+        <div className="space-y-6">
+          <TabsContent value="upcoming" className="mt-0">
+            {todayMeetings.length > 0 && (
+              <div className="space-y-4">
+                <h3 className="text-sm font-medium text-muted-foreground uppercase tracking-wide">TODAY</h3>
+                <div className="space-y-2">
+                  {todayMeetings.map((meeting) => (
+                    <MeetingCard key={meeting.id} meeting={meeting} />
+                  ))}
                 </div>
               </div>
-            </PopoverContent>
-          </Popover>
-
-          <Popover>
-            <PopoverTrigger asChild>
-              <Button variant="outline" size="sm">
-                <Calendar className="h-4 w-4 mr-2" />
-                Jul 14, 2025
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent className="w-auto p-0" align="start">
-              <CalendarComponent
-                mode="single"
-                selected={dateRange}
-                onSelect={setDateRange}
-                className="rounded-md border"
-              />
-            </PopoverContent>
-          </Popover>
-
-          <Button variant="ghost" size="sm">Clear all filters</Button>
-        </div>
-      )}
-
-      {/* Meetings List */}
-      <div className="space-y-6">
-        <TabsContent value="upcoming" className="mt-0">
-          {todayMeetings.length > 0 && (
-            <div className="space-y-4">
-              <h3 className="text-sm font-medium text-muted-foreground uppercase tracking-wide">TODAY</h3>
-              <div className="space-y-2">
-                {todayMeetings.map((meeting) => (
+            )}
+            
+            {otherMeetings.length > 0 && (
+              <div className={`space-y-2 ${todayMeetings.length > 0 ? 'mt-8' : ''}`}>
+                {otherMeetings.map((meeting) => (
                   <MeetingCard key={meeting.id} meeting={meeting} />
                 ))}
               </div>
+            )}
+          </TabsContent>
+
+          <TabsContent value="unconfirmed" className="mt-0">
+            <div className="text-center py-8 text-muted-foreground">
+              No unconfirmed bookings
             </div>
-          )}
-          
-          {otherMeetings.length > 0 && (
-            <div className={`space-y-2 ${todayMeetings.length > 0 ? 'mt-8' : ''}`}>
-              {otherMeetings.map((meeting) => (
-                <MeetingCard key={meeting.id} meeting={meeting} />
-              ))}
+          </TabsContent>
+
+          <TabsContent value="recurring" className="mt-0">
+            <div className="text-center py-8 text-muted-foreground">
+              No recurring bookings
             </div>
-          )}
-        </TabsContent>
+          </TabsContent>
 
-        <TabsContent value="unconfirmed" className="mt-0">
-          <div className="text-center py-8 text-muted-foreground">
-            No unconfirmed bookings
-          </div>
-        </TabsContent>
+          <TabsContent value="past" className="mt-0">
+            <div className="text-center py-8 text-muted-foreground">
+              No past bookings
+            </div>
+          </TabsContent>
 
-        <TabsContent value="recurring" className="mt-0">
-          <div className="text-center py-8 text-muted-foreground">
-            No recurring bookings
-          </div>
-        </TabsContent>
-
-        <TabsContent value="past" className="mt-0">
-          <div className="text-center py-8 text-muted-foreground">
-            No past bookings
-          </div>
-        </TabsContent>
-
-        <TabsContent value="canceled" className="mt-0">
-          <div className="text-center py-8 text-muted-foreground">
-            No canceled bookings
-          </div>
-        </TabsContent>
-      </div>
+          <TabsContent value="canceled" className="mt-0">
+            <div className="text-center py-8 text-muted-foreground">
+              No canceled bookings
+            </div>
+          </TabsContent>
+        </div>
+      </Tabs>
 
       {/* Add Guests Modal */}
       <AddGuestsModal
