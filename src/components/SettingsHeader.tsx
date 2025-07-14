@@ -49,7 +49,7 @@ export const SettingsHeader = () => {
                 <div className="py-1">
                   <button className="flex items-center w-full px-3 py-2 text-sm hover:bg-muted transition-colors">
                     <Settings className="h-4 w-4 mr-2" />
-                    Profile Settings
+                    My Profile
                   </button>
                   <button className="flex items-center w-full px-3 py-2 text-sm hover:bg-muted transition-colors">
                     <Moon className="h-4 w-4 mr-2" />
