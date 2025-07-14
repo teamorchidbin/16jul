@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { CalendarIcon, Clock, MapPin, User, Users, MoreVertical, Video, ExternalLink, Edit, RotateCcw, X, UserPlus, StickyNote, Search, Filter, Download, ChevronDown } from 'lucide-react';
 import { Button } from '../components/ui/button';
@@ -39,8 +40,8 @@ export default function Bookings() {
   ];
 
   const mockBookings = {
-    upcoming: {
-      today: [{
+    upcoming: [
+      {
         id: '1',
         title: '30 Minute Meeting',
         attendees: ['Sanskar Yadav'],
@@ -55,9 +56,10 @@ export default function Bookings() {
         },
         status: 'confirmed',
         notes: 'Discussion about project requirements and timeline. Please come prepared with your questions.',
-        meetingNotes: ''
-      }],
-      tomorrow: [{
+        meetingNotes: '',
+        isToday: true
+      },
+      {
         id: '2',
         title: 'Product Demo',
         attendees: ['John Doe', 'Jane Smith'],
@@ -71,11 +73,12 @@ export default function Bookings() {
         },
         status: 'confirmed',
         notes: 'Demo of new features and Q&A session.',
-        meetingNotes: ''
-      }]
-    },
-    unconfirmed: {
-      later: [{
+        meetingNotes: '',
+        isToday: false
+      }
+    ],
+    unconfirmed: [
+      {
         id: '3',
         title: 'Discovery Call',
         attendees: ['Jane Smith'],
@@ -90,11 +93,12 @@ export default function Bookings() {
         },
         status: 'pending',
         notes: 'Initial discovery call to understand requirements.',
-        meetingNotes: ''
-      }]
-    },
-    recurring: {
-      weekly: [{
+        meetingNotes: '',
+        isToday: false
+      }
+    ],
+    recurring: [
+      {
         id: '4',
         title: 'Weekly Standup',
         attendees: ['Team Meeting'],
@@ -110,11 +114,12 @@ export default function Bookings() {
         status: 'confirmed',
         notes: 'Weekly team sync and updates.',
         meetingNotes: '',
-        isRecurring: true
-      }]
-    },
-    past: {
-      yesterday: [{
+        isRecurring: true,
+        isToday: false
+      }
+    ],
+    past: [
+      {
         id: '5',
         title: 'Client Consultation',
         attendees: ['Alice Brown'],
@@ -129,11 +134,12 @@ export default function Bookings() {
         },
         status: 'completed',
         notes: 'Consultation about marketing strategy.',
-        meetingNotes: 'Great meeting with actionable insights.'
-      }]
-    },
-    canceled: {
-      thisWeek: [{
+        meetingNotes: 'Great meeting with actionable insights.',
+        isToday: false
+      }
+    ],
+    canceled: [
+      {
         id: '6',
         title: 'Strategy Session',
         attendees: ['Bob Wilson'],
@@ -147,9 +153,10 @@ export default function Bookings() {
         },
         status: 'canceled',
         notes: 'Strategy planning session.',
-        meetingNotes: ''
-      }]
-    }
+        meetingNotes: '',
+        isToday: false
+      }
+    ]
   };
 
   const handleExport = () => {
@@ -162,6 +169,7 @@ export default function Bookings() {
   const handleCancelEvent = (bookingId: string) => {
     setCancelBookingId(bookingId);
     setShowCancelDialog(true);
+    setIsCanceled(false);
   };
 
   const confirmCancel = () => {
@@ -175,10 +183,12 @@ export default function Bookings() {
   const toggleBookingExpansion = (bookingId: string) => {
     setExpandedBooking(expandedBooking === bookingId ? null : bookingId);
   };
+
   const handleAddGuests = (emails: string[]) => {
     console.log('Adding guests:', emails);
     setShowAddGuests(false);
   };
+
   const handleSaveMeetingNotes = (notes: string) => {
     console.log('Saving meeting notes:', notes);
     setShowMeetingNotes(false);
@@ -316,16 +326,21 @@ export default function Bookings() {
   const renderSection = (title: string, bookings: any[]) => {
     if (bookings.length === 0) return null;
     return (
-      <div className="mb-8">
-        <h3 className="text-lg font-semibold mb-4 text-foreground">{title}</h3>
-        <div className="space-y-4">
+      <div className="mb-6">
+        <h3 className="text-sm font-medium text-muted-foreground mb-3">{title}</h3>
+        <div className="space-y-3">
           {bookings.map(renderBookingCard)}
         </div>
       </div>
     );
   };
 
-  const currentBookings = mockBookings[activeTab as keyof typeof mockBookings] || {};
+  const currentBookings = mockBookings[activeTab as keyof typeof mockBookings] || [];
+  const todayBookings = currentBookings.filter((booking: any) => booking.isToday);
+  const otherBookings = currentBookings.filter((booking: any) => !booking.isToday);
+  const hasMultipleDates = todayBookings.length > 0 && otherBookings.length > 0;
+
+  const selectedBooking = mockBookings[activeTab as keyof typeof mockBookings]?.find((booking: any) => booking.id === cancelBookingId);
 
   return (
     <div className="min-h-screen bg-background">
@@ -564,13 +579,11 @@ export default function Bookings() {
 
         {/* Content */}
         <div className="max-w-4xl">
-          {Object.keys(currentBookings).length > 0 ? (
-            Object.entries(currentBookings).map(([sectionKey, bookings]) => 
-              renderSection(
-                sectionKey.charAt(0).toUpperCase() + sectionKey.slice(1), 
-                bookings as any[]
-              )
-            )
+          {currentBookings.length > 0 ? (
+            <>
+              {hasMultipleDates && renderSection('Today', todayBookings)}
+              {hasMultipleDates ? renderSection('Other', otherBookings) : renderSection('', currentBookings)}
+            </>
           ) : (
             <div className="text-center py-12">
               <CalendarIcon className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
@@ -594,89 +607,104 @@ export default function Bookings() {
             <>
               <DialogHeader>
                 <DialogTitle>Are you sure you want to cancel the event?</DialogTitle>
-                <DialogDescription>
-                  This meeting is scheduled and we sent an email with a calendar invitation with the details to everyone.
-                </DialogDescription>
               </DialogHeader>
               
-              <div className="space-y-4">
-                <div className="space-y-2">
-                  <div className="flex justify-between">
-                    <span className="text-sm font-medium">What</span>
-                    <span className="text-sm">Product Hunt Chats between Sanskar Yadav and Sanskar Yadav</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-sm font-medium">When</span>
-                    <div className="text-sm text-right">
-                      <div>Monday, July 14, 2025</div>
-                      <div>1:45 PM - 2:00 PM (India Standard Time)</div>
+              {selectedBooking && (
+                <div className="space-y-4">
+                  <div className="space-y-3">
+                    <div>
+                      <h4 className="font-medium text-sm mb-1">Event</h4>
+                      <p className="text-sm">{selectedBooking.title}</p>
+                    </div>
+                    
+                    <div>
+                      <h4 className="font-medium text-sm mb-1">Date & Time</h4>
+                      <p className="text-sm">{selectedBooking.date} • {selectedBooking.time}</p>
+                      <p className="text-xs text-muted-foreground">{selectedBooking.timezone}</p>
+                    </div>
+                    
+                    <div>
+                      <h4 className="font-medium text-sm mb-1">Location</h4>
+                      {selectedBooking.location.type === 'online' ? (
+                        <button className="text-sm text-primary flex items-center gap-1">
+                          {selectedBooking.location.app} <ExternalLink className="h-3 w-3" />
+                        </button>
+                      ) : (
+                        <p className="text-sm">{selectedBooking.location.address}</p>
+                      )}
+                    </div>
+                    
+                    <div>
+                      <h4 className="font-medium text-sm mb-1">Attendees</h4>
+                      <div className="space-y-1">
+                        {selectedBooking.attendees.map((attendee: string, index: number) => (
+                          <div key={index} className="text-sm">
+                            <p>{attendee}</p>
+                            <p className="text-xs text-muted-foreground">{selectedBooking.email}</p>
+                          </div>
+                        ))}
+                      </div>
                     </div>
                   </div>
-                  <div className="flex justify-between">
-                    <span className="text-sm font-medium">Who</span>
-                    <div className="text-sm text-right">
-                      <div>Sanskar Yadav <Badge variant="secondary" className="ml-1">Host</Badge></div>
-                      <div>sanskarix@gmail.com</div>
-                      <div className="mt-1">Sanskar Yadav</div>
-                      <div>sanskarix@gmail.com</div>
-                    </div>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-sm font-medium">Where</span>
-                    <button className="text-sm text-primary flex items-center gap-1">
-                      Google Meet <ExternalLink className="h-3 w-3" />
-                    </button>
-                  </div>
-                </div>
 
-                <div className="space-y-2">
-                  <label className="text-sm font-medium">Reason for cancellation (optional)</label>
-                  <textarea
-                    value={cancelReason}
-                    onChange={(e) => setCancelReason(e.target.value)}
-                    placeholder="Why are you cancelling?"
-                    className="w-full p-3 border border-border rounded-lg resize-none h-24 text-sm"
-                  />
-                </div>
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium">Reason for cancellation (optional)</label>
+                    <textarea
+                      value={cancelReason}
+                      onChange={(e) => setCancelReason(e.target.value)}
+                      placeholder="Why are you cancelling?"
+                      className="w-full p-3 border border-border rounded-lg resize-none h-20 text-sm"
+                    />
+                  </div>
 
-                <div className="flex justify-end space-x-3">
-                  <Button variant="outline" onClick={() => setShowCancelDialog(false)}>
-                    Nevermind
-                  </Button>
-                  <Button variant="destructive" onClick={confirmCancel}>
-                    Cancel event
-                  </Button>
+                  <div className="flex justify-end space-x-3">
+                    <Button variant="outline" onClick={() => setShowCancelDialog(false)}>
+                      Nevermind
+                    </Button>
+                    <Button variant="destructive" onClick={confirmCancel}>
+                      Cancel event
+                    </Button>
+                  </div>
                 </div>
-              </div>
+              )}
             </>
           ) : (
-            <div className="text-center py-8">
+            <div className="text-center py-6">
               <div className="h-16 w-16 rounded-full bg-destructive/10 flex items-center justify-center mx-auto mb-4">
                 <X className="h-8 w-8 text-destructive" />
               </div>
-              <DialogTitle className="text-xl mb-4">This event is canceled</DialogTitle>
-              <div className="space-y-3 text-sm">
-                <div className="flex justify-between">
-                  <span className="font-medium">What</span>
-                  <span>Product Hunt Chats between Sanskar Yadav and Sanskar Yadav</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="font-medium">When</span>
-                  <div className="text-right">
-                    <div className="line-through text-muted-foreground">Monday, July 14, 2025</div>
-                    <div className="line-through text-muted-foreground">1:45 PM - 2:00 PM (India Standard Time)</div>
+              <DialogTitle className="text-xl mb-4">Event Canceled</DialogTitle>
+              {selectedBooking && (
+                <div className="space-y-3 text-sm text-left">
+                  <div>
+                    <h4 className="font-medium mb-1">Event</h4>
+                    <p className="line-through text-muted-foreground">{selectedBooking.title}</p>
+                  </div>
+                  
+                  <div>
+                    <h4 className="font-medium mb-1">Date & Time</h4>
+                    <p className="line-through text-muted-foreground">{selectedBooking.date} • {selectedBooking.time}</p>
+                  </div>
+                  
+                  <div>
+                    <h4 className="font-medium mb-1">Attendees</h4>
+                    <div className="space-y-1">
+                      {selectedBooking.attendees.map((attendee: string, index: number) => (
+                        <div key={index}>
+                          <p className="line-through text-muted-foreground">{attendee}</p>
+                          <p className="text-xs line-through text-muted-foreground">{selectedBooking.email}</p>
+                        </div>
+                      ))}
+                    </div>
                   </div>
                 </div>
-                <div className="flex justify-between">
-                  <span className="font-medium">Who</span>
-                  <div className="text-right">
-                    <div>Sanskar Yadav <Badge variant="secondary" className="ml-1">Host</Badge></div>
-                    <div className="text-muted-foreground">sanskarix@gmail.com</div>
-                    <div className="mt-1">Sanskar Yadav</div>
-                    <div className="text-muted-foreground">sanskarix@gmail.com</div>
-                  </div>
-                </div>
-              </div>
+              )}
+              <Button 
+                className="mt-6" 
+                onClick={() => setShowCancelDialog(false)}
+              >
+                Close
+              </Button>
             </div>
           )}
         </DialogContent>
