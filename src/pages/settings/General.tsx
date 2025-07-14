@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Button } from '../../components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../components/ui/select';
@@ -10,7 +9,6 @@ import { Calendar } from '../../components/ui/calendar';
 import { Calendar as CalendarIcon, Trash2 } from 'lucide-react';
 import { format } from 'date-fns';
 import { cn } from '../../lib/utils';
-
 export const General = () => {
   const [dynamicGroupLinks, setDynamicGroupLinks] = useState(true);
   const [searchEngineIndexing, setSearchEngineIndexing] = useState(true);
@@ -26,7 +24,6 @@ export const General = () => {
     dateRange: string;
     timezone: string;
   }>>([]);
-
   const handleAddTravelSchedule = () => {
     if (dateRange.from) {
       const newSchedule = {
@@ -39,13 +36,10 @@ export const General = () => {
       setScheduleTimezoneOpen(false);
     }
   };
-
   const handleDeleteTravelSchedule = (id: string) => {
     setTravelSchedules(travelSchedules.filter(schedule => schedule.id !== id));
   };
-
-  return (
-    <div className="min-h-screen bg-background flex justify-center">
+  return <div className="min-h-screen bg-background flex justify-center">
       <div className="p-8 max-w-4xl w-full">
         <div className="mb-8 text-center">
           <h1 className="text-2xl font-semibold mb-2">General</h1>
@@ -112,13 +106,10 @@ export const General = () => {
                             </Button>
                           </PopoverTrigger>
                           <PopoverContent className="w-auto p-0" align="start">
-                            <Calendar 
-                              mode="range" 
-                              selected={dateRange.from && dateRange.to ? { from: dateRange.from, to: dateRange.to } : undefined}
-                              onSelect={(range) => setDateRange(range || {})} 
-                              initialFocus 
-                              className={cn("p-3 pointer-events-auto")} 
-                            />
+                            <Calendar mode="range" selected={dateRange.from && dateRange.to ? {
+                            from: dateRange.from,
+                            to: dateRange.to
+                          } : undefined} onSelect={range => setDateRange(range || {})} initialFocus className={cn("p-3 pointer-events-auto")} />
                           </PopoverContent>
                         </Popover>
                       </div>
@@ -157,8 +148,7 @@ export const General = () => {
               </div>
 
               {/* Display existing travel schedules */}
-              {travelSchedules.map(schedule => (
-                <div key={schedule.id} className="flex items-center justify-between p-3 bg-background border rounded-lg">
+              {travelSchedules.map(schedule => <div key={schedule.id} className="flex items-center justify-between p-3 bg-background border rounded-lg">
                   <div>
                     <div className="font-medium">{schedule.dateRange}</div>
                     <div className="text-sm text-muted-foreground">{schedule.timezone}</div>
@@ -166,8 +156,7 @@ export const General = () => {
                   <Button variant="ghost" size="sm" onClick={() => handleDeleteTravelSchedule(schedule.id)}>
                     <Trash2 className="h-4 w-4" />
                   </Button>
-                </div>
-              ))}
+                </div>)}
             </div>
           </div>
 
@@ -231,13 +220,8 @@ export const General = () => {
           </div>
 
           {/* Update button */}
-          <div className="pt-6">
-            <Button className="bg-blue-600 hover:bg-blue-700">
-              Update
-            </Button>
-          </div>
+          
         </div>
       </div>
-    </div>
-  );
+    </div>;
 };
