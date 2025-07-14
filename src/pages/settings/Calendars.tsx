@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Button } from '../../components/ui/button';
 import { Label } from '../../components/ui/label';
@@ -7,23 +6,18 @@ import { Switch } from '../../components/ui/switch';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '../../components/ui/dialog';
 import { Plus, Trash2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-
 export const Calendars = () => {
   const [addingEvents, setAddingEvents] = useState(true);
   const [syncCalendar, setSyncCalendar] = useState(true);
   const [showRemoveDialog, setShowRemoveDialog] = useState(false);
   const navigate = useNavigate();
-
   const handleAddCalendar = () => {
     navigate('/apps');
   };
-
   const handleRemoveApp = () => {
     setShowRemoveDialog(false);
   };
-
-  return (
-    <div className="min-h-screen bg-background flex justify-center">
+  return <div className="min-h-screen bg-background flex justify-center">
       <div className="p-8 max-w-4xl w-full">
         <div className="mb-8 text-center">
           <h1 className="text-2xl font-semibold mb-2">Calendars</h1>
@@ -111,10 +105,7 @@ export const Calendars = () => {
                 <div className="space-y-4">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-2">
-                      <Switch 
-                        checked={addingEvents}
-                        onCheckedChange={setAddingEvents}
-                      />
+                      <Switch checked={addingEvents} onCheckedChange={setAddingEvents} />
                       <span className="text-sm">sanskarix@gmail.com</span>
                     </div>
                     <span className="text-sm text-muted-foreground">← Adding events to</span>
@@ -122,10 +113,7 @@ export const Calendars = () => {
 
                   <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-2">
-                      <Switch 
-                        checked={syncCalendar}
-                        onCheckedChange={setSyncCalendar}
-                      />
+                      <Switch checked={syncCalendar} onCheckedChange={setSyncCalendar} />
                       <span className="text-sm">Sync this Google Calendar to display external bookings made outside Cal ID.</span>
                     </div>
                   </div>
@@ -143,18 +131,12 @@ export const Calendars = () => {
         </div>
 
         {/* Vertical dotted line */}
-        <div className="flex justify-center my-8">
-          <div className="h-12 border-l-2 border-dotted border-gray-400" style={{ borderWidth: '3px', borderSpacing: '8px' }}></div>
-        </div>
+        
 
         {/* Add new app button */}
         <div className="text-center">
-          <Button onClick={handleAddCalendar} className="bg-blue-600 hover:bg-blue-700">
-            <Plus className="h-4 w-4 mr-2" />
-            Add Calendar
-          </Button>
+          
         </div>
       </div>
-    </div>
-  );
+    </div>;
 };
