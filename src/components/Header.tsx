@@ -14,10 +14,7 @@ interface HeaderProps {
   };
 }
 
-export const Header = ({
-  showEventTypesHeader = false,
-  eventData
-}: HeaderProps) => {
+export const Header = ({ showEventTypesHeader = false, eventData }: HeaderProps) => {
   const [showProfileDropdown, setShowProfileDropdown] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -39,85 +36,105 @@ export const Header = ({
   }, [showProfileDropdown]);
 
   return (
-    <div className="bg-background border-b border-border px-8 py-4">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center space-x-4">
-          {showEventTypesHeader && eventData && (
-            <div className="flex items-center space-x-3">
-              <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center">
-                <span className="text-primary font-semibold text-sm">
-                  {eventData.title.charAt(0)}
-                </span>
+    <header className="h-20 border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-50">
+      <div className="h-full px-8 flex items-center justify-between w-full">
+        {showEventTypesHeader && !eventData && (
+          <div className="flex-1">
+            <h1 className="text-xl font-semibold text-foreground">Event Types</h1>
+            <p className="text-sm text-muted-foreground mt-1">Create events to share for people to book on your calendar.</p>
+          </div>
+        )}
+        
+        {eventData && (
+          <div className="flex-1">
+            <div className="flex items-center space-x-3 mb-1">
+              <h1 className="text-xl font-semibold text-foreground">
+                {eventData.title}
+              </h1>
+              <div className="flex items-center space-x-2 px-2 py-1 bg-muted/70 text-muted-foreground text-sm rounded-md">
+                <span>cal.id/sanskar/{eventData.url}</span>
+                <Copy className="h-3 w-3" />
               </div>
-              <div className="flex-1">
-                <h1 className="text-lg font-semibold text-foreground">{eventData.title}</h1>
-                <div className="flex items-center space-x-2 text-sm text-muted-foreground">
-                  <Copy className="h-4 w-4" />
-                  <span>{eventData.url}</span>
-                </div>
-              </div>
-              <div className="flex items-center space-x-2">
-                <Switch
-                  checked={eventData.enabled}
-                  onCheckedChange={eventData.onEnabledChange}
-                />
-                <Eye className="h-4 w-4 text-muted-foreground" />
-              </div>
+              <button className="text-sm text-primary hover:text-primary/80 flex items-center transition-colors">
+                <Eye className="h-4 w-4 mr-1" />
+              </button>
+            </div>
+          </div>
+        )}
+        
+        <div className="flex items-center space-x-4 ml-auto">
+          {eventData && (
+            <div className="flex items-center space-x-2">
+              <Switch checked={eventData.enabled} onCheckedChange={eventData.onEnabledChange} />
+              <span className="text-sm text-muted-foreground">
+                {eventData.enabled ? 'Enabled' : 'Disabled'}
+              </span>
             </div>
           )}
-        </div>
-
-        <div className="flex items-center space-x-3">
+          
+          {/* Notifications */}
           <div className="relative">
             <button
               onClick={() => setShowNotifications(!showNotifications)}
-              className="p-2 hover:bg-muted rounded-lg relative"
+              className="p-2 hover:bg-muted rounded-lg transition-colors relative"
             >
               <Bell className="h-5 w-5 text-muted-foreground" />
-              <span className="absolute -top-1 -right-1 h-3 w-3 bg-red-500 rounded-full"></span>
+              <div className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full"></div>
             </button>
+            
             {showNotifications && (
               <NotificationDropdown onClose={() => setShowNotifications(false)} />
             )}
           </div>
 
+          {/* Profile */}
           <div className="relative" ref={dropdownRef}>
             <button
               onClick={() => setShowProfileDropdown(!showProfileDropdown)}
-              className="flex items-center space-x-2 p-2 hover:bg-muted rounded-lg"
+              className="flex items-center space-x-3 px-4 py-2 hover:bg-muted rounded-lg transition-colors w-full"
             >
               <div className="h-8 w-8 rounded-full bg-primary flex items-center justify-center">
-                <span className="text-white text-sm font-medium">SY</span>
+                <span className="text-sm font-medium text-primary-foreground">SY</span>
               </div>
+              <span className="text-sm font-medium text-foreground">Sanskar Yadav</span>
               <ChevronDown className="h-4 w-4 text-muted-foreground" />
             </button>
-
+            
             {showProfileDropdown && (
-              <div className="absolute right-0 mt-2 w-64 bg-background border border-border rounded-lg shadow-lg py-2 z-50">
-                <div className="px-4 py-2 border-b border-border">
-                  <p className="font-medium text-foreground">Sanskar Yadav</p>
-                  <p className="text-sm text-muted-foreground">sanskar@onehash.ai</p>
-                </div>
-                
+              <div className="absolute right-0 top-full mt-1 w-48 bg-popover border border-border rounded-lg shadow-lg animate-scale-in z-10">
                 <div className="py-1">
-                  <button className="flex items-center w-full px-4 py-2 text-sm text-foreground hover:bg-muted">
-                    <User className="h-4 w-4 mr-3" />
-                    Profile
+                  <button 
+                    onClick={() => {
+                      window.location.href = '/settings/profile';
+                      setShowProfileDropdown(false);
+                    }}
+                    className="flex items-center w-full px-3 py-2 text-sm hover:bg-muted transition-colors"
+                  >
+                    <User className="h-4 w-4 mr-2" />
+                    My Profile
                   </button>
-                  <button className="flex items-center w-full px-4 py-2 text-sm text-foreground hover:bg-muted">
-                    <Moon className="h-4 w-4 mr-3" />
-                    Dark mode
+                  <button 
+                    onClick={() => {
+                      window.location.href = '/settings/out-of-office';
+                      setShowProfileDropdown(false);
+                    }}
+                    className="flex items-center w-full px-3 py-2 text-sm hover:bg-muted transition-colors"
+                  >
+                    <Moon className="h-4 w-4 mr-2" />
+                    Out of Office
                   </button>
-                  <button className="flex items-center w-full px-4 py-2 text-sm text-foreground hover:bg-muted">
-                    <HelpCircle className="h-4 w-4 mr-3" />
-                    Help & support
+                  <button className="flex items-center w-full px-3 py-2 text-sm hover:bg-muted transition-colors">
+                    <MapPin className="h-4 w-4 mr-2" />
+                    RoadMap
                   </button>
-                </div>
-                
-                <div className="border-t border-border pt-1">
-                  <button className="flex items-center w-full px-4 py-2 text-sm text-foreground hover:bg-muted">
-                    <LogOut className="h-4 w-4 mr-3" />
-                    Sign out
+                  <button className="flex items-center w-full px-3 py-2 text-sm hover:bg-muted transition-colors">
+                    <HelpCircle className="h-4 w-4 mr-2" />
+                    Help
+                  </button>
+                  <div className="border-t border-border my-1"></div>
+                  <button className="flex items-center w-full px-3 py-2 text-sm hover:bg-muted transition-colors text-destructive">
+                    <LogOut className="h-4 w-4 mr-2" />
+                    Sign Out
                   </button>
                 </div>
               </div>
@@ -125,6 +142,6 @@ export const Header = ({
           </div>
         </div>
       </div>
-    </div>
+    </header>
   );
 };
