@@ -1,5 +1,6 @@
+
 import React, { useState } from 'react';
-import { CalendarIcon, Clock, MapPin, User, Users, MoreVertical, Video, ExternalLink, Edit, RotateCcw, X, UserPlus, StickyNote, Search, Filter, Download, ChevronDown } from 'lucide-react';
+import { CalendarIcon, Clock, MapPin, User, Users, MoreVertical, Video, ExternalLink, Edit, RotateCcw, X, UserPlus, StickyNote, Search, Filter, Download, ChevronDown, Upload } from 'lucide-react';
 import { Button } from '../components/ui/button';
 import { Badge } from '../components/ui/badge';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '../components/ui/dropdown-menu';
@@ -28,6 +29,10 @@ export default function Bookings() {
   const [showHostFilter, setShowHostFilter] = useState(false);
   const [showEventTypeFilter, setShowEventTypeFilter] = useState(false);
   const [showTeamFilter, setShowTeamFilter] = useState(false);
+  const [showEditLocation, setShowEditLocation] = useState(false);
+  const [showNoShowDialog, setShowNoShowDialog] = useState(false);
+  const [noShowBookingId, setNoShowBookingId] = useState<string | null>(null);
+  const [selectedAttendees, setSelectedAttendees] = useState<string[]>([]);
   const { toast } = useToast();
 
   const tabs = [
@@ -39,8 +44,8 @@ export default function Bookings() {
   ];
 
   const mockBookings = {
-    upcoming: {
-      today: [{
+    upcoming: [
+      {
         id: '1',
         title: '30 Minute Meeting',
         attendees: ['Sanskar Yadav'],
@@ -54,15 +59,17 @@ export default function Bookings() {
           link: 'https://meet.google.com/abc-def-ghi'
         },
         status: 'confirmed',
-        notes: 'Discussion about project requirements and timeline. Please come prepared with your questions.',
-        meetingNotes: ''
-      }],
-      tomorrow: [{
+        notes: 'Discussion about project requirements and timeline.',
+        meetingNotes: '',
+        isToday: true,
+        isPast: false
+      },
+      {
         id: '2',
         title: 'Product Demo',
         attendees: ['John Doe', 'Jane Smith'],
         email: 'john@example.com',
-        date: 'Tomorrow',
+        date: 'Tomorrow', 
         time: '2:00pm - 3:00pm',
         timezone: 'Indian Standard Time',
         location: {
@@ -71,11 +78,32 @@ export default function Bookings() {
         },
         status: 'confirmed',
         notes: 'Demo of new features and Q&A session.',
-        meetingNotes: ''
-      }]
-    },
-    unconfirmed: {
-      later: [{
+        meetingNotes: '',
+        isToday: false,
+        isPast: false
+      },
+      {
+        id: '7',
+        title: 'Client Call',
+        attendees: ['Mike Wilson'],
+        email: 'mike@company.com',
+        date: 'Today',
+        time: '1:00pm - 1:30pm',
+        timezone: 'Indian Standard Time',
+        location: {
+          type: 'online',
+          app: 'Zoom',
+          link: 'https://zoom.us/j/987654321'
+        },
+        status: 'confirmed',
+        notes: 'Follow-up call with client.',
+        meetingNotes: '',
+        isToday: true,
+        isPast: true
+      }
+    ],
+    unconfirmed: [
+      {
         id: '3',
         title: 'Discovery Call',
         attendees: ['Jane Smith'],
@@ -90,11 +118,13 @@ export default function Bookings() {
         },
         status: 'pending',
         notes: 'Initial discovery call to understand requirements.',
-        meetingNotes: ''
-      }]
-    },
-    recurring: {
-      weekly: [{
+        meetingNotes: '',
+        isToday: false,
+        isPast: false
+      }
+    ],
+    recurring: [
+      {
         id: '4',
         title: 'Weekly Standup',
         attendees: ['Team Meeting'],
@@ -110,11 +140,13 @@ export default function Bookings() {
         status: 'confirmed',
         notes: 'Weekly team sync and updates.',
         meetingNotes: '',
-        isRecurring: true
-      }]
-    },
-    past: {
-      yesterday: [{
+        isRecurring: true,
+        isToday: false,
+        isPast: false
+      }
+    ],
+    past: [
+      {
         id: '5',
         title: 'Client Consultation',
         attendees: ['Alice Brown'],
@@ -129,11 +161,13 @@ export default function Bookings() {
         },
         status: 'completed',
         notes: 'Consultation about marketing strategy.',
-        meetingNotes: 'Great meeting with actionable insights.'
-      }]
-    },
-    canceled: {
-      thisWeek: [{
+        meetingNotes: 'Great meeting with actionable insights.',
+        isToday: false,
+        isPast: true
+      }
+    ],
+    canceled: [
+      {
         id: '6',
         title: 'Strategy Session',
         attendees: ['Bob Wilson'],
@@ -147,9 +181,11 @@ export default function Bookings() {
         },
         status: 'canceled',
         notes: 'Strategy planning session.',
-        meetingNotes: ''
-      }]
-    }
+        meetingNotes: '',
+        isToday: false,
+        isPast: false
+      }
+    ]
   };
 
   const handleExport = () => {
@@ -162,6 +198,7 @@ export default function Bookings() {
   const handleCancelEvent = (bookingId: string) => {
     setCancelBookingId(bookingId);
     setShowCancelDialog(true);
+    setIsCanceled(false);
   };
 
   const confirmCancel = () => {
@@ -172,43 +209,46 @@ export default function Bookings() {
     window.location.href = '/scheduling-coming-soon';
   };
 
-  const toggleBookingExpansion = (bookingId: string) => {
-    setExpandedBooking(expandedBooking === bookingId ? null : bookingId);
+  const handleMarkNoShow = (bookingId: string) => {
+    setNoShowBookingId(bookingId);
+    setShowNoShowDialog(true);
   };
-  const handleAddGuests = (emails: string[]) => {
-    console.log('Adding guests:', emails);
-    setShowAddGuests(false);
-  };
-  const handleSaveMeetingNotes = (notes: string) => {
-    console.log('Saving meeting notes:', notes);
-    setShowMeetingNotes(false);
+
+  const confirmNoShow = () => {
+    console.log('Marking as no-show:', selectedAttendees);
+    setShowNoShowDialog(false);
+    setSelectedAttendees([]);
+    toast({
+      title: "Attendees marked as no-show",
+      description: "The selected attendees have been marked as no-show.",
+    });
   };
 
   const renderBookingCard = (booking: any) => {
-    const isExpanded = expandedBooking === booking.id;
     return (
-      <div key={booking.id} className="bg-card border border-border rounded-lg p-6 hover:shadow-sm transition-all duration-200 cursor-pointer" onClick={() => setExpandedBooking(expandedBooking === booking.id ? null : booking.id)}>
-        <div className="flex justify-between items-start mb-4">
-          <div className="flex-1">
-            <div className="flex items-center gap-3 mb-3">
-              <h3 className="font-semibold text-lg text-foreground">{booking.title}</h3>
+      <div key={booking.id} className="group relative rounded-xl border border-border bg-card p-6 transition-all hover:shadow-sm">
+        <div className="flex items-start justify-between">
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-3 mb-4">
+              <h3 className="text-lg font-semibold text-card-foreground truncate">{booking.title}</h3>
               <Badge variant={booking.status === 'confirmed' ? 'default' : booking.status === 'pending' ? 'secondary' : booking.status === 'completed' ? 'outline' : 'destructive'}>
                 {booking.status}
               </Badge>
             </div>
             
-            <div className="space-y-2 text-sm">
-              <div className="flex items-center gap-2 text-muted-foreground">
-                <User className="h-4 w-4" />
-                <span>{booking.attendees.join(', ')}</span>
+            <div className="space-y-3">
+              <div className="flex items-center gap-3 text-sm text-muted-foreground">
+                <div className="flex items-center gap-2">
+                  <User className="h-4 w-4" />
+                  <span>{booking.attendees.join(', ')}</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Clock className="h-4 w-4" />
+                  <span>{booking.date} • {booking.time}</span>
+                </div>
               </div>
               
-              <div className="flex items-center gap-2 text-muted-foreground">
-                <Clock className="h-4 w-4" />
-                <span>{booking.date} • {booking.time}</span>
-              </div>
-              
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 text-sm">
                 {booking.location.type === 'online' ? (
                   <>
                     <Video className="h-4 w-4 text-muted-foreground" />
@@ -229,15 +269,15 @@ export default function Bookings() {
               </div>
               
               {booking.notes && (
-                <div className="flex items-start gap-2 text-muted-foreground">
+                <div className="flex items-start gap-2 text-sm text-muted-foreground">
                   <StickyNote className="h-4 w-4 mt-0.5" />
-                  <span className="text-sm">{booking.notes}</span>
+                  <span>{booking.notes}</span>
                 </div>
               )}
             </div>
           </div>
           
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 ml-4">
             <Button variant="outline" size="sm" onClick={(e) => {
               e.stopPropagation();
               handleReschedule();
@@ -260,7 +300,7 @@ export default function Bookings() {
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
-                <DropdownMenuItem onClick={() => console.log('Edit location')}>
+                <DropdownMenuItem onClick={() => setShowEditLocation(true)}>
                   <MapPin className="h-4 w-4 mr-2" />
                   Edit location
                 </DropdownMenuItem>
@@ -273,69 +313,42 @@ export default function Bookings() {
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
-          </div>
-        </div>
-        
-        {isExpanded && (
-          <div className="mt-6 pt-6 border-t border-border">
-            <div className="flex justify-between items-center mb-4">
-              <h4 className="font-medium">Meeting Details</h4>
+            <Button variant="outline" size="sm" onClick={(e) => {
+              e.stopPropagation();
+              setSelectedBookingId(booking.id);
+              setShowMeetingNotes(true);
+            }}>
+              <StickyNote className="h-4 w-4 mr-1" />
+              Notes
+            </Button>
+            {booking.isPast && (
               <Button variant="outline" size="sm" onClick={(e) => {
                 e.stopPropagation();
-                setSelectedBookingId(booking.id);
-                setShowMeetingNotes(true);
+                handleMarkNoShow(booking.id);
               }}>
-                <StickyNote className="h-4 w-4 mr-1" />
-                Meeting Notes
+                Mark as No-Show
               </Button>
-            </div>
-            <div className="grid grid-cols-2 gap-4 text-sm">
-              <div>
-                <p className="font-medium mb-1">Duration</p>
-                <p className="text-muted-foreground">30 minutes</p>
-              </div>
-              <div>
-                <p className="font-medium mb-1">Created</p>
-                <p className="text-muted-foreground">2 days ago</p>
-              </div>
-              <div>
-                <p className="font-medium mb-1">Timezone</p>
-                <p className="text-muted-foreground">{booking.timezone}</p>
-              </div>
-              <div>
-                <p className="font-medium mb-1">Attendees</p>
-                <p className="text-muted-foreground">{booking.attendees.length}</p>
-              </div>
-            </div>
+            )}
           </div>
-        )}
-      </div>
-    );
-  };
-
-  const renderSection = (title: string, bookings: any[]) => {
-    if (bookings.length === 0) return null;
-    return (
-      <div className="mb-8">
-        <h3 className="text-lg font-semibold mb-4 text-foreground">{title}</h3>
-        <div className="space-y-4">
-          {bookings.map(renderBookingCard)}
         </div>
       </div>
     );
   };
 
-  const currentBookings = mockBookings[activeTab as keyof typeof mockBookings] || {};
+  const currentBookings = mockBookings[activeTab as keyof typeof mockBookings] || [];
+  const todayBookings = currentBookings.filter(booking => booking.isToday);
+  const otherBookings = currentBookings.filter(booking => !booking.isToday);
+  const showTodaySection = todayBookings.length > 0 && otherBookings.length > 0;
 
   return (
     <div className="min-h-screen bg-background">
-      <Header showEventTypesHeader={false} />
+      <Header showEventTypesHeader={true} />
       
       <div className="px-8 py-6">
         <div className="flex items-center justify-between space-x-4 mb-8">
           <div className="flex-1">
-            <h1 className="text-xl font-semibold text-foreground mb-1">Bookings</h1>
-            <p className="text-sm text-muted-foreground">Manage all your scheduled meetings and appointments.</p>
+            <h1 className="text-2xl font-bold text-foreground mb-1">Bookings</h1>
+            <p className="text-muted-foreground">Manage all your scheduled meetings and appointments.</p>
           </div>
         </div>
 
@@ -361,14 +374,14 @@ export default function Bookings() {
 
         {/* Search and Actions */}
         <div className="flex items-center justify-between space-x-4 mb-6">
-          <div className="relative w-80">
+          <div className="relative flex-1 max-w-md">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <input
               type="text"
               placeholder="Search bookings..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 border border-border rounded-lg focus:ring-2 focus:ring-ring focus:border-transparent bg-background text-sm"
+              className="w-full pl-10 pr-4 py-3 border border-border rounded-lg focus:ring-2 focus:ring-ring focus:border-transparent bg-background text-sm"
             />
           </div>
           
@@ -378,7 +391,7 @@ export default function Bookings() {
               Filters
             </Button>
             <Button variant="outline" onClick={handleExport}>
-              <Download className="h-4 w-4 mr-2" />
+              <Upload className="h-4 w-4 mr-2" />
               Export All
             </Button>
           </div>
@@ -386,10 +399,9 @@ export default function Bookings() {
 
         {/* Filters */}
         {showFilters && (
-          <div className="bg-muted/30 border border-border rounded-lg p-4 mb-6 space-y-4">
-            <div className="flex items-center justify-between">
-              <h3 className="font-medium text-foreground">Filters</h3>
-              <Button variant="ghost" size="sm">Clear all filters</Button>
+          <div className="bg-muted/30 border border-border rounded-lg p-4 mb-6">
+            <div className="flex items-center justify-between mb-4">
+              <Button variant="ghost" size="sm" className="text-muted-foreground">Clear all filters</Button>
             </div>
             
             <div className="grid grid-cols-5 gap-4">
@@ -414,15 +426,14 @@ export default function Bookings() {
                         />
                       </div>
                       <div className="space-y-2">
-                        <div className="flex items-center space-x-2">
-                          <Checkbox id="sanskar-yadav" defaultChecked />
+                        <div className="flex items-center justify-between">
                           <div className="flex items-center space-x-2">
                             <div className="h-6 w-6 rounded-full bg-primary flex items-center justify-center text-xs text-white">SY</div>
-                            <label htmlFor="sanskar-yadav" className="text-sm">Sanskar Yadav</label>
+                            <label className="text-sm">Sanskar Yadav</label>
                           </div>
+                          <Checkbox defaultChecked />
                         </div>
                       </div>
-                      <p className="text-sm text-muted-foreground text-center">No more results</p>
                     </div>
                   </PopoverContent>
                 </Popover>
@@ -449,12 +460,12 @@ export default function Bookings() {
                         />
                       </div>
                       <div className="space-y-2">
-                        <div className="flex items-center space-x-2">
-                          <Checkbox id="host-sanskar" defaultChecked />
+                        <div className="flex items-center justify-between">
                           <div className="flex items-center space-x-2">
                             <div className="h-6 w-6 rounded-full bg-primary flex items-center justify-center text-xs text-white">SY</div>
-                            <label htmlFor="host-sanskar" className="text-sm">Sanskar Yadav</label>
+                            <label className="text-sm">Sanskar Yadav</label>
                           </div>
+                          <Checkbox defaultChecked />
                         </div>
                       </div>
                     </div>
@@ -473,30 +484,30 @@ export default function Bookings() {
                   </PopoverTrigger>
                   <PopoverContent className="w-80 p-4">
                     <div className="space-y-3">
-                      <div className="flex items-center space-x-2">
-                        <Checkbox id="all-event-types" defaultChecked />
-                        <label htmlFor="all-event-types" className="text-sm font-medium">All event types</label>
+                      <div className="flex items-center justify-between">
+                        <label className="text-sm font-medium">All event types</label>
+                        <Checkbox defaultChecked />
                       </div>
                       <hr />
                       <div>
                         <h5 className="font-medium mb-2">Personal</h5>
                         <div className="space-y-2 ml-4">
-                          <div className="flex items-center space-x-2">
-                            <Checkbox id="30-min-meeting" />
-                            <label htmlFor="30-min-meeting" className="text-sm">30 Minute Meeting</label>
+                          <div className="flex items-center justify-between">
+                            <label className="text-sm">30 Minute Meeting</label>
+                            <Checkbox />
                           </div>
-                          <div className="flex items-center space-x-2">
-                            <Checkbox id="discovery-call" />
-                            <label htmlFor="discovery-call" className="text-sm">Discovery Call</label>
+                          <div className="flex items-center justify-between">
+                            <label className="text-sm">Discovery Call</label>
+                            <Checkbox />
                           </div>
                         </div>
                       </div>
                       <div>
                         <h5 className="font-medium mb-2">Tech Team</h5>
                         <div className="space-y-2 ml-4">
-                          <div className="flex items-center space-x-2">
-                            <Checkbox id="tech-standup" />
-                            <label htmlFor="tech-standup" className="text-sm">Weekly Standup</label>
+                          <div className="flex items-center justify-between">
+                            <label className="text-sm">Weekly Standup</label>
+                            <Checkbox />
                           </div>
                         </div>
                       </div>
@@ -516,27 +527,27 @@ export default function Bookings() {
                   </PopoverTrigger>
                   <PopoverContent className="w-80 p-4">
                     <div className="space-y-3">
-                      <div className="flex items-center space-x-2">
-                        <Checkbox id="all-teams" defaultChecked />
-                        <label htmlFor="all-teams" className="text-sm font-medium">All</label>
+                      <div className="flex items-center justify-between">
+                        <label className="text-sm font-medium">All</label>
+                        <Checkbox defaultChecked />
                       </div>
-                      <div className="flex items-center space-x-2">
-                        <Checkbox id="personal-team" />
-                        <label htmlFor="personal-team" className="text-sm">Personal</label>
+                      <div className="flex items-center justify-between">
+                        <label className="text-sm">Personal</label>
+                        <Checkbox />
                       </div>
                       <hr />
                       <div className="space-y-2">
-                        <div className="flex items-center space-x-2">
-                          <Checkbox id="tech-team-filter" />
-                          <label htmlFor="tech-team-filter" className="text-sm">Tech Team</label>
+                        <div className="flex items-center justify-between">
+                          <label className="text-sm">Tech Team</label>
+                          <Checkbox />
                         </div>
-                        <div className="flex items-center space-x-2">
-                          <Checkbox id="design-team-filter" />
-                          <label htmlFor="design-team-filter" className="text-sm">Design Team</label>
+                        <div className="flex items-center justify-between">
+                          <label className="text-sm">Design Team</label>
+                          <Checkbox />
                         </div>
-                        <div className="flex items-center space-x-2">
-                          <Checkbox id="marketing-team-filter" />
-                          <label htmlFor="marketing-team-filter" className="text-sm">Marketing Team</label>
+                        <div className="flex items-center justify-between">
+                          <label className="text-sm">Marketing Team</label>
+                          <Checkbox />
                         </div>
                       </div>
                     </div>
@@ -563,15 +574,23 @@ export default function Bookings() {
         )}
 
         {/* Content */}
-        <div className="max-w-4xl">
-          {Object.keys(currentBookings).length > 0 ? (
-            Object.entries(currentBookings).map(([sectionKey, bookings]) => 
-              renderSection(
-                sectionKey.charAt(0).toUpperCase() + sectionKey.slice(1), 
-                bookings as any[]
-              )
-            )
-          ) : (
+        <div className="space-y-6">
+          {showTodaySection && (
+            <div>
+              <h3 className="text-lg font-semibold mb-4 text-foreground">Today</h3>
+              <div className="space-y-4">
+                {todayBookings.map(renderBookingCard)}
+              </div>
+            </div>
+          )}
+          
+          {otherBookings.length > 0 && (
+            <div className="space-y-4">
+              {otherBookings.map(renderBookingCard)}
+            </div>
+          )}
+          
+          {currentBookings.length === 0 && (
             <div className="text-center py-12">
               <CalendarIcon className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
               <h3 className="text-lg font-medium mb-2">No bookings found</h3>
@@ -593,39 +612,32 @@ export default function Bookings() {
           {!isCanceled ? (
             <>
               <DialogHeader>
-                <DialogTitle>Are you sure you want to cancel the event?</DialogTitle>
+                <DialogTitle>Cancel Event</DialogTitle>
                 <DialogDescription>
-                  This meeting is scheduled and we sent an email with a calendar invitation with the details to everyone.
+                  Are you sure you want to cancel this event? All attendees will be notified.
                 </DialogDescription>
               </DialogHeader>
               
               <div className="space-y-4">
-                <div className="space-y-2">
-                  <div className="flex justify-between">
-                    <span className="text-sm font-medium">What</span>
-                    <span className="text-sm">Product Hunt Chats between Sanskar Yadav and Sanskar Yadav</span>
+                <div className="space-y-3 text-sm">
+                  <div>
+                    <span className="font-medium">Event:</span>
+                    <div className="mt-1">30 Minute Meeting</div>
                   </div>
-                  <div className="flex justify-between">
-                    <span className="text-sm font-medium">When</span>
-                    <div className="text-sm text-right">
-                      <div>Monday, July 14, 2025</div>
-                      <div>1:45 PM - 2:00 PM (India Standard Time)</div>
+                  <div>
+                    <span className="font-medium">Date & Time:</span>
+                    <div className="mt-1">Monday, July 14, 2025</div>
+                    <div>9:00 AM - 9:30 AM (IST)</div>
+                  </div>
+                  <div>
+                    <span className="font-medium">Location:</span>
+                    <div className="mt-1 text-primary">Google Meet</div>
+                  </div>
+                  <div>
+                    <span className="font-medium">Attendees:</span>
+                    <div className="mt-1">
+                      <div>Sanskar Yadav (sanskar@onehash.ai)</div>
                     </div>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-sm font-medium">Who</span>
-                    <div className="text-sm text-right">
-                      <div>Sanskar Yadav <Badge variant="secondary" className="ml-1">Host</Badge></div>
-                      <div>sanskarix@gmail.com</div>
-                      <div className="mt-1">Sanskar Yadav</div>
-                      <div>sanskarix@gmail.com</div>
-                    </div>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-sm font-medium">Where</span>
-                    <button className="text-sm text-primary flex items-center gap-1">
-                      Google Meet <ExternalLink className="h-3 w-3" />
-                    </button>
                   </div>
                 </div>
 
@@ -641,10 +653,10 @@ export default function Bookings() {
 
                 <div className="flex justify-end space-x-3">
                   <Button variant="outline" onClick={() => setShowCancelDialog(false)}>
-                    Nevermind
+                    Keep Event
                   </Button>
                   <Button variant="destructive" onClick={confirmCancel}>
-                    Cancel event
+                    Cancel Event
                   </Button>
                 </div>
               </div>
@@ -654,31 +666,107 @@ export default function Bookings() {
               <div className="h-16 w-16 rounded-full bg-destructive/10 flex items-center justify-center mx-auto mb-4">
                 <X className="h-8 w-8 text-destructive" />
               </div>
-              <DialogTitle className="text-xl mb-4">This event is canceled</DialogTitle>
+              <DialogTitle className="text-xl mb-4">Event Canceled</DialogTitle>
               <div className="space-y-3 text-sm">
-                <div className="flex justify-between">
-                  <span className="font-medium">What</span>
-                  <span>Product Hunt Chats between Sanskar Yadav and Sanskar Yadav</span>
+                <div>
+                  <span className="font-medium">Event:</span>
+                  <div className="mt-1 line-through text-muted-foreground">30 Minute Meeting</div>
                 </div>
-                <div className="flex justify-between">
-                  <span className="font-medium">When</span>
-                  <div className="text-right">
-                    <div className="line-through text-muted-foreground">Monday, July 14, 2025</div>
-                    <div className="line-through text-muted-foreground">1:45 PM - 2:00 PM (India Standard Time)</div>
+                <div>
+                  <span className="font-medium">Date & Time:</span>
+                  <div className="mt-1 line-through text-muted-foreground">Monday, July 14, 2025</div>
+                  <div className="line-through text-muted-foreground">9:00 AM - 9:30 AM (IST)</div>
+                </div>
+                <div>
+                  <span className="font-medium">Attendees:</span>
+                  <div className="mt-1">
+                    <div>Sanskar Yadav (sanskar@onehash.ai)</div>
                   </div>
                 </div>
-                <div className="flex justify-between">
-                  <span className="font-medium">Who</span>
-                  <div className="text-right">
-                    <div>Sanskar Yadav <Badge variant="secondary" className="ml-1">Host</Badge></div>
-                    <div className="text-muted-foreground">sanskarix@gmail.com</div>
-                    <div className="mt-1">Sanskar Yadav</div>
-                    <div className="text-muted-foreground">sanskarix@gmail.com</div>
-                  </div>
-                </div>
+                <p className="text-muted-foreground mt-4">All attendees have been notified of the cancellation.</p>
               </div>
             </div>
           )}
+        </DialogContent>
+      </Dialog>
+
+      {/* Edit Location Dialog */}
+      <Dialog open={showEditLocation} onOpenChange={setShowEditLocation}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <MapPin className="h-5 w-5" />
+              Edit Location
+            </DialogTitle>
+          </DialogHeader>
+          
+          <div className="space-y-4">
+            <div>
+              <span className="text-sm font-medium">Current Location:</span>
+              <div className="mt-2 flex items-center gap-2">
+                <Video className="h-4 w-4 text-primary" />
+                <span className="text-sm">Google Meet</span>
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <select className="w-full p-3 border border-border rounded-lg bg-background">
+                <option>Google Meet</option>
+                <option>Zoom</option>
+                <option>Microsoft Teams</option>
+                <option>Phone call</option>
+                <option>Physical location</option>
+              </select>
+            </div>
+
+            <div className="flex justify-end space-x-3">
+              <Button variant="outline" onClick={() => setShowEditLocation(false)}>
+                Cancel
+              </Button>
+              <Button onClick={() => setShowEditLocation(false)}>
+                Update
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Mark as No-Show Dialog */}
+      <Dialog open={showNoShowDialog} onOpenChange={setShowNoShowDialog}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Mark as No-Show</DialogTitle>
+            <DialogDescription>
+              After Event workflow reminders will not be triggered for attendees marked as no-show
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <div className="flex items-center justify-between">
+                <label className="text-sm">yo</label>
+                <Checkbox 
+                  checked={selectedAttendees.includes('yo')}
+                  onCheckedChange={(checked) => {
+                    if (checked) {
+                      setSelectedAttendees([...selectedAttendees, 'yo']);
+                    } else {
+                      setSelectedAttendees(selectedAttendees.filter(a => a !== 'yo'));
+                    }
+                  }}
+                />
+              </div>
+            </div>
+
+            <div className="flex justify-end space-x-3">
+              <Button variant="outline" onClick={() => setShowNoShowDialog(false)}>
+                Close
+              </Button>
+              <Button onClick={confirmNoShow}>
+                Confirm
+              </Button>
+            </div>
+          </div>
         </DialogContent>
       </Dialog>
 
