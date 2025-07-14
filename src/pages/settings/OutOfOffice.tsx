@@ -178,8 +178,8 @@ export const OutOfOffice = () => {
           </Dialog>
         </div>
 
-        {oooSchedules.length > 0 ? <div className="space-y-4">
-            {oooSchedules.map(schedule => <div key={schedule.id} className="border rounded-lg p-6">
+        {oooSchedules.length > 0 ? <div className="space-y-6">
+            {oooSchedules.map(schedule => <div key={schedule.id} className="space-y-4">
                 <div className="flex items-center justify-between">
                   <div className="flex items-start space-x-4">
                     <div className="w-6 h-6 bg-green-100 rounded-full flex items-center justify-center mt-1">
@@ -202,7 +202,9 @@ export const OutOfOffice = () => {
               </div>)}
 
             {/* Vertical dotted line */}
-            
+            <div className="flex justify-center my-6">
+              <div className="h-16 border-l-2 border-dashed border-muted-foreground/30"></div>
+            </div>
 
             {/* Add button below schedules */}
             <div className="text-center">
@@ -216,7 +218,7 @@ export const OutOfOffice = () => {
                 {/* Dialog content same as above */}
               </Dialog>
             </div>
-          </div> : <div className="flex flex-col items-center justify-center py-16 text-center border rounded-lg">
+          </div> : <div className="flex flex-col items-center justify-center py-16 text-center">
             <div className="w-20 h-20 bg-muted rounded-full flex items-center justify-center mb-6">
               <Clock className="h-10 w-10 text-muted-foreground" />
             </div>

@@ -71,7 +71,7 @@ export const Appearance = () => {
 
         <div className="space-y-8">
           {/* Dashboard theme */}
-          <div className="border rounded-lg p-6">
+          <div className="space-y-4">
             <div className="space-y-4">
               <div>
                 <h2 className="text-lg font-medium mb-2">Dashboard theme</h2>
@@ -96,7 +96,7 @@ export const Appearance = () => {
           </div>
 
           {/* Booking page theme */}
-          <div className="border rounded-lg p-6">
+          <div className="pt-8 border-t space-y-4">
             <div className="space-y-4">
               <div>
                 <h2 className="text-lg font-medium mb-2">Booking page theme</h2>
@@ -121,7 +121,7 @@ export const Appearance = () => {
           </div>
 
           {/* Booking layout */}
-          <div className="border rounded-lg p-6">
+          <div className="pt-8 border-t space-y-4">
             <div className="space-y-4">
               <div>
                 <h2 className="text-lg font-medium mb-2">Booking layout</h2>
@@ -167,7 +167,7 @@ export const Appearance = () => {
           </div>
 
           {/* Custom brand colors */}
-          <div className="border rounded-lg p-6">
+          <div className="pt-8 border-t space-y-4">
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <div>
@@ -221,7 +221,7 @@ export const Appearance = () => {
           </div>
 
           {/* Other settings */}
-          <div className="border rounded-lg p-6">
+          <div className="pt-8 border-t space-y-6">
             <div className="space-y-6">
               <div className="flex items-center justify-between">
                 <div>

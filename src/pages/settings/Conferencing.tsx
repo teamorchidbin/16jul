@@ -43,8 +43,8 @@ export const Conferencing = () => {
           <p className="text-muted-foreground">Add your favourite video conferencing apps for your meetings</p>
         </div>
 
-        <div className="space-y-4">
-          {conferencingApps.map((app, index) => <div key={index} className="border rounded-lg p-6">
+        <div className="space-y-6">
+          {conferencingApps.map((app, index) => <div key={index} className="space-y-4">
               <div className="flex items-start justify-between">
                 <div className="flex items-start space-x-4">
                   <div className={`w-12 h-12 ${app.color} rounded-lg flex items-center justify-center text-white text-xl`}>
@@ -80,11 +80,16 @@ export const Conferencing = () => {
         </div>
 
         {/* Vertical dotted line */}
-        
+        <div className="flex justify-center my-6">
+          <div className="h-16 border-l-2 border-dashed border-muted-foreground/30"></div>
+        </div>
 
         {/* Add new app button */}
         <div className="text-center">
-          
+          <Button onClick={handleAddApp} className="bg-blue-600 hover:bg-blue-700">
+            <Plus className="h-4 w-4 mr-2" />
+            Add app
+          </Button>
         </div>
       </div>
     </div>;

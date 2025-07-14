@@ -109,7 +109,7 @@ export const Profile = () => {
 
         <div className="space-y-8 mb-12">
           {/* Profile Information Section */}
-          <div className="border rounded-lg p-6 space-y-8">
+          <div className="space-y-8">
             {/* Profile Picture */}
             <div className="space-y-4">
               <Label className="text-base font-medium">Profile Picture</Label>
@@ -312,7 +312,7 @@ export const Profile = () => {
         </div>
 
         {/* Danger Zone */}
-        <div className="border rounded-lg p-6 border-destructive/30 bg-destructive/5">
+        <div className="pt-8 border-t space-y-6 border-destructive/30 bg-destructive/5">
           <div className="mb-6">
             <h2 className="text-lg font-medium mb-2 text-destructive">Danger zone</h2>
             <p className="text-sm text-muted-foreground">Be careful. Account deletion cannot be undone.</p>

@@ -26,7 +26,7 @@ export const Calendars = () => {
 
         <div className="space-y-8">
           {/* Add to calendar */}
-          <div className="border rounded-lg p-6">
+          <div className="space-y-4">
             <div className="space-y-4">
               <h2 className="text-lg font-medium">Add to calendar</h2>
               <p className="text-muted-foreground">Select where to add events when you're booked.</p>
@@ -49,7 +49,7 @@ export const Calendars = () => {
           </div>
 
           {/* Check for conflicts */}
-          <div className="border rounded-lg p-6">
+          <div className="pt-8 border-t space-y-4">
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <h2 className="text-lg font-medium">Check for conflicts</h2>
