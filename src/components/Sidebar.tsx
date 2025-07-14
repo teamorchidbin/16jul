@@ -1,7 +1,6 @@
-
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import { Calendar, Users, Settings, BarChart3, Workflow, FileText, Clock, Moon, Sun } from 'lucide-react';
+import { Calendar, Clock, Users, Settings, BarChart3, Workflow, FileText, Zap, Moon, Sun } from 'lucide-react';
 
 interface SidebarProps {
   darkMode: boolean;
@@ -36,7 +35,7 @@ export const Sidebar = ({
     {
       name: 'Apps',
       href: '/apps',
-      icon: Workflow
+      icon: Zap
     },
     {
       name: 'Routing Forms',
