@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { ChevronDown, Moon, HelpCircle, MapPin, LogOut, User, Bell, Copy, Eye } from 'lucide-react';
 import { NotificationDropdown } from './NotificationDropdown';
 import { Switch } from './ui/switch';
@@ -17,6 +17,23 @@ interface HeaderProps {
 export const Header = ({ showEventTypesHeader = false, eventData }: HeaderProps) => {
   const [showProfileDropdown, setShowProfileDropdown] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setShowProfileDropdown(false);
+      }
+    };
+
+    if (showProfileDropdown) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [showProfileDropdown]);
 
   return (
     <header className="h-20 border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-50">
@@ -71,7 +88,7 @@ export const Header = ({ showEventTypesHeader = false, eventData }: HeaderProps)
           </div>
 
           {/* Profile */}
-          <div className="relative">
+          <div className="relative" ref={dropdownRef}>
             <button
               onClick={() => setShowProfileDropdown(!showProfileDropdown)}
               className="flex items-center space-x-3 px-4 py-2 hover:bg-muted rounded-lg transition-colors w-full"
@@ -86,11 +103,23 @@ export const Header = ({ showEventTypesHeader = false, eventData }: HeaderProps)
             {showProfileDropdown && (
               <div className="absolute right-0 top-full mt-1 w-48 bg-popover border border-border rounded-lg shadow-lg animate-scale-in z-10">
                 <div className="py-1">
-                  <button className="flex items-center w-full px-3 py-2 text-sm hover:bg-muted transition-colors">
+                  <button 
+                    onClick={() => {
+                      window.location.href = '/settings/profile';
+                      setShowProfileDropdown(false);
+                    }}
+                    className="flex items-center w-full px-3 py-2 text-sm hover:bg-muted transition-colors"
+                  >
                     <User className="h-4 w-4 mr-2" />
                     My Profile
                   </button>
-                  <button className="flex items-center w-full px-3 py-2 text-sm hover:bg-muted transition-colors">
+                  <button 
+                    onClick={() => {
+                      window.location.href = '/settings/out-of-office';
+                      setShowProfileDropdown(false);
+                    }}
+                    className="flex items-center w-full px-3 py-2 text-sm hover:bg-muted transition-colors"
+                  >
                     <Moon className="h-4 w-4 mr-2" />
                     Out of Office
                   </button>

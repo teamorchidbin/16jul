@@ -77,15 +77,15 @@ export const EventLimits = () => {
     };
     updateSetting('limitTotalBookingDuration', 'limits', [...settings.limitTotalBookingDuration.limits, newLimit]);
   };
-  return <div className="p-6 max-w-4xl space-y-6">
+  return <div className="p-6 max-w-6xl mx-auto space-y-6">
       {/* Before Event */}
-      <div className="border-b border-gray-200 pb-6">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Before event</h3>
+      <div className="pb-6 space-y-4">
+        <h3 className="text-lg font-semibold text-foreground mb-4">Before event</h3>
         
         <div className="grid grid-cols-2 gap-6">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">Buffer time</label>
-            <select value={settings.beforeEvent.bufferTime} onChange={e => updateSetting('beforeEvent', 'bufferTime', e.target.value)} className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+            <select value={settings.beforeEvent.bufferTime} onChange={e => updateSetting('beforeEvent', 'bufferTime', e.target.value)} className="w-full px-3 py-2 border border-border rounded-lg focus:ring-2 focus:ring-ring bg-background">
               <option value="no-buffer">No buffer time</option>
               <option value="15">15 minutes</option>
               <option value="30">30 minutes</option>

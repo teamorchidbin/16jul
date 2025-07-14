@@ -46,6 +46,9 @@ export const SettingsSidebar = () => {
       title: 'Teams',
       items: [
         { name: 'Add a team', href: '/settings/teams/new', icon: Users },
+        { name: 'Tech Team', href: '/settings/teams/tech', icon: Users },
+        { name: 'Design Team', href: '/settings/teams/design', icon: Users },
+        { name: 'Marketing Team', href: '/settings/teams/marketing', icon: Users },
       ]
     }
   ];

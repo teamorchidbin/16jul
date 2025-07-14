@@ -179,7 +179,7 @@ export const EventSetup = ({
     }
     return null;
   };
-  return <div className="p-8 max-w-4xl space-y-6 mx-0">
+  return <div className="p-6 max-w-6xl mx-auto space-y-6">
       <div>
         <label className="block text-sm font-medium text-foreground mb-2">Title</label>
         <input type="text" value={formData.title} onChange={e => handleFormChange('title', e.target.value)} className="w-full px-4 py-3 border border-border rounded-lg focus:ring-2 focus:ring-ring focus:border-transparent bg-background" />

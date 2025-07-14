@@ -179,7 +179,7 @@ export const OutOfOffice = () => {
         </div>
 
         {oooSchedules.length > 0 ? <div className="space-y-6">
-            {oooSchedules.map(schedule => <div key={schedule.id} className="space-y-4">
+            {oooSchedules.map(schedule => <div key={schedule.id} className="border border-border rounded-lg p-4 bg-card">
                 <div className="flex items-center justify-between">
                   <div className="flex items-start space-x-4">
                     <div className="w-6 h-6 bg-green-100 rounded-full flex items-center justify-center mt-1">
@@ -191,9 +191,62 @@ export const OutOfOffice = () => {
                     </div>
                   </div>
                   <div className="flex items-center space-x-2">
-                    <Button variant="ghost" size="sm">
-                      <Edit className="h-4 w-4" />
-                    </Button>
+                    <Dialog>
+                      <DialogTrigger asChild>
+                        <Button variant="ghost" size="sm">
+                          <Edit className="h-4 w-4" />
+                        </Button>
+                      </DialogTrigger>
+                      <DialogContent className="sm:max-w-md">
+                        <DialogHeader>
+                          <DialogTitle>Edit Out of Office</DialogTitle>
+                        </DialogHeader>
+                        <div className="space-y-4">
+                          <div className="space-y-2">
+                            <Label>Dates</Label>
+                            <Popover>
+                              <PopoverTrigger asChild>
+                                <Button variant="outline" className="w-full justify-start text-left">
+                                  <CalendarIcon className="mr-2 h-4 w-4" />
+                                  {schedule.dateRange}
+                                </Button>
+                              </PopoverTrigger>
+                              <PopoverContent className="w-auto p-0" align="start">
+                                <Calendar mode="range" initialFocus className={cn("p-3 pointer-events-auto")} />
+                              </PopoverContent>
+                            </Popover>
+                          </div>
+
+                          <div className="space-y-2">
+                            <Label>Reason</Label>
+                            <Select defaultValue="vacation">
+                              <SelectTrigger>
+                                <SelectValue placeholder="Select reason" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {reasonOptions.map(option => <SelectItem key={option.value} value={option.value}>
+                                    {option.label}
+                                  </SelectItem>)}
+                              </SelectContent>
+                            </Select>
+                          </div>
+
+                          <div className="space-y-2">
+                            <Label>Notes</Label>
+                            <Textarea placeholder="Additional notes..." rows={3} />
+                          </div>
+
+                          <div className="flex space-x-2">
+                            <Button variant="outline">
+                              Close
+                            </Button>
+                            <Button>
+                              Update
+                            </Button>
+                          </div>
+                        </div>
+                      </DialogContent>
+                    </Dialog>
                     <Button variant="ghost" size="sm" onClick={() => handleDeleteOOO(schedule.id)}>
                       <Trash2 className="h-4 w-4" />
                     </Button>

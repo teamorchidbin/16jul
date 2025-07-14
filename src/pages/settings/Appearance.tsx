@@ -6,6 +6,7 @@ import { Label } from '../../components/ui/label';
 import { Switch } from '../../components/ui/switch';
 import { Checkbox } from '../../components/ui/checkbox';
 import { Upload } from 'lucide-react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '../../components/ui/dialog';
 
 export const Appearance = () => {
   const [customBrandColors, setCustomBrandColors] = useState(true);
@@ -240,7 +241,23 @@ export const Appearance = () => {
                     <h2 className="text-base font-medium">Custom brand logo</h2>
                     <p className="text-sm text-muted-foreground">Add your own brand logo into your booking page.</p>
                   </div>
-                  <Button variant="outline">Preview</Button>
+                    <Dialog>
+                      <DialogTrigger asChild>
+                        <Button variant="outline">Preview</Button>
+                      </DialogTrigger>
+                      <DialogContent className="max-w-md">
+                        <DialogHeader>
+                          <DialogTitle>Brand Logo Preview</DialogTitle>
+                        </DialogHeader>
+                        <div className="flex justify-center p-8">
+                          <img 
+                            src="https://cdn.prod.website-files.com/5e53d34464688e6f5960a338/610a36c2792530d601aaf35f_OneHash_Logo.svg" 
+                            alt="OneHash Logo Preview" 
+                            className="max-w-full max-h-32 object-contain"
+                          />
+                        </div>
+                      </DialogContent>
+                    </Dialog>
                 </div>
                 
                 <div className="flex items-center space-x-4">

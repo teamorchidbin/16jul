@@ -24,12 +24,14 @@ export const ImportCalendly = () => {
         </div>
 
         <div className="space-y-6">
-          <div className="flex items-center space-x-2">
-            <Checkbox 
-              checked={notifyBookers}
-              onCheckedChange={handleNotifyBookersChange}
-            />
-            <span className="text-sm">Notify past bookers about your migration</span>
+          <div className="border border-border rounded-lg p-4 bg-card">
+            <div className="flex items-center space-x-2">
+              <Checkbox 
+                checked={notifyBookers}
+                onCheckedChange={handleNotifyBookersChange}
+              />
+              <span className="text-sm">Notify past bookers about your migration</span>
+            </div>
           </div>
           
           <div className="text-center">

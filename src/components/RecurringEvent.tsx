@@ -7,7 +7,7 @@ export const RecurringEvent = () => {
   const [isRecurringEnabled, setIsRecurringEnabled] = useState(false);
 
   return (
-    <div className="p-6 max-w-4xl mx-0">
+    <div className="p-6 max-w-6xl mx-auto space-y-6">
       <div className="space-y-6">
         {/* Warning */}
         <div className="flex items-start space-x-3 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">

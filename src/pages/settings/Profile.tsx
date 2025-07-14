@@ -312,8 +312,8 @@ export const Profile = () => {
         </div>
 
         {/* Danger Zone */}
-        <div className="pt-8 border-t space-y-6 border-destructive/30 bg-destructive/5">
-          <div className="mb-6">
+        <div className="border border-destructive/30 rounded-lg p-6 bg-destructive/5">
+          <div className="mb-4">
             <h2 className="text-lg font-medium mb-2 text-destructive">Danger zone</h2>
             <p className="text-sm text-muted-foreground">Be careful. Account deletion cannot be undone.</p>
           </div>

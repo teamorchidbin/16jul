@@ -104,8 +104,8 @@ export const EventAvailability = () => {
   }];
   const currentSchedule = schedules.find(s => s.id === availabilityType) || schedules[0];
   const timezone = 'Asia/Calcutta';
-  return <div className="p-8 max-w-4xl space-y-8">
-      <div>
+  return <div className="p-6 max-w-6xl mx-auto space-y-6 flex justify-center">
+      <div className="w-full max-w-4xl">
         
         
         <div className="mb-8">

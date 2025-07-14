@@ -24,12 +24,12 @@ export const EventAdvanced = () => {
     icon: Tablet,
     description: 'Clean, minimal design'
   }];
-  return <div className="p-6 max-w-4xl space-y-8">
+  return <div className="p-6 max-w-6xl mx-auto space-y-6">
       
 
       {/* Booking Settings */}
-      <div className="border-b border-gray-200 pb-6">
-        <h3 className="text-base font-semibold text-gray-900 mb-4">Booking Settings</h3>
+      <div className="pb-6 space-y-4">
+        <h3 className="text-lg font-semibold text-foreground mb-4">Booking Settings</h3>
         
         <div className="space-y-4">
           <div className="flex items-center justify-between">

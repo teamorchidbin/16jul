@@ -43,7 +43,13 @@ export const EventWorkflows = () => {
     <div className="p-6 max-w-6xl mx-auto space-y-6">
       <div className="space-y-4">
         <div className="flex items-center justify-between">
-          <h3 className="text-lg font-semibold text-foreground">Available Workflows</h3>
+          <div className="flex items-center space-x-2">
+            <h3 className="text-lg font-semibold text-foreground">Available Workflows</h3>
+            <div className="w-2 h-2 bg-muted-foreground/30 rounded-full"></div>
+            <span className="text-sm text-muted-foreground">
+              {activeWorkflows.length === 0 ? 'No Workflows Active' : `${activeWorkflows.length} Active`}
+            </span>
+          </div>
           <button className="flex items-center px-3 py-2 text-sm bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors font-medium">
             <Plus className="h-4 w-4 mr-2" />
             Create Custom Workflow
@@ -99,15 +105,6 @@ export const EventWorkflows = () => {
           ))}
         </div>
 
-        {activeWorkflows.length === 0 && (
-          <div className="text-center py-8 bg-muted/20 rounded-lg border border-dashed border-border">
-            <div className="w-12 h-12 bg-muted rounded-full flex items-center justify-center mx-auto mb-3">
-              <MessageSquare className="h-6 w-6 text-muted-foreground" />
-            </div>
-            <p className="text-muted-foreground font-medium">No workflows are currently active</p>
-            <p className="text-muted-foreground/70 text-sm mt-1">Enable workflows above to automate your event processes</p>
-          </div>
-        )}
       </div>
     </div>
   );

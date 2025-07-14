@@ -140,7 +140,7 @@ export const EventTypes = () => {
       <div className="flex items-center justify-between space-x-4">
         <div className="flex items-center space-x-4 flex-1 min-w-0 rounded-md">
           <div className="flex items-center bg-muted/50 rounded-lg p-1 flex-shrink-0">
-            <button onClick={() => setSelectedTeam('personal')} className={`flex items-center px-3 py-1.5 text-sm font-medium rounded-md transition-all whitespace-nowrap ${selectedTeam === 'personal' ? 'bg-background text-foreground shadow-sm' : 'text-muted-foreground hover:text-foreground'}`}>
+            <button onClick={() => setSelectedTeam('personal')} className={`flex items-center px-3 py-1.5 text-sm font-medium rounded-md transition-all whitespace-nowrap ${selectedTeam === 'personal' ? 'bg-muted text-foreground shadow-sm' : 'text-muted-foreground hover:text-foreground'}`}>
               <div className={`h-5 w-5 rounded-full flex items-center justify-center text-xs font-medium mr-2 ${selectedTeam === 'personal' ? 'bg-primary text-primary-foreground' : 'bg-muted-foreground/20'}`}>
                 {teamEvents[0].avatar}
               </div>
