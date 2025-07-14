@@ -18,6 +18,11 @@ import { ApiKeys } from "./pages/settings/ApiKeys";
 import { EventTypes } from "./pages/EventTypes";
 import { EditEvent } from "./pages/EditEvent";
 import NotFound from "./pages/NotFound";
+import Bookings from "./pages/Bookings";
+import { Password } from "./pages/settings/Password";
+import { Impersonation } from "./pages/settings/Impersonation";
+import { TeamNew } from "./pages/settings/TeamNew";
+import { TeamDetail } from "./pages/settings/TeamDetail";
 
 const queryClient = new QueryClient();
 
@@ -31,7 +36,7 @@ const App = () => (
           <Route path="/" element={<Layout />}>
             <Route index element={<EventTypes />} />
             <Route path="event/:eventId/:tab" element={<EditEvent />} />
-            <Route path="bookings" element={<div className="p-8">Bookings page coming soon</div>} />
+            <Route path="bookings" element={<Bookings />} />
             <Route path="availability" element={<div className="p-8">Availability page coming soon</div>} />
             <Route path="teams" element={<div className="p-8">Teams page coming soon</div>} />
             <Route path="apps" element={<div className="p-8">Apps page coming soon</div>} />
@@ -47,12 +52,14 @@ const App = () => (
             <Route path="conferencing" element={<Conferencing />} />
             <Route path="appearance" element={<Appearance />} />
             <Route path="out-of-office" element={<OutOfOffice />} />
-            <Route path="security/password" element={<div className="p-8">Password settings coming soon</div>} />
-            <Route path="security/impersonation" element={<div className="p-8">Impersonation settings coming soon</div>} />
+            <Route path="security/password" element={<Password />} />
+            <Route path="security/impersonation" element={<Impersonation />} />
             <Route path="import/calendly" element={<ImportCalendly />} />
             <Route path="developer/webhooks" element={<Webhooks />} />
             <Route path="developer/api-keys" element={<ApiKeys />} />
-            <Route path="teams/new" element={<div className="p-8">Add team coming soon</div>} />
+            <Route path="teams/new" element={<TeamNew />} />
+            <Route path="teams/:teamId" element={<TeamDetail />} />
+            <Route path="teams/:teamId/:section" element={<TeamDetail />} />
           </Route>
           
           <Route path="*" element={<NotFound />} />

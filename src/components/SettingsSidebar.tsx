@@ -1,9 +1,51 @@
 
-import React from 'react';
-import { NavLink } from 'react-router-dom';
-import { ArrowLeft, User, Settings, Calendar, Video, Palette, Clock, Shield, Lock, Users, Download, Code, Webhook, Key } from 'lucide-react';
+import React, { useState } from 'react';
+import { NavLink, useLocation } from 'react-router-dom';
+import { ArrowLeft, User, Settings, Calendar, Video, Palette, Clock, Shield, Lock, Users, Download, Code, Webhook, Key, ChevronDown, ChevronRight } from 'lucide-react';
 
 export const SettingsSidebar = () => {
+  const location = useLocation();
+  const [expandedTeam, setExpandedTeam] = useState<string | null>(null);
+  
+  const teams = [
+    {
+      id: 'tech-team',
+      name: 'Tech Team',
+      href: '/settings/teams/tech-team',
+      subItems: [
+        { name: 'Profile', href: '/settings/teams/tech-team/profile' },
+        { name: 'Members', href: '/settings/teams/tech-team/members' },
+        { name: 'Event Types', href: '/settings/teams/tech-team/event-types' },
+        { name: 'Appearance', href: '/settings/teams/tech-team/appearance' },
+        { name: 'Booking Limits', href: '/settings/teams/tech-team/booking-limits' },
+      ]
+    },
+    {
+      id: 'design-team',
+      name: 'Design Team',
+      href: '/settings/teams/design-team',
+      subItems: [
+        { name: 'Profile', href: '/settings/teams/design-team/profile' },
+        { name: 'Members', href: '/settings/teams/design-team/members' },
+        { name: 'Event Types', href: '/settings/teams/design-team/event-types' },
+        { name: 'Appearance', href: '/settings/teams/design-team/appearance' },
+        { name: 'Booking Limits', href: '/settings/teams/design-team/booking-limits' },
+      ]
+    },
+    {
+      id: 'marketing-team',
+      name: 'Marketing Team',
+      href: '/settings/teams/marketing-team',
+      subItems: [
+        { name: 'Profile', href: '/settings/teams/marketing-team/profile' },
+        { name: 'Members', href: '/settings/teams/marketing-team/members' },
+        { name: 'Event Types', href: '/settings/teams/marketing-team/event-types' },
+        { name: 'Appearance', href: '/settings/teams/marketing-team/appearance' },
+        { name: 'Booking Limits', href: '/settings/teams/marketing-team/booking-limits' },
+      ]
+    }
+  ];
+
   const navigation = [
     {
       title: '',
@@ -46,9 +88,6 @@ export const SettingsSidebar = () => {
       title: 'Teams',
       items: [
         { name: 'Add a team', href: '/settings/teams/new', icon: Users },
-        { name: 'Tech Team', href: '/settings/teams/tech', icon: Users },
-        { name: 'Design Team', href: '/settings/teams/design', icon: Users },
-        { name: 'Marketing Team', href: '/settings/teams/marketing', icon: Users },
       ]
     }
   ];
@@ -91,6 +130,59 @@ export const SettingsSidebar = () => {
                 </NavLink>
               ))}
             </div>
+            
+            {/* Teams sub-navigation */}
+            {section.title === 'Teams' && (
+              <div className="mt-2 space-y-1">
+                {teams.map((team) => {
+                  const isTeamActive = location.pathname.includes(team.id);
+                  const isExpanded = expandedTeam === team.id || isTeamActive;
+                  
+                  return (
+                    <div key={team.id}>
+                      <button
+                        onClick={() => setExpandedTeam(isExpanded ? null : team.id)}
+                        className={`w-full group flex items-center justify-between px-3 py-2.5 text-sm font-medium rounded-lg transition-all duration-200 ${
+                          isTeamActive
+                            ? 'bg-primary text-primary-foreground shadow-sm'
+                            : 'text-muted-foreground hover:bg-muted hover:text-foreground'
+                        }`}
+                      >
+                        <div className="flex items-center">
+                          <Users className="mr-3 h-5 w-5 flex-shrink-0" />
+                          {team.name}
+                        </div>
+                        {isExpanded ? (
+                          <ChevronDown className="h-4 w-4" />
+                        ) : (
+                          <ChevronRight className="h-4 w-4" />
+                        )}
+                      </button>
+                      
+                      {isExpanded && (
+                        <div className="ml-8 mt-1 space-y-1">
+                          {team.subItems.map((subItem) => (
+                            <NavLink
+                              key={subItem.name}
+                              to={subItem.href}
+                              className={({ isActive }) =>
+                                `block px-3 py-2 text-sm rounded-lg transition-all duration-200 ${
+                                  isActive
+                                    ? 'bg-primary/10 text-primary font-medium'
+                                    : 'text-muted-foreground hover:bg-muted hover:text-foreground'
+                                }`
+                              }
+                            >
+                              {subItem.name}
+                            </NavLink>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            )}
           </div>
         ))}
       </nav>

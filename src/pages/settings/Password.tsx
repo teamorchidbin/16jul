@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Button } from '../../components/ui/button';
 import { ExternalLink } from 'lucide-react';
@@ -16,13 +15,16 @@ export const Password = () => {
         </div>
 
         <div className="text-center py-16">
-          <p className="text-muted-foreground mb-6 max-w-2xl mx-auto">
-            To change your email, password, enable two-factor authentication and more, please visit your OneHash account settings.
-          </p>
+          <div className="max-w-2xl mx-auto mb-6">
+            <p className="text-lg font-semibold mb-4">Your Cal ID is managed by OneHash</p>
+            <p className="text-muted-foreground">
+              To change your email, password, enable two-factor authentication and more, please visit your OneHash account settings.
+            </p>
+          </div>
           
           <Button onClick={handleRedirect} className="bg-blue-600 hover:bg-blue-700">
             <ExternalLink className="h-4 w-4 mr-2" />
-            Go to Account Settings
+            Security Settings
           </Button>
         </div>
       </div>
