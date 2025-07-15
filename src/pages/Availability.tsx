@@ -1,11 +1,6 @@
-
 import React, { useState } from 'react';
-import { Plus, MoreHorizontal, Copy, Trash2, Star } from 'lucide-react';
+import { Plus, MoreHorizontal, Copy, Trash2, Search } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '../components/ui/dialog';
-import { Button } from '../components/ui/button';
-import { Input } from '../components/ui/input';
-
 interface Schedule {
   id: string;
   title: string;
@@ -14,51 +9,33 @@ interface Schedule {
   timezone: string;
   isDefault: boolean;
 }
-
 export const Availability = () => {
   const [selectedTab, setSelectedTab] = useState('my-availability');
+  const [searchQuery, setSearchQuery] = useState('');
   const [showMoreOptions, setShowMoreOptions] = useState<string | null>(null);
-  const [isNewScheduleModalOpen, setIsNewScheduleModalOpen] = useState(false);
-  const [newScheduleName, setNewScheduleName] = useState('');
   const navigate = useNavigate();
-
-  const [schedules, setSchedules] = useState<Schedule[]>([
-    {
-      id: 'working-hours',
-      title: 'Working Hours',
-      description: 'Default',
-      hours: 'Mon - Fri, 9:00 AM - 5:00 PM',
-      timezone: 'Asia/Calcutta',
-      isDefault: true
-    },
-    {
-      id: 'additional-hours',
-      title: 'Additional hours',
-      description: '',
-      hours: 'Mon - Fri, 9:00 AM - 5:00 PM\nSun, Sat, 9:00 AM - 4:00 PM',
-      timezone: 'Asia/Calcutta',
-      isDefault: false
-    }
-  ]);
-
+  const schedules: Schedule[] = [{
+    id: 'working-hours',
+    title: 'Working Hours',
+    description: 'Default',
+    hours: 'Mon - Fri, 9:00 AM - 5:00 PM',
+    timezone: 'Asia/Calcutta',
+    isDefault: true
+  }, {
+    id: 'additional-hours',
+    title: 'Additional hours',
+    description: '',
+    hours: 'Mon - Fri, 9:00 AM - 5:00 PM\nSun, Sat, 9:00 AM - 4:00 PM',
+    timezone: 'Asia/Calcutta',
+    isDefault: false
+  }];
+  const filteredSchedules = schedules.filter(schedule => schedule.title.toLowerCase().includes(searchQuery.toLowerCase()) || schedule.description.toLowerCase().includes(searchQuery.toLowerCase()));
   const handleScheduleClick = (scheduleId: string) => {
     navigate(`/availability/${scheduleId}`);
   };
-
-  const handleSetAsDefault = (scheduleId: string) => {
-    setSchedules(prev => prev.map(schedule => ({
-      ...schedule,
-      isDefault: schedule.id === scheduleId
-    })));
-    setShowMoreOptions(null);
-  };
-
   const handleMenuAction = (action: string, scheduleId: string) => {
     setShowMoreOptions(null);
     switch (action) {
-      case 'setDefault':
-        handleSetAsDefault(scheduleId);
-        break;
       case 'duplicate':
         console.log('Duplicating schedule', scheduleId);
         break;
@@ -67,92 +44,47 @@ export const Availability = () => {
         break;
     }
   };
-
-  const handleNewSchedule = () => {
-    if (newScheduleName.trim()) {
-      const newId = `schedule-${Date.now()}`;
-      navigate(`/availability/${newId}`, { 
-        state: { newScheduleName: newScheduleName.trim() } 
-      });
-      setIsNewScheduleModalOpen(false);
-      setNewScheduleName('');
-    }
-  };
-
-  // Sort schedules to show default first
-  const sortedSchedules = [...schedules].sort((a, b) => {
-    if (a.isDefault && !b.isDefault) return -1;
-    if (!a.isDefault && b.isDefault) return 1;
-    return 0;
-  });
-
-  return (
-    <div className="px-6 pt-3 pb-6 space-y-6 w-full max-w-full">
-      {/* Tab Selector with New Schedule Button */}
-      <div className="flex items-center justify-between">
+  return <div className="px-6 pt-3 pb-6 space-y-4 w-full max-w-full">
+      {/* Tab Selector */}
+      <div className="flex items-center space-x-4">
         <div className="flex items-center bg-muted/50 rounded-lg p-1">
-          <button
-            onClick={() => setSelectedTab('my-availability')}
-            className={`px-4 py-2 text-sm font-medium rounded-md transition-all ${
-              selectedTab === 'my-availability'
-                ? 'bg-background text-foreground shadow-sm'
-                : 'text-muted-foreground hover:text-foreground'
-            }`}
-          >
-            My availability
+          <button onClick={() => setSelectedTab('my-availability')} className={`px-4 py-2 text-sm font-medium rounded-md transition-all ${selectedTab === 'my-availability' ? 'bg-background text-foreground shadow-sm' : 'text-muted-foreground hover:text-foreground'}`}>
+            My Availability
           </button>
-          <button
-            onClick={() => setSelectedTab('team-availability')}
-            className={`px-4 py-2 text-sm font-medium rounded-md transition-all ${
-              selectedTab === 'team-availability'
-                ? 'bg-background text-foreground shadow-sm'
-                : 'text-muted-foreground hover:text-foreground'
-            }`}
-          >
+          <button onClick={() => setSelectedTab('team-availability')} className={`px-4 py-2 text-sm font-medium rounded-md transition-all ${selectedTab === 'team-availability' ? 'bg-background text-foreground shadow-sm' : 'text-muted-foreground hover:text-foreground'}`}>
             Team Availability
           </button>
         </div>
+      </div>
 
-        <button 
-          onClick={() => setIsNewScheduleModalOpen(true)}
-          className="inline-flex items-center px-4 py-2 bg-primary text-primary-foreground text-sm font-medium rounded-lg hover:bg-primary/90 transition-colors"
-        >
+      {/* Search Bar and New Button */}
+      <div className="flex items-center justify-between space-x-4">
+        <div className="relative w-80">
+          
+          
+        </div>
+        
+        <button className="inline-flex items-center px-4 py-2 bg-primary text-primary-foreground text-sm font-medium rounded-lg hover:bg-primary/90 transition-colors">
           <Plus className="h-4 w-4 mr-2" />
           New schedule
         </button>
       </div>
 
       {/* Schedules List */}
-      <div className="space-y-4">
-        {sortedSchedules.map(schedule => (
-          <div
-            key={schedule.id}
-            onClick={() => handleScheduleClick(schedule.id)}
-            className="bg-card rounded-lg p-6 hover:shadow-md transition-all cursor-pointer border border-border/50 hover:border-border"
-          >
+      <div className="space-y-3">
+        {filteredSchedules.map(schedule => <div key={schedule.id} onClick={() => handleScheduleClick(schedule.id)} className="bg-card border border-border rounded-lg p-4 hover:border-border/60 transition-all hover:shadow-sm cursor-pointer">
             <div className="flex items-start justify-between">
               <div className="flex-1 min-w-0">
-                <div className="flex items-center mb-3 space-x-3">
-                  <h3 className="font-semibold text-foreground text-lg">
+                <div className="flex items-center mb-2 space-x-2">
+                  <h3 className="font-semibold text-foreground text-base">
                     {schedule.title}
                   </h3>
-                  {schedule.isDefault && (
-                    <span 
-                      className="inline-flex items-center px-2 py-1 text-xs rounded border font-medium"
-                      style={{ 
-                        borderColor: '#008c44', 
-                        color: '#008c44',
-                        backgroundColor: 'transparent'
-                      }}
-                    >
+                  {schedule.isDefault && <span className="inline-flex items-center px-2 py-1 bg-muted text-foreground text-xs rounded font-medium">
                       Default
-                    </span>
-                  )}
+                    </span>}
                 </div>
-                <div className="text-muted-foreground text-sm mb-3 leading-relaxed">
-                  {schedule.hours.split('\n').map((line, index) => (
-                    <div key={index}>{line}</div>
-                  ))}
+                <div className="text-muted-foreground text-sm mb-2">
+                  {schedule.hours.split('\n').map((line, index) => <div key={index}>{line}</div>)}
                 </div>
                 <div className="flex items-center text-sm text-muted-foreground">
                   <span className="mr-2">🌍</span>
@@ -162,92 +94,26 @@ export const Availability = () => {
               
               <div className="flex items-center space-x-2 ml-4" onClick={e => e.stopPropagation()}>
                 <div className="relative">
-                  <button
-                    onClick={() => setShowMoreOptions(showMoreOptions === schedule.id ? null : schedule.id)}
-                    className="p-2 hover:bg-muted rounded-md transition-colors"
-                  >
-                    <MoreHorizontal className="h-4 w-4" />
+                  <button onClick={() => setShowMoreOptions(showMoreOptions === schedule.id ? null : schedule.id)} className="p-1.5 hover:bg-muted rounded-md transition-colors">
+                    <MoreHorizontal className="h-4 w-4 text-muted-foreground" />
                   </button>
                   
-                  {showMoreOptions === schedule.id && (
-                    <div className="absolute right-0 top-full mt-1 w-48 bg-popover border border-border rounded-lg shadow-lg animate-scale-in z-10">
+                  {showMoreOptions === schedule.id && <div className="absolute right-0 top-full mt-1 w-36 bg-popover border border-border rounded-lg shadow-lg animate-scale-in z-10">
                       <div className="py-1">
-                        {!schedule.isDefault && (
-                          <button
-                            onClick={() => handleMenuAction('setDefault', schedule.id)}
-                            className="flex items-center w-full px-3 py-2 text-sm hover:bg-muted transition-colors"
-                          >
-                            <Star className="h-4 w-4 mr-2 text-muted-foreground" />
-                            Set as default
-                          </button>
-                        )}
-                        <button
-                          onClick={() => handleMenuAction('duplicate', schedule.id)}
-                          className="flex items-center w-full px-3 py-2 text-sm hover:bg-muted transition-colors"
-                        >
-                          <Copy className="h-4 w-4 mr-2 text-muted-foreground" />
+                        <button onClick={() => handleMenuAction('duplicate', schedule.id)} className="flex items-center w-full px-3 py-2 text-sm hover:bg-muted transition-colors">
+                          <Copy className="h-4 w-4 mr-2" />
                           Duplicate
                         </button>
-                        <button
-                          onClick={() => handleMenuAction('delete', schedule.id)}
-                          className="flex items-center w-full px-3 py-2 text-sm hover:bg-muted transition-colors text-destructive"
-                        >
+                        <button onClick={() => handleMenuAction('delete', schedule.id)} className="flex items-center w-full px-3 py-2 text-sm hover:bg-muted transition-colors text-destructive">
                           <Trash2 className="h-4 w-4 mr-2" />
                           Delete
                         </button>
                       </div>
-                    </div>
-                  )}
+                    </div>}
                 </div>
               </div>
             </div>
-          </div>
-        ))}
+          </div>)}
       </div>
-
-      {/* New Schedule Modal */}
-      <Dialog open={isNewScheduleModalOpen} onOpenChange={setIsNewScheduleModalOpen}>
-        <DialogContent className="max-w-lg">
-          <DialogHeader>
-            <DialogTitle>Add a new schedule</DialogTitle>
-          </DialogHeader>
-          
-          <div className="space-y-4">
-            <div>
-              <label htmlFor="schedule-name" className="block text-sm font-medium mb-2">
-                Name
-              </label>
-              <Input
-                id="schedule-name"
-                value={newScheduleName}
-                onChange={(e) => setNewScheduleName(e.target.value)}
-                placeholder="Working Hours"
-                className="w-full"
-              />
-              {!newScheduleName.trim() && (
-                <div className="mt-2 text-sm text-muted-foreground bg-muted px-2 py-1 rounded">
-                  Please fill in this field.
-                </div>
-              )}
-            </div>
-
-            <div className="flex justify-end space-x-3 pt-4">
-              <Button 
-                variant="outline" 
-                onClick={() => setIsNewScheduleModalOpen(false)}
-              >
-                Close
-              </Button>
-              <Button 
-                onClick={handleNewSchedule}
-                disabled={!newScheduleName.trim()}
-              >
-                Continue
-              </Button>
-            </div>
-          </div>
-        </DialogContent>
-      </Dialog>
-    </div>
-  );
+    </div>;
 };
