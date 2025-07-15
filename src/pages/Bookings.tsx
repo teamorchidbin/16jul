@@ -931,7 +931,7 @@ export default function Bookings() {
       {/* Meetings List */}
       <div className="space-y-6">
         {todayMeetings.length > 0 && <div className="space-y-3">
-            <h3 className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-2">TODAY</h3>
+            
             <div className="space-y-3">
               {todayMeetings.map(meeting => <MeetingCard key={meeting.id} meeting={meeting} />)}
             </div>
