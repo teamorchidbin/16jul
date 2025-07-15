@@ -674,7 +674,7 @@ export default function Bookings() {
                 </div>
                 
                 {/* Details button moved to bottom right */}
-                <div className="flex items-center gap-2 text-sm text-gray-500">
+                <div className="flex items-center gap-2 text-sm text-gray-500 px-0 py-0 my-0 mx-0">
                   <span>Details</span>
                   {isExpanded ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
                 </div>
@@ -938,9 +938,7 @@ export default function Bookings() {
           </div>}
         
         {otherMeetings.length > 0 && <div className={`space-y-3 ${todayMeetings.length > 0 ? 'mt-6' : ''}`}>
-            {activeTab === 'recurring' && otherMeetings.length > 0 && <h3 className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-2">
-                {otherMeetings.some(m => m.isToday) ? 'TODAY' : 'RECURRING'}
-              </h3>}
+            {activeTab === 'recurring' && otherMeetings.length > 0}
             {activeTab === 'past' && otherMeetings.length > 0 && <h3 className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-2">
                 {otherMeetings.some(m => m.isToday) ? 'TODAY' : 'PAST'}
               </h3>}
