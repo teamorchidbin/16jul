@@ -280,6 +280,7 @@ export default function Bookings() {
   const [cancelReason, setCancelReason] = useState('');
   const [dateRange, setDateRange] = useState<Date | undefined>(undefined);
   const [showEditDropdown, setShowEditDropdown] = useState<string | null>(null);
+  const [showAttendeesDropdown, setShowAttendeesDropdown] = useState<string | null>(null);
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -313,29 +314,77 @@ export default function Bookings() {
     return currentHour > meetingHour;
   };
 
+  const getAttendeeDisplay = (meeting: Meeting) => {
+    const attendees = meeting.attendees.filter(a => a.name !== 'You');
+    if (attendees.length === 0) return null;
+    if (attendees.length === 1) return attendees[0].name.split(' ')[0];
+    if (attendees.length === 2) return `${attendees[0].name.split(' ')[0]} & ${attendees[1].name.split(' ')[0]}`;
+    return `${attendees[0].name.split(' ')[0]}, ${attendees[1].name.split(' ')[0]} + ${attendees.length - 2} More`;
+  };
+
   const MeetingCard = ({ meeting }: { meeting: Meeting }) => {
     const isExpanded = expandedMeeting === meeting.id;
+    const attendeeDisplay = getAttendeeDisplay(meeting);
+    const otherAttendees = meeting.attendees.filter(a => a.name !== 'You');
     
     return (
       <div className="bg-white border border-gray-200 rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-all duration-200">
-        <div 
-          className="p-6 cursor-pointer"
-          onClick={() => setExpandedMeeting(isExpanded ? null : meeting.id)}
-        >
-          {/* Default View */}
+        <div className="p-4">
           <div className="flex justify-between items-start">
-            <div className="flex-1">
-              {/* Title */}
-              <h3 className="font-semibold text-lg text-gray-900 mb-2">{meeting.title}</h3>
-              
-              {/* Date and Time */}
-              <div className="flex items-center gap-2 text-gray-600 mb-3">
-                <Clock className="h-4 w-4" />
-                <span className="text-sm">{meeting.isToday ? 'Today' : meeting.date} • {meeting.time} - {meeting.endTime}</span>
+            <div 
+              className="flex-1 cursor-pointer"
+              onClick={() => setExpandedMeeting(isExpanded ? null : meeting.id)}
+            >
+              {/* Date/Time and Title Row */}
+              <div className="flex items-start justify-between mb-3">
+                <div className="flex items-start gap-4">
+                  <div className="flex items-center gap-2 text-gray-600">
+                    <Clock className="h-4 w-4" />
+                    <span className="text-sm font-medium">
+                      {meeting.isToday ? 'Today' : meeting.date} • {meeting.time} - {meeting.endTime}
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <h3 className="font-semibold text-lg text-gray-900">{meeting.eventType}</h3>
+                    {attendeeDisplay && (
+                      <div className="flex items-center gap-1">
+                        <span className="text-gray-400">•</span>
+                        <div className="relative">
+                          {otherAttendees.length > 2 ? (
+                            <button
+                              className="text-sm text-gray-600 hover:text-gray-800"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setShowAttendeesDropdown(showAttendeesDropdown === meeting.id ? null : meeting.id);
+                              }}
+                            >
+                              {attendeeDisplay}
+                            </button>
+                          ) : (
+                            <span className="text-sm text-gray-600">{attendeeDisplay}</span>
+                          )}
+                          
+                          {showAttendeesDropdown === meeting.id && otherAttendees.length > 2 && (
+                            <div className="absolute top-full left-0 mt-1 bg-white border border-gray-200 rounded-md shadow-lg z-20 min-w-48">
+                              <div className="p-2">
+                                <div className="text-xs font-medium text-gray-500 mb-2">Attendees</div>
+                                {otherAttendees.map((attendee, index) => (
+                                  <div key={index} className="text-sm text-gray-700 py-1">
+                                    {attendee.name}
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
               </div>
 
-              {/* Location */}
-              <div className="flex items-center space-x-2 mb-4">
+              {/* Location Row */}
+              <div className="flex items-center space-x-2">
                 {meeting.location.type === 'online' ? (
                   <button className="flex items-center space-x-2 text-sm text-blue-600 hover:text-blue-800 transition-colors">
                     <Video className="h-4 w-4" />
@@ -404,10 +453,10 @@ export default function Bookings() {
 
           {/* Expanded Details */}
           {isExpanded && (
-            <div className="mt-6 pt-6 border-t border-gray-200 animate-fade-in">
-              {/* Attendees */}
+            <div className="mt-4 pt-4 border-t border-gray-200 animate-fade-in">
+              {/* Invitees */}
               <div className="mb-4">
-                <h4 className="font-medium text-gray-900 mb-2">Attendees</h4>
+                <h4 className="font-medium text-gray-900 mb-2">Invitees</h4>
                 <div className="space-y-2">
                   {meeting.attendees.map((attendee, index) => (
                     <div key={index} className="flex items-center justify-between">
@@ -427,16 +476,8 @@ export default function Bookings() {
                 <p className="text-sm text-gray-600">{meeting.duration}</p>
               </div>
 
-              {/* Notes */}
-              {meeting.notes && (
-                <div className="mb-4">
-                  <h4 className="font-medium text-gray-900 mb-1">Notes</h4>
-                  <p className="text-sm text-gray-600">{meeting.notes}</p>
-                </div>
-              )}
-
               {/* Action Buttons for Expanded View */}
-              <div className="flex items-center space-x-3 pt-4">
+              <div className="flex items-center space-x-3">
                 <Button 
                   variant="outline" 
                   size="sm" 
@@ -472,8 +513,8 @@ export default function Bookings() {
     <div className="px-6 pt-3 pb-6 space-y-4 w-full max-w-full">
       {/* Header with Tabs and Action Buttons */}
       <div className="flex items-center justify-between">
-        {/* Tabs */}
-        <div className="flex bg-gray-100 rounded-lg p-1">
+        {/* Tabs - matching event types style exactly */}
+        <div className="flex space-x-1">
           {[
             { value: 'upcoming', label: 'Upcoming' },
             { value: 'unconfirmed', label: 'Unconfirmed' },
@@ -484,10 +525,10 @@ export default function Bookings() {
             <button
               key={tab.value}
               onClick={() => setActiveTab(tab.value)}
-              className={`px-4 py-2 text-sm font-medium rounded-md transition-colors ${
+              className={`px-3 py-1.5 text-sm font-medium rounded-md transition-colors ${
                 activeTab === tab.value
-                  ? 'bg-white text-gray-900 shadow-sm'
-                  : 'text-gray-600 hover:text-gray-900'
+                  ? 'bg-gray-900 text-white'
+                  : 'text-gray-700 hover:bg-gray-100'
               }`}
             >
               {tab.label}
@@ -518,7 +559,7 @@ export default function Bookings() {
 
       {/* Filters */}
       {showFilters && (
-        <div className="flex items-center space-x-4 p-4 bg-gray-50 rounded-lg animate-fade-in">
+        <div className="flex items-center space-x-4 p-4 bg-gray-50 rounded-lg transition-all duration-300 ease-in-out animate-fade-in">
             <Popover>
               <PopoverTrigger asChild>
                 <Button variant="outline" size="sm">Attendee: All</Button>
@@ -624,9 +665,9 @@ export default function Bookings() {
       {/* Meetings List */}
       <div className="space-y-6">
         {todayMeetings.length > 0 && (
-          <div className="space-y-4">
-            <h3 className="text-xs font-medium text-gray-500 uppercase tracking-wide">TODAY</h3>
-            <div className="space-y-4">
+          <div className="space-y-3">
+            <h3 className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-2">TODAY</h3>
+            <div className="space-y-3">
               {todayMeetings.map((meeting) => (
                 <MeetingCard key={meeting.id} meeting={meeting} />
               ))}
@@ -635,10 +676,12 @@ export default function Bookings() {
         )}
         
         {otherMeetings.length > 0 && (
-          <div className={`space-y-4 ${todayMeetings.length > 0 ? 'mt-8' : ''}`}>
-            {otherMeetings.map((meeting) => (
-              <MeetingCard key={meeting.id} meeting={meeting} />
-            ))}
+          <div className={`space-y-3 ${todayMeetings.length > 0 ? 'mt-6' : ''}`}>
+            <div className="space-y-3">
+              {otherMeetings.map((meeting) => (
+                <MeetingCard key={meeting.id} meeting={meeting} />
+              ))}
+            </div>
           </div>
         )}
 
