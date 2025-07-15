@@ -1,15 +1,15 @@
 
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { Layout } from './components/Layout';
-import { Index } from './pages/Index';
+import Index from './pages/Index';
 import { EventTypes } from './pages/EventTypes';
 import { EditEvent } from './pages/EditEvent';
 import Bookings from './pages/Bookings';
 import { Availability } from './pages/Availability';
 import { EditAvailability } from './pages/EditAvailability';
 import { Settings } from './pages/Settings';
-import { NotFound } from './pages/NotFound';
-import { SchedulingComingSoon } from './pages/SchedulingComingSoon';
+import NotFound from './pages/NotFound';
+import SchedulingComingSoon from './pages/SchedulingComingSoon';
 import { Toaster } from './components/ui/toaster';
 import './App.css';
 
