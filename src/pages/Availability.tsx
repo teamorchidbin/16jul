@@ -1,6 +1,5 @@
-
 import React, { useState } from 'react';
-import { Plus, MoreHorizontal, Copy2, Trash2, Search, Copy } from 'lucide-react';
+import { Plus, MoreHorizontal, Copy, Trash2, Search } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '../components/ui/button';
 
@@ -182,7 +181,7 @@ export const Availability = () => {
                             onClick={() => handleMenuAction('duplicate', schedule.id)}
                             className="flex items-center w-full px-3 py-2 text-sm hover:bg-muted transition-colors"
                           >
-                            <Copy2 className="h-4 w-4 mr-2" />
+                            <Copy className="h-4 w-4 mr-2" />
                             Duplicate
                           </button>
                           <button
