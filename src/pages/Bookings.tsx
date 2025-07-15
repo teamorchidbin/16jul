@@ -940,9 +940,7 @@ export default function Bookings() {
         {otherMeetings.length > 0 && <div className={`space-y-3 ${todayMeetings.length > 0 ? 'mt-6' : ''}`}>
             {activeTab === 'recurring' && otherMeetings.length > 0}
             {activeTab === 'past' && otherMeetings.length > 0}
-            {activeTab === 'canceled' && otherMeetings.length > 0 && <h3 className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-2">
-                {otherMeetings.some(m => m.isToday) ? 'TODAY' : 'CANCELED'}
-              </h3>}
+            {activeTab === 'canceled' && otherMeetings.length > 0}
             {activeTab === 'unconfirmed' && otherMeetings.length > 0}
             <div className="space-y-3">
               {otherMeetings.map(meeting => <MeetingCard key={meeting.id} meeting={meeting} />)}
