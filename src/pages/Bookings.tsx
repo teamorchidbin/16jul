@@ -945,9 +945,7 @@ export default function Bookings() {
             {activeTab === 'canceled' && otherMeetings.length > 0 && <h3 className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-2">
                 {otherMeetings.some(m => m.isToday) ? 'TODAY' : 'CANCELED'}
               </h3>}
-            {activeTab === 'unconfirmed' && otherMeetings.length > 0 && <h3 className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-2">
-                {otherMeetings.some(m => m.isToday) ? 'TODAY' : 'UNCONFIRMED'}
-              </h3>}
+            {activeTab === 'unconfirmed' && otherMeetings.length > 0}
             <div className="space-y-3">
               {otherMeetings.map(meeting => <MeetingCard key={meeting.id} meeting={meeting} />)}
             </div>
