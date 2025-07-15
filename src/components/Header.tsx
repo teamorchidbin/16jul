@@ -40,6 +40,7 @@ export const Header = ({ showEventTypesHeader = false, eventData }: HeaderProps)
   const isBookingsPage = location.pathname === '/bookings';
   const isAvailabilityPage = location.pathname === '/availability';
   const isEditAvailabilityPage = location.pathname.startsWith('/availability/');
+  const isTeamsPage = location.pathname === '/teams';
 
   return (
     <header className="h-20 border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-50">
@@ -62,6 +63,13 @@ export const Header = ({ showEventTypesHeader = false, eventData }: HeaderProps)
           <div className="flex-1">
             <h1 className="text-xl font-semibold text-foreground">Availability</h1>
             <p className="text-sm text-muted-foreground mt-1">Configure times when you are available for bookings.</p>
+          </div>
+        )}
+
+        {isTeamsPage && (
+          <div className="flex-1">
+            <h1 className="text-xl font-semibold text-foreground">Teams</h1>
+            <p className="text-sm text-muted-foreground mt-1">Create and manage teams to use collaborative features.</p>
           </div>
         )}
         
