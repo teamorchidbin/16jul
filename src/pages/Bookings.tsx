@@ -9,6 +9,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '../components/ui/popove
 import { Checkbox } from '../components/ui/checkbox';
 import { AddGuestsModal } from '../components/AddGuestsModal';
 import { useToast } from '../hooks/use-toast';
+import type { DateRange } from 'react-day-picker';
 
 interface Meeting {
   id: string;
@@ -37,7 +38,7 @@ interface Meeting {
 }
 
 const mockMeetings: Meeting[] = [
-  // Upcoming meetings
+  // Upcoming meetings - 15 total
   {
     id: '1',
     title: '30 Minute Meeting',
@@ -53,7 +54,6 @@ const mockMeetings: Meeting[] = [
       name: 'Google Meet',
       logo: '📹'
     },
-    notes: 'Discussion about project requirements and timeline.',
     eventType: '30 Min Meeting',
     status: 'upcoming',
     isToday: true
@@ -66,12 +66,11 @@ const mockMeetings: Meeting[] = [
     endTime: '2:15pm',
     duration: '15 minutes',
     attendees: [
-      { name: 'Alex Johnson', email: 'alex@example.com', timezone: 'America/New_York' },
-      { name: 'Sarah Chen', email: 'sarah@example.com', timezone: 'Asia/Singapore' }
+      { name: 'Emily Rodriguez', email: 'emily.r@techcorp.com', timezone: 'America/New_York' }
     ],
     location: {
       type: 'online',
-      name: 'Google Meet',  
+      name: 'Zoom',  
       logo: '📹'
     },
     eventType: '15 Min Meeting',
@@ -80,23 +79,21 @@ const mockMeetings: Meeting[] = [
   },
   {
     id: '3',
-    title: 'Team Standup',
+    title: 'Strategy Session',
     date: 'Tue, 15 Jul',
     time: '10:00am',
-    endTime: '10:15am',
-    duration: '15 minutes',
+    endTime: '10:30am',
+    duration: '30 minutes',
     attendees: [
-      { name: 'Mike Wilson', email: 'mike@example.com', timezone: 'Europe/London' },
-      { name: 'Lisa Park', email: 'lisa@example.com', timezone: 'Asia/Seoul' },
-      { name: 'David Brown', email: 'david@example.com', timezone: 'America/Los_Angeles' },
-      { name: 'Emma Davis', email: 'emma@example.com', timezone: 'Australia/Sydney' }
+      { name: 'Alex Chen', email: 'alex.chen@startup.io', timezone: 'Asia/Singapore' },
+      { name: 'Maria Garcia', email: 'maria.garcia@consulting.com', timezone: 'Europe/Madrid' }
     ],
     location: {
       type: 'online',
-      name: 'Zoom',
+      name: 'Teams',
       logo: '📹'
     },
-    eventType: '15 Min Meeting',
+    eventType: '30 Min Meeting',
     status: 'upcoming',
     isToday: false
   },
@@ -108,13 +105,12 @@ const mockMeetings: Meeting[] = [
     endTime: '4:00pm',
     duration: '60 minutes',
     attendees: [
-      { name: 'Robert Kim', email: 'robert@clientcorp.com', timezone: 'Asia/Tokyo' },
-      { name: 'Maria Garcia', email: 'maria@clientcorp.com', timezone: 'Europe/Madrid' },
-      { name: 'John Smith', email: 'john@clientcorp.com', timezone: 'America/Chicago' }
+      { name: 'David Kim', email: 'david.kim@enterprise.com', timezone: 'Asia/Seoul' },
+      { name: 'Sarah Wilson', email: 'sarah.w@agency.co', timezone: 'America/Los_Angeles' }
     ],
     location: {
       type: 'online',
-      name: 'Teams',
+      name: 'Google Meet',
       logo: '📹'
     },
     eventType: '60 Min Meeting',
@@ -129,11 +125,51 @@ const mockMeetings: Meeting[] = [
     endTime: '12:00pm',
     duration: '60 minutes',
     attendees: [
-      { name: 'Anna Thompson', email: 'anna@design.com', timezone: 'Europe/Berlin' },
-      { name: 'Carlos Rodriguez', email: 'carlos@design.com', timezone: 'America/Mexico_City' },
-      { name: 'Wei Zhang', email: 'wei@design.com', timezone: 'Asia/Shanghai' },
-      { name: 'Priya Patel', email: 'priya@design.com', timezone: 'Asia/Mumbai' },
-      { name: 'Tom Anderson', email: 'tom@design.com', timezone: 'America/Denver' }
+      { name: 'James Thompson', email: 'james.t@design.studio', timezone: 'Europe/London' },
+      { name: 'Lisa Park', email: 'lisa.park@creative.com', timezone: 'America/Chicago' }
+    ],
+    location: {
+      type: 'online',
+      name: 'Zoom',
+      logo: '📹'
+    },
+    eventType: '60 Min Meeting',
+    status: 'upcoming',
+    isToday: false
+  },
+  {
+    id: '6',
+    title: 'Team Standup',
+    date: 'Fri, 18 Jul',
+    time: '9:00am',
+    endTime: '9:15am',
+    duration: '15 minutes',
+    attendees: [
+      { name: 'Robert Johnson', email: 'robert.j@techteam.com', timezone: 'America/New_York' },
+      { name: 'Anna Martinez', email: 'anna.m@devops.io', timezone: 'Europe/Berlin' },
+      { name: 'Michael Wong', email: 'michael.wong@cloud.net', timezone: 'Asia/Hong_Kong' }
+    ],
+    location: {
+      type: 'online',
+      name: 'Teams',
+      logo: '📹'
+    },
+    eventType: '15 Min Meeting',
+    status: 'upcoming',
+    isToday: false
+  },
+  {
+    id: '7',
+    title: 'Product Demo',
+    date: 'Mon, 21 Jul',
+    time: '2:00pm',
+    endTime: '3:00pm',
+    duration: '60 minutes',
+    attendees: [
+      { name: 'Jennifer Lee', email: 'jennifer.lee@sales.com', timezone: 'America/Los_Angeles' },
+      { name: 'Carlos Rodriguez', email: 'carlos.r@marketing.co', timezone: 'America/Mexico_City' },
+      { name: 'Priya Patel', email: 'priya.patel@product.io', timezone: 'Asia/Mumbai' },
+      { name: 'Tom Anderson', email: 'tom.anderson@growth.com', timezone: 'America/Denver' }
     ],
     location: {
       type: 'online',
@@ -144,16 +180,19 @@ const mockMeetings: Meeting[] = [
     status: 'upcoming',
     isToday: false
   },
-  // Unconfirmed meetings
   {
-    id: '6',
-    title: 'Strategy Session',
-    date: 'Fri, 18 Jul',
-    time: '2:00pm',
-    endTime: '3:00pm',
+    id: '8',
+    title: 'Weekly Sync',
+    date: 'Tue, 22 Jul',
+    time: '4:00pm',
+    endTime: '5:00pm',
     duration: '60 minutes',
     attendees: [
-      { name: 'Jennifer Lee', email: 'jennifer@strategy.com', timezone: 'America/New_York' }
+      { name: 'Sophie Brown', email: 'sophie.brown@remote.com', timezone: 'Europe/Paris' },
+      { name: 'Kevin Wu', email: 'kevin.wu@distributed.io', timezone: 'Asia/Shanghai' },
+      { name: 'Rachel Green', email: 'rachel.green@global.net', timezone: 'Australia/Sydney' },
+      { name: 'Ahmed Hassan', email: 'ahmed.hassan@mena.co', timezone: 'Africa/Cairo' },
+      { name: 'Elena Volkov', email: 'elena.volkov@eastern.com', timezone: 'Europe/Moscow' }
     ],
     location: {
       type: 'online',
@@ -161,19 +200,23 @@ const mockMeetings: Meeting[] = [
       logo: '📹'
     },
     eventType: '60 Min Meeting',
-    status: 'unconfirmed',
+    status: 'upcoming',
     isToday: false
   },
   {
-    id: '7',
-    title: 'Product Demo',
-    date: 'Mon, 21 Jul',
-    time: '4:00pm',
-    endTime: '5:00pm',
+    id: '9',
+    title: 'Tech Discussion',
+    date: 'Wed, 23 Jul',
+    time: '1:00pm',
+    endTime: '2:00pm',
     duration: '60 minutes',
     attendees: [
-      { name: 'Mark Johnson', email: 'mark@demo.com', timezone: 'Europe/London' },
-      { name: 'Rachel Green', email: 'rachel@demo.com', timezone: 'America/Los_Angeles' }
+      { name: 'Mark Davis', email: 'mark.davis@tech.com', timezone: 'America/New_York' },
+      { name: 'Julia Schmidt', email: 'julia.schmidt@engineering.de', timezone: 'Europe/Berlin' },
+      { name: 'Yuki Tanaka', email: 'yuki.tanaka@innovation.jp', timezone: 'Asia/Tokyo' },
+      { name: 'Lucas Silva', email: 'lucas.silva@startup.br', timezone: 'America/Sao_Paulo' },
+      { name: 'Fatima Al-Zahra', email: 'fatima.alzahra@tech.ae', timezone: 'Asia/Dubai' },
+      { name: 'Chris Miller', email: 'chris.miller@software.ca', timezone: 'America/Toronto' }
     ],
     location: {
       type: 'online',
@@ -181,128 +224,142 @@ const mockMeetings: Meeting[] = [
       logo: '📹'
     },
     eventType: '60 Min Meeting',
-    status: 'unconfirmed',
-    isToday: false
-  },
-  {
-    id: '8',
-    title: 'Tech Discussion',
-    date: 'Tue, 22 Jul',
-    time: '1:00pm',
-    endTime: '2:00pm',
-    duration: '60 minutes',
-    attendees: [
-      { name: 'Kevin Wu', email: 'kevin@tech.com', timezone: 'Asia/Hong_Kong' },
-      { name: 'Sofia Martinez', email: 'sofia@tech.com', timezone: 'Europe/Barcelona' },
-      { name: 'Ahmed Hassan', email: 'ahmed@tech.com', timezone: 'Africa/Cairo' }
-    ],
-    location: {
-      type: 'online',
-      name: 'Google Meet',
-      logo: '📹'
-    },
-    eventType: '60 Min Meeting',
-    status: 'unconfirmed',
-    isToday: false
-  },
-  // Recurring meetings
-  {
-    id: '9',
-    title: 'Daily Standup',
-    date: 'Every Day',
-    time: '9:00am',
-    endTime: '9:15am',
-    duration: '15 minutes',
-    attendees: [
-      { name: 'Development Team', email: 'dev@company.com', timezone: 'America/New_York' },
-      { name: 'Project Manager', email: 'pm@company.com', timezone: 'America/New_York' }
-    ],
-    location: {
-      type: 'online',
-      name: 'Jitsi Meet',
-      logo: '📹'
-    },
-    eventType: '15 Min Meeting',
-    status: 'recurring',
-    recurringInfo: 'Daily at 9:00 AM',
+    status: 'upcoming',
     isToday: false
   },
   {
     id: '10',
-    title: 'Weekly Review',
-    date: 'Every Friday',
-    time: '4:00pm',
-    endTime: '5:00pm',
-    duration: '60 minutes',
+    title: 'Strategy Planning',
+    date: 'Thu, 24 Jul',
+    time: '10:00am',
+    endTime: '11:30am',
+    duration: '90 minutes',
     attendees: [
-      { name: 'Manager', email: 'manager@company.com', timezone: 'America/Chicago' },
-      { name: 'Team Lead', email: 'lead@company.com', timezone: 'America/Chicago' },
-      { name: 'Senior Dev', email: 'senior@company.com', timezone: 'America/Chicago' },
-      { name: 'QA Lead', email: 'qa@company.com', timezone: 'America/Chicago' }
+      { name: 'Isabella Rossi', email: 'isabella.rossi@strategy.it', timezone: 'Europe/Rome' },
+      { name: 'Oliver Smith', email: 'oliver.smith@consulting.uk', timezone: 'Europe/London' },
+      { name: 'Nina Petrov', email: 'nina.petrov@advisory.ru', timezone: 'Europe/Moscow' },
+      { name: 'Diego Lopez', email: 'diego.lopez@planning.es', timezone: 'Europe/Madrid' },
+      { name: 'Amara Johnson', email: 'amara.johnson@insights.us', timezone: 'America/Chicago' }
     ],
     location: {
       type: 'online',
       name: 'Google Meet',
       logo: '📹'
     },
-    eventType: '60 Min Meeting',
-    status: 'recurring',
-    recurringInfo: 'Weekly on Fridays',
+    eventType: '90 Min Meeting',
+    status: 'upcoming',
     isToday: false
   },
-  // Past meetings
   {
     id: '11',
     title: 'Client Presentation',
-    date: 'Fri, 12 Jul',
-    time: '2:00pm',
-    endTime: '3:00pm',
+    date: 'Fri, 25 Jul',
+    time: '3:00pm',
+    endTime: '4:00pm',
     duration: '60 minutes',
     attendees: [
-      { name: 'Client Rep', email: 'client@example.com', timezone: 'Europe/Paris' }
-    ],
-    location: {
-      type: 'physical',
-      name: 'Conference Room A',
-      address: '123 Business St, City'
-    },
-    eventType: '60 Min Meeting',
-    status: 'past',
-    isToday: false
-  },
-  {
-    id: '12',
-    title: 'Strategy Meeting',
-    date: 'Thu, 11 Jul',
-    time: '10:00am',
-    endTime: '11:30am',
-    duration: '90 minutes',
-    attendees: [
-      { name: 'Strategy Team Lead', email: 'strategy@company.com', timezone: 'America/New_York' },
-      { name: 'Business Analyst', email: 'analyst@company.com', timezone: 'America/New_York' }
+      { name: 'Victoria Chang', email: 'victoria.chang@corp.com', timezone: 'Asia/Hong_Kong' },
+      { name: 'Gabriel Santos', email: 'gabriel.santos@enterprise.br', timezone: 'America/Sao_Paulo' },
+      { name: 'Zara Ahmed', email: 'zara.ahmed@business.ae', timezone: 'Asia/Dubai' },
+      { name: 'Ethan Taylor', email: 'ethan.taylor@company.au', timezone: 'Australia/Melbourne' }
     ],
     location: {
       type: 'online',
       name: 'Zoom',
       logo: '📹'
     },
+    eventType: '60 Min Meeting',
+    status: 'upcoming',
+    isToday: false
+  },
+  {
+    id: '12',
+    title: 'Product Roadmap',
+    date: 'Mon, 28 Jul',
+    time: '11:00am',
+    endTime: '12:30pm',
+    duration: '90 minutes',
+    attendees: [
+      { name: 'Harrison Ford', email: 'harrison.ford@product.com', timezone: 'America/Los_Angeles' },
+      { name: 'Mei Zhang', email: 'mei.zhang@roadmap.cn', timezone: 'Asia/Shanghai' },
+      { name: 'Sebastian Mueller', email: 'sebastian.mueller@planning.de', timezone: 'Europe/Berlin' },
+      { name: 'Aria Nakamura', email: 'aria.nakamura@strategy.jp', timezone: 'Asia/Tokyo' },
+      { name: 'Phoenix Williams', email: 'phoenix.williams@vision.ca', timezone: 'America/Vancouver' },
+      { name: 'Luna Martinez', email: 'luna.martinez@future.mx', timezone: 'America/Mexico_City' },
+      { name: 'River Johnson', email: 'river.johnson@innovation.us', timezone: 'America/Denver' }
+    ],
+    location: {
+      type: 'online',
+      name: 'Teams',
+      logo: '📹'
+    },
     eventType: '90 Min Meeting',
-    status: 'past',
+    status: 'upcoming',
     isToday: false
   },
   {
     id: '13',
+    title: 'Marketing Review',
+    date: 'Tue, 29 Jul',
+    time: '2:00pm',
+    endTime: '3:30pm',
+    duration: '90 minutes',
+    attendees: [
+      { name: 'Skyler Davis', email: 'skyler.davis@marketing.com', timezone: 'America/Chicago' },
+      { name: 'Ravi Sharma', email: 'ravi.sharma@growth.in', timezone: 'Asia/Mumbai' },
+      { name: 'Chloe Brown', email: 'chloe.brown@brand.uk', timezone: 'Europe/London' },
+      { name: 'Mason Lee', email: 'mason.lee@campaign.kr', timezone: 'Asia/Seoul' },
+      { name: 'Zoe Taylor', email: 'zoe.taylor@digital.au', timezone: 'Australia/Sydney' }
+    ],
+    location: {
+      type: 'online',
+      name: 'Google Meet',
+      logo: '📹'
+    },
+    eventType: '90 Min Meeting',
+    status: 'upcoming',
+    isToday: false
+  },
+  {
+    id: '14',
+    title: 'Engineering Sync',
+    date: 'Wed, 30 Jul',
+    time: '4:00pm',
+    endTime: '5:00pm',
+    duration: '60 minutes',
+    attendees: [
+      { name: 'Atlas Rodriguez', email: 'atlas.rodriguez@engineering.com', timezone: 'America/Los_Angeles' },
+      { name: 'Nova Kim', email: 'nova.kim@development.kr', timezone: 'Asia/Seoul' },
+      { name: 'Sage Wilson', email: 'sage.wilson@code.ca', timezone: 'America/Toronto' },
+      { name: 'Echo Martinez', email: 'echo.martinez@software.mx', timezone: 'America/Mexico_City' },
+      { name: 'Orion Chen', email: 'orion.chen@tech.tw', timezone: 'Asia/Taipei' },
+      { name: 'Indigo Patel', email: 'indigo.patel@systems.in', timezone: 'Asia/Mumbai' }
+    ],
+    location: {
+      type: 'online',
+      name: 'Zoom',
+      logo: '📹'
+    },
+    eventType: '60 Min Meeting',
+    status: 'upcoming',
+    isToday: false
+  },
+  {
+    id: '15',
     title: 'Design Workshop',
-    date: 'Wed, 10 Jul',
+    date: 'Thu, 31 Jul',
     time: '1:00pm',
     endTime: '3:00pm',
     duration: '120 minutes',
     attendees: [
-      { name: 'UI Designer', email: 'ui@design.com', timezone: 'Europe/Amsterdam' },
-      { name: 'UX Researcher', email: 'ux@design.com', timezone: 'Europe/Amsterdam' },
-      { name: 'Product Owner', email: 'po@company.com', timezone: 'Europe/Amsterdam' },
-      { name: 'Frontend Dev', email: 'frontend@company.com', timezone: 'Europe/Amsterdam' },
-      { name: 'Backend Dev', email: 'backend@company.com', timezone: 'Europe/Amsterdam' }
+      { name: 'Sterling Thompson', email: 'sterling.thompson@design.com', timezone: 'America/New_York' },
+      { name: 'Jade Wang', email: 'jade.wang@creative.cn', timezone: 'Asia/Shanghai' },
+      { name: 'Rowan Anderson', email: 'rowan.anderson@studio.se', timezone: 'Europe/Stockholm' },
+      { name: 'Sage Murphy', email: 'sage.murphy@visual.ie', timezone: 'Europe/Dublin' },
+      { name: 'Cedar Jones', email: 'cedar.jones@ux.nz', timezone: 'Pacific/Auckland' },
+      { name: 'Aspen Garcia', email: 'aspen.garcia@interface.es', timezone: 'Europe/Madrid' },
+      { name: 'Willow Lee', email: 'willow.lee@experience.ca', timezone: 'America/Vancouver' },
+      { name: 'Ocean Smith', email: 'ocean.smith@ui.us', timezone: 'America/Los_Angeles' }
     ],
     location: {
       type: 'online',
@@ -310,52 +367,28 @@ const mockMeetings: Meeting[] = [
       logo: '📹'
     },
     eventType: '120 Min Meeting',
-    status: 'past',
-    isToday: false
-  },
-  // Canceled meetings
-  {
-    id: '14',
-    title: 'Project Review',
-    date: 'Thu, 11 Jul',
-    time: '11:00am',
-    endTime: '12:00pm',
-    duration: '60 minutes',
-    attendees: [
-      { name: 'Project Manager', email: 'pm@company.com', timezone: 'America/Chicago' },
-      { name: 'Stakeholder', email: 'stakeholder@company.com', timezone: 'America/Chicago' }
-    ],
-    location: {
-      type: 'online',
-      name: 'Teams',
-      logo: '📹'
-    },
-    eventType: '60 Min Meeting',
-    status: 'canceled',
-    isToday: false
-  },
-  {
-    id: '15',
-    title: 'Training Session',
-    date: 'Wed, 10 Jul',
-    time: '3:00pm',
-    endTime: '4:30pm',
-    duration: '90 minutes',
-    attendees: [
-      { name: 'Trainer', email: 'trainer@company.com', timezone: 'Europe/London' },
-      { name: 'Trainee 1', email: 'trainee1@company.com', timezone: 'Europe/London' },
-      { name: 'Trainee 2', email: 'trainee2@company.com', timezone: 'Europe/London' },
-      { name: 'HR Rep', email: 'hr@company.com', timezone: 'Europe/London' }
-    ],
-    location: {
-      type: 'online',
-      name: 'Google Meet',
-      logo: '📹'
-    },
-    eventType: '90 Min Meeting',
-    status: 'canceled',
+    status: 'upcoming',
     isToday: false
   }
+];
+
+// Generate similar meetings for other statuses
+const generateMeetingsForStatus = (status: Meeting['status'], count: number = 15): Meeting[] => {
+  return Array.from({ length: count }, (_, i) => ({
+    ...mockMeetings[i % mockMeetings.length],
+    id: `${status}-${i + 1}`,
+    status,
+    isToday: status === 'upcoming' && i < 2,
+    title: status === 'canceled' ? mockMeetings[i % mockMeetings.length].title : mockMeetings[i % mockMeetings.length].title,
+  }));
+};
+
+const allMeetings = [
+  ...mockMeetings,
+  ...generateMeetingsForStatus('unconfirmed'),
+  ...generateMeetingsForStatus('recurring'),
+  ...generateMeetingsForStatus('past'),
+  ...generateMeetingsForStatus('canceled')
 ];
 
 export default function Bookings() {
@@ -370,14 +403,14 @@ export default function Bookings() {
   const [selectedMeeting, setSelectedMeeting] = useState<Meeting | null>(null);
   const [meetingNotes, setMeetingNotes] = useState('');
   const [cancelReason, setCancelReason] = useState('');
-  const [dateRange, setDateRange] = useState<{ from?: Date; to?: Date }>({});
+  const [dateRange, setDateRange] = useState<DateRange | undefined>();
   const [showEditDropdown, setShowEditDropdown] = useState<string | null>(null);
   const [showAttendeesDropdown, setShowAttendeesDropdown] = useState<string | null>(null);
   const navigate = useNavigate();
   const { toast } = useToast();
 
-  const todayMeetings = mockMeetings.filter(m => m.status === activeTab && m.isToday);
-  const otherMeetings = mockMeetings.filter(m => m.status === activeTab && !m.isToday);
+  const todayMeetings = allMeetings.filter(m => m.status === activeTab && m.isToday);
+  const otherMeetings = allMeetings.filter(m => m.status === activeTab && !m.isToday);
 
   const handleExport = () => {
     toast({
@@ -411,12 +444,15 @@ export default function Bookings() {
     if (attendees.length === 0) return null;
     if (attendees.length === 1) return attendees[0].name.split(' ')[0];
     if (attendees.length === 2) return `${attendees[0].name.split(' ')[0]} & ${attendees[1].name.split(' ')[0]}`;
-    return `${attendees[0].name.split(' ')[0]}, ${attendees[1].name.split(' ')[0]} + ${attendees.length - 2} More`;
+    return { 
+      display: `${attendees[0].name.split(' ')[0]}, ${attendees[1].name.split(' ')[0]}`,
+      moreCount: attendees.length - 2 
+    };
   };
 
   const getAllAttendees = () => {
     const allAttendees = new Set<string>();
-    mockMeetings.forEach(meeting => {
+    allMeetings.forEach(meeting => {
       meeting.attendees.forEach(attendee => {
         allAttendees.add(attendee.name);
       });
@@ -427,6 +463,8 @@ export default function Bookings() {
   const MeetingCard = ({ meeting }: { meeting: Meeting }) => {
     const isExpanded = expandedMeeting === meeting.id;
     const attendeeDisplay = getAttendeeDisplay(meeting);
+    const showActionButtons = meeting.status !== 'past' && meeting.status !== 'canceled';
+    const showExpandedActions = meeting.status !== 'past' && meeting.status !== 'canceled';
     
     return (
       <div className="bg-white border border-gray-200 rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-all duration-200">
@@ -438,48 +476,51 @@ export default function Bookings() {
               onClick={() => setExpandedMeeting(isExpanded ? null : meeting.id)}
             >
               {/* Date and Time */}
-              <div className="text-sm text-gray-600 mb-1">
-                {meeting.isToday ? 'Today' : meeting.date} • {meeting.time} - {meeting.endTime}
-              </div>
-              
-              {/* Title and Attendees */}
-              <div className="flex items-center gap-2 mb-2">
-                <h3 className={`font-semibold text-lg ${meeting.status === 'canceled' ? 'line-through text-gray-500' : 'text-gray-900'}`}>
-                  {meeting.eventType}
-                </h3>
-                {attendeeDisplay && (
-                  <>
-                    <span className="text-gray-400">•</span>
-                    <div className="relative">
-                      {meeting.attendees.length > 2 ? (
-                        <button
-                          className="text-sm text-gray-600 hover:text-gray-800"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setShowAttendeesDropdown(showAttendeesDropdown === meeting.id ? null : meeting.id);
-                          }}
-                        >
-                          {attendeeDisplay}
-                        </button>
-                      ) : (
-                        <span className="text-sm text-gray-600">{attendeeDisplay}</span>
-                      )}
-                      
-                      {showAttendeesDropdown === meeting.id && meeting.attendees.length > 2 && (
-                        <div className="absolute top-full left-0 mt-1 bg-white border border-gray-200 rounded-md shadow-lg z-20 min-w-48">
-                          <div className="p-2">
-                            <div className="text-xs font-medium text-gray-500 mb-2">Attendees</div>
-                            {meeting.attendees.map((attendee, index) => (
-                              <div key={index} className="text-sm text-gray-700 py-1">
-                                {attendee.name}
-                              </div>
-                            ))}
+              <div className="flex items-start gap-4 mb-3">
+                <div className="text-sm text-gray-600">
+                  {meeting.isToday ? 'Today' : meeting.date} • {meeting.time} - {meeting.endTime}
+                </div>
+                <div>
+                  <h3 className={`text-sm font-medium ${meeting.status === 'canceled' ? 'line-through text-gray-500' : 'text-gray-900'}`}>
+                    {meeting.title}
+                  </h3>
+                  {attendeeDisplay && (
+                    <div className="flex items-center gap-1 mt-1">
+                      <span className="text-gray-400">•</span>
+                      <div className="relative">
+                        {typeof attendeeDisplay === 'object' ? (
+                          <div className="flex items-center gap-1">
+                            <span className="text-sm text-gray-600">{attendeeDisplay.display}</span>
+                            <button
+                              className="text-sm text-blue-600 hover:text-blue-800 font-medium"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setShowAttendeesDropdown(showAttendeesDropdown === meeting.id ? null : meeting.id);
+                              }}
+                            >
+                              + {attendeeDisplay.moreCount} More
+                            </button>
                           </div>
-                        </div>
-                      )}
+                        ) : (
+                          <span className="text-sm text-gray-600">{attendeeDisplay}</span>
+                        )}
+                        
+                        {showAttendeesDropdown === meeting.id && typeof attendeeDisplay === 'object' && (
+                          <div className="absolute top-full left-0 mt-1 bg-white border border-gray-200 rounded-md shadow-lg z-20 min-w-48">
+                            <div className="p-2">
+                              <div className="text-xs font-medium text-gray-500 mb-2">All Attendees</div>
+                              {meeting.attendees.map((attendee, index) => (
+                                <div key={index} className="text-sm text-gray-700 py-1">
+                                  {attendee.name}
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+                      </div>
                     </div>
-                  </>
-                )}
+                  )}
+                </div>
               </div>
 
               {/* Location */}
@@ -500,58 +541,56 @@ export default function Bookings() {
 
             {/* Action Buttons */}
             <div className="flex items-center space-x-2 ml-4">
-              {meeting.status !== 'past' && meeting.status !== 'canceled' && (
-                <Button variant="outline" size="sm" onClick={(e) => { e.stopPropagation(); handleReschedule(); }}>
-                  Reschedule
-                </Button>
-              )}
-              {meeting.status !== 'past' && meeting.status !== 'canceled' && (
-                <Button variant="outline" size="sm" onClick={(e) => { e.stopPropagation(); handleCancelEvent(meeting); }}>
-                  Cancel
-                </Button>
-              )}
-              {meeting.status !== 'past' && meeting.status !== 'canceled' && (
-                <div className="relative">
-                  <Button 
-                    variant="outline" 
-                    size="sm" 
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setShowEditDropdown(showEditDropdown === meeting.id ? null : meeting.id);
-                    }}
-                  >
-                    Edit
-                    <ChevronDown className="h-4 w-4 ml-1" />
+              {showActionButtons && (
+                <>
+                  <Button variant="outline" size="sm" onClick={(e) => { e.stopPropagation(); handleReschedule(); }}>
+                    Reschedule
                   </Button>
-                  {showEditDropdown === meeting.id && (
-                    <div className="absolute top-full right-0 mt-1 bg-white border border-gray-200 rounded-md shadow-lg z-10 min-w-48">
-                      <button 
-                        className="w-full px-3 py-2 text-left text-sm hover:bg-gray-50 flex items-center gap-2"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setSelectedMeeting(meeting);
-                          setShowEditLocation(true);
-                          setShowEditDropdown(null);
-                        }}
-                      >
-                        <MapPin className="h-4 w-4" />
-                        Edit location
-                      </button>
-                      <button 
-                        className="w-full px-3 py-2 text-left text-sm hover:bg-gray-50 flex items-center gap-2"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setSelectedMeeting(meeting);
-                          setShowAddGuests(true);
-                          setShowEditDropdown(null);
-                        }}
-                      >
-                        <UserPlus className="h-4 w-4" />
-                        Add guests
-                      </button>
-                    </div>
-                  )}
-                </div>
+                  <Button variant="outline" size="sm" onClick={(e) => { e.stopPropagation(); handleCancelEvent(meeting); }}>
+                    Cancel
+                  </Button>
+                  <div className="relative">
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setShowEditDropdown(showEditDropdown === meeting.id ? null : meeting.id);
+                      }}
+                    >
+                      Edit
+                      <ChevronDown className="h-4 w-4 ml-1" />
+                    </Button>
+                    {showEditDropdown === meeting.id && (
+                      <div className="absolute top-full right-0 mt-1 bg-white border border-gray-200 rounded-md shadow-lg z-20 min-w-48">
+                        <button 
+                          className="w-full px-3 py-2 text-left text-sm hover:bg-gray-50 flex items-center gap-2"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setSelectedMeeting(meeting);
+                            setShowEditLocation(true);
+                            setShowEditDropdown(null);
+                          }}
+                        >
+                          <MapPin className="h-4 w-4" />
+                          Edit location
+                        </button>
+                        <button 
+                          className="w-full px-3 py-2 text-left text-sm hover:bg-gray-50 flex items-center gap-2"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setSelectedMeeting(meeting);
+                            setShowAddGuests(true);
+                            setShowEditDropdown(null);
+                          }}
+                        >
+                          <UserPlus className="h-4 w-4" />
+                          Add guests
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                </>
               )}
             </div>
           </div>
@@ -559,57 +598,69 @@ export default function Bookings() {
           {/* Expanded Details */}
           {isExpanded && (
             <div className="mt-4 pt-4 border-t border-gray-200 animate-fade-in">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                <div>
-                  <h4 className="font-medium text-gray-900 mb-2">Event Type</h4>
-                  <p className="text-sm text-gray-600">{meeting.eventType}</p>
-                </div>
-                <div>
-                  <h4 className="font-medium text-gray-900 mb-2">Duration</h4>
-                  <p className="text-sm text-gray-600">{meeting.duration}</p>
-                </div>
-              </div>
-
-              {/* Invitees */}
-              <div className="mb-4">
-                <h4 className="font-medium text-gray-900 mb-2">Invitees</h4>
-                <div className="space-y-3">
-                  {meeting.attendees.map((attendee, index) => (
-                    <div key={index} className="space-y-1">
-                      <div className="text-sm font-medium text-gray-900">Invitee Name - {attendee.name}</div>
-                      <div className="text-sm text-gray-600">Invitee Email - {attendee.email}</div>
-                      <div className="text-sm text-gray-600">Invitee Time Zone - {attendee.timezone}</div>
+              <div className="flex justify-between">
+                <div className="flex-1 space-y-4">
+                  <div className="grid grid-cols-2 gap-x-8 gap-y-4">
+                    <div>
+                      <div className="text-sm font-medium text-gray-900 mb-1">Event Type</div>
+                      <div className="text-sm text-gray-600">{meeting.eventType}</div>
                     </div>
-                  ))}
-                </div>
-              </div>
+                    <div>
+                      <div className="text-sm font-medium text-gray-900 mb-1">Duration</div>
+                      <div className="text-sm text-gray-600">{meeting.duration}</div>
+                    </div>
+                  </div>
 
-              {/* Action Buttons for Expanded View */}
-              <div className="flex items-center space-x-3">
-                {meeting.status !== 'past' && meeting.status !== 'canceled' && (
-                  <Button 
-                    variant="outline" 
-                    size="sm" 
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setSelectedMeeting(meeting);
-                      setShowMeetingNotes(true);
-                    }}
-                  >
-                    Meeting Notes
-                  </Button>
-                )}
-                {meeting.isToday && isCurrentTime(meeting.time) && meeting.status !== 'past' && meeting.status !== 'canceled' && (
-                  <Button 
-                    variant="outline" 
-                    size="sm"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleMarkNoShow(meeting);
-                    }}
-                  >
-                    Mark as No-Show
-                  </Button>
+                  {/* Invitees */}
+                  <div>
+                    <div className="text-sm font-medium text-gray-900 mb-2">Invitee Details</div>
+                    <div className="space-y-3">
+                      {meeting.attendees.map((attendee, index) => (
+                        <div key={index} className="grid grid-cols-3 gap-4 text-sm">
+                          <div>
+                            <span className="font-medium text-gray-700">{index === 0 ? 'Name:' : ''}</span>
+                            <div className="text-gray-600">{attendee.name}</div>
+                          </div>
+                          <div>
+                            <span className="font-medium text-gray-700">{index === 0 ? 'Email:' : ''}</span>
+                            <div className="text-gray-600">{attendee.email}</div>
+                          </div>
+                          <div>
+                            <span className="font-medium text-gray-700">{index === 0 ? 'Time Zone:' : ''}</span>
+                            <div className="text-gray-600">{attendee.timezone}</div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Action Buttons for Expanded View */}
+                {showExpandedActions && (
+                  <div className="flex flex-col items-end space-y-2 ml-6">
+                    <Button 
+                      size="sm" 
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setSelectedMeeting(meeting);
+                        setShowMeetingNotes(true);
+                      }}
+                    >
+                      Meeting Notes
+                    </Button>
+                    {meeting.isToday && isCurrentTime(meeting.time) && (
+                      <Button 
+                        variant="outline" 
+                        size="sm"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleMarkNoShow(meeting);
+                        }}
+                      >
+                        Mark as No-Show
+                      </Button>
+                    )}
+                  </div>
                 )}
               </div>
             </div>
@@ -629,7 +680,7 @@ export default function Bookings() {
       {/* Header with Tabs and Action Buttons */}
       <div className="flex items-center justify-between">
         {/* Tabs */}
-        <div className="flex space-x-1">
+        <div className="flex">
           {[
             { value: 'upcoming', label: 'Upcoming' },
             { value: 'unconfirmed', label: 'Unconfirmed' },
@@ -640,10 +691,10 @@ export default function Bookings() {
             <button
               key={tab.value}
               onClick={() => setActiveTab(tab.value)}
-              className={`px-4 py-2 text-sm font-medium rounded-md transition-colors min-w-[100px] ${
+              className={`px-6 py-2 text-sm font-medium transition-colors min-w-[120px] ${
                 activeTab === tab.value
-                  ? 'bg-primary text-primary-foreground'
-                  : 'text-gray-700 hover:bg-gray-100'
+                  ? 'text-primary border-b-2 border-primary'
+                  : 'text-gray-700 hover:text-gray-900'
               }`}
             >
               {tab.label}
@@ -761,6 +812,14 @@ export default function Bookings() {
                   <span className="text-sm">Marketing Team</span>
                   <Checkbox />
                 </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-sm">Sales Team</span>
+                  <Checkbox />
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-sm">Engineering Team</span>
+                  <Checkbox />
+                </div>
               </div>
             </PopoverContent>
           </Popover>
@@ -769,7 +828,7 @@ export default function Bookings() {
             <PopoverTrigger asChild>
               <Button variant="outline" size="sm">
                 <Calendar className="h-4 w-4 mr-2" />
-                {dateRange.from ? (
+                {dateRange?.from ? (
                   dateRange.to ? (
                     `${dateRange.from.toLocaleDateString()} - ${dateRange.to.toLocaleDateString()}`
                   ) : (
@@ -784,7 +843,7 @@ export default function Bookings() {
               <CalendarComponent
                 mode="range"
                 selected={dateRange}
-                onSelect={(range) => setDateRange(range || {})}
+                onSelect={setDateRange}
                 className="rounded-md border"
               />
             </PopoverContent>
