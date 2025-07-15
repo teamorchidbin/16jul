@@ -1,7 +1,6 @@
-
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ArrowLeft, Plus, ChevronDown, Copy, Trash2, Edit3, Info } from 'lucide-react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import { Switch } from '../components/ui/switch';
 import { Input } from '../components/ui/input';
 import { Button } from '../components/ui/button';
@@ -21,18 +20,44 @@ interface DaySchedule {
   timeSlots: TimeSlot[];
 }
 
+interface DateOverride {
+  id: string;
+  date: Date;
+  dayName: string;
+  dateString: string;
+  timeString: string;
+  isUnavailable: boolean;
+}
+
 export const EditAvailability = () => {
   const navigate = useNavigate();
   const { scheduleId } = useParams();
+  const location = useLocation();
   const [isSetToDefault, setIsSetToDefault] = useState(true);
   const [timezone, setTimezone] = useState('Asia/Kolkata');
   const [isEditingTitle, setIsEditingTitle] = useState(false);
-  const [scheduleTitle, setScheduleTitle] = useState(
-    scheduleId === 'working-hours' ? 'Working Hours' : 'Additional hours'
-  );
+  const [scheduleTitle, setScheduleTitle] = useState('');
   const [isOverrideModalOpen, setIsOverrideModalOpen] = useState(false);
   const [isCopyModalOpen, setIsCopyModalOpen] = useState(false);
   const [copySourceDay, setCopySourceDay] = useState('');
+  const [dateOverrides, setDateOverrides] = useState<DateOverride[]>([
+    {
+      id: '1',
+      date: new Date(2025, 6, 15), // July 15, 2025
+      dayName: 'Tuesday',
+      dateString: 'July 15',
+      timeString: '9:00 AM - 5:00 PM',
+      isUnavailable: false
+    },
+    {
+      id: '2',
+      date: new Date(2025, 6, 16), // July 16, 2025
+      dayName: 'Wednesday',
+      dateString: 'July 16',
+      timeString: 'Unavailable',
+      isUnavailable: true
+    }
+  ]);
 
   const [weekDays, setWeekDays] = useState<DaySchedule[]>([
     { day: 'Monday', enabled: true, timeSlots: [{ startTime: '09:00', endTime: '17:00' }] },
@@ -43,6 +68,19 @@ export const EditAvailability = () => {
     { day: 'Saturday', enabled: false, timeSlots: [] },
     { day: 'Sunday', enabled: false, timeSlots: [] }
   ]);
+
+  useEffect(() => {
+    // Set initial title based on scheduleId or new schedule name from state
+    if (location.state?.newScheduleName) {
+      setScheduleTitle(location.state.newScheduleName);
+    } else if (scheduleId === 'working-hours') {
+      setScheduleTitle('Working Hours');
+    } else if (scheduleId === 'additional-hours') {
+      setScheduleTitle('Additional hours');
+    } else {
+      setScheduleTitle('New Schedule');
+    }
+  }, [scheduleId, location.state]);
 
   const handleDayToggle = (dayIndex: number) => {
     const updated = [...weekDays];
@@ -93,6 +131,14 @@ export const EditAvailability = () => {
 
   const handleSaveTitle = () => {
     setIsEditingTitle(false);
+  };
+
+  const handleDeleteOverride = (overrideId: string) => {
+    setDateOverrides(prev => prev.filter(override => override.id !== overrideId));
+  };
+
+  const handleEditOverride = (overrideId: string) => {
+    console.log('Edit override:', overrideId);
   };
 
   return (
@@ -153,71 +199,69 @@ export const EditAvailability = () => {
           {/* Days Schedule */}
           <div className="space-y-6">
             {weekDays.map((daySchedule, dayIndex) => (
-              <div key={dayIndex} className="space-y-3">
-                <div className="flex items-start space-x-4">
-                  <div className="flex items-center space-x-4 min-w-0 flex-shrink-0">
-                    <Switch 
-                      checked={daySchedule.enabled} 
-                      onCheckedChange={() => handleDayToggle(dayIndex)}
-                    />
-                    <div className="w-20 text-sm font-medium">
-                      {daySchedule.day}
-                    </div>
+              <div key={dayIndex} className="flex items-start space-x-6">
+                <div className="flex items-center space-x-4 min-w-[140px] flex-shrink-0">
+                  <Switch 
+                    checked={daySchedule.enabled} 
+                    onCheckedChange={() => handleDayToggle(dayIndex)}
+                  />
+                  <div className="text-sm font-medium min-w-[80px]">
+                    {daySchedule.day}
                   </div>
-                  
-                  {!daySchedule.enabled ? (
-                    <div className="text-sm text-muted-foreground">Unavailable</div>
-                  ) : (
-                    <div className="flex-1 space-y-3">
-                      {daySchedule.timeSlots.map((timeSlot, slotIndex) => (
-                        <div key={slotIndex} className="flex items-center space-x-3">
-                          <div className="w-32">
-                            <TimeSelector
-                              value={timeSlot.startTime}
-                              onChange={(time) => handleTimeSlotChange(dayIndex, slotIndex, 'startTime', time)}
-                            />
-                          </div>
-                          <span className="text-muted-foreground">-</span>
-                          <div className="w-32">
-                            <TimeSelector
-                              value={timeSlot.endTime}
-                              onChange={(time) => handleTimeSlotChange(dayIndex, slotIndex, 'endTime', time)}
-                            />
-                          </div>
-                          <Button
-                            type="button"
-                            variant="ghost"
-                            size="icon"
-                            onClick={() => handleAddTimeSlot(dayIndex)}
-                            className="h-8 w-8"
-                          >
-                            <Plus className="h-4 w-4" />
-                          </Button>
-                          <Button
-                            type="button"
-                            variant="ghost"
-                            size="icon"
-                            onClick={() => handleCopyTimes(daySchedule.day)}
-                            className="h-8 w-8"
-                          >
-                            <Copy className="h-4 w-4" />
-                          </Button>
-                          {daySchedule.timeSlots.length > 1 && (
-                            <Button
-                              type="button"
-                              variant="ghost"
-                              size="icon"
-                              onClick={() => handleRemoveTimeSlot(dayIndex, slotIndex)}
-                              className="h-8 w-8"
-                            >
-                              <Trash2 className="h-4 w-4" />
-                            </Button>
-                          )}
-                        </div>
-                      ))}
-                    </div>
-                  )}
                 </div>
+                
+                {!daySchedule.enabled ? (
+                  <div className="text-sm text-muted-foreground pt-2">Unavailable</div>
+                ) : (
+                  <div className="flex-1 space-y-3">
+                    {daySchedule.timeSlots.map((timeSlot, slotIndex) => (
+                      <div key={slotIndex} className="flex items-center space-x-3">
+                        <div className="w-32">
+                          <TimeSelector
+                            value={timeSlot.startTime}
+                            onChange={(time) => handleTimeSlotChange(dayIndex, slotIndex, 'startTime', time)}
+                          />
+                        </div>
+                        <span className="text-muted-foreground">-</span>
+                        <div className="w-32">
+                          <TimeSelector
+                            value={timeSlot.endTime}
+                            onChange={(time) => handleTimeSlotChange(dayIndex, slotIndex, 'endTime', time)}
+                          />
+                        </div>
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => handleAddTimeSlot(dayIndex)}
+                          className="h-8 w-8"
+                        >
+                          <Plus className="h-4 w-4" />
+                        </Button>
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => handleCopyTimes(daySchedule.day)}
+                          className="h-8 w-8"
+                        >
+                          <Copy className="h-4 w-4" />
+                        </Button>
+                        {daySchedule.timeSlots.length > 1 && (
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => handleRemoveTimeSlot(dayIndex, slotIndex)}
+                            className="h-8 w-8"
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
             ))}
           </div>
@@ -259,6 +303,43 @@ export const EditAvailability = () => {
               <p className="text-sm text-muted-foreground mb-6">
                 Add dates when your availability changes from your daily hours.
               </p>
+
+              {/* Date Override List */}
+              {dateOverrides.length > 0 && (
+                <div className="space-y-4 mb-6">
+                  {dateOverrides.map((override) => (
+                    <div key={override.id} className="flex items-center justify-between py-3 border-b border-border last:border-b-0">
+                      <div>
+                        <div className="font-medium text-sm">
+                          {override.dayName}, {override.dateString}
+                        </div>
+                        <div className="text-sm text-muted-foreground">
+                          {override.timeString}
+                        </div>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => handleDeleteOverride(override.id)}
+                          className="h-8 w-8"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => handleEditOverride(override.id)}
+                          className="h-8 w-8"
+                        >
+                          <Edit3 className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+
               <Button
                 variant="outline"
                 onClick={() => setIsOverrideModalOpen(true)}
@@ -277,7 +358,16 @@ export const EditAvailability = () => {
         isOpen={isOverrideModalOpen}
         onClose={() => setIsOverrideModalOpen(false)}
         onSave={(override) => {
-          console.log('Override saved:', override);
+          const newOverride: DateOverride = {
+            id: Date.now().toString(),
+            date: override.date,
+            dayName: override.date.toLocaleDateString('en-US', { weekday: 'long' }),
+            dateString: override.date.toLocaleDateString('en-US', { month: 'long', day: 'numeric' }),
+            timeString: override.isUnavailable ? 'Unavailable' : 
+              override.timeSlots.map((slot: any) => `${slot.startTime} - ${slot.endTime}`).join(', '),
+            isUnavailable: override.isUnavailable
+          };
+          setDateOverrides(prev => [...prev, newOverride]);
         }}
       />
 

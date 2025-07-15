@@ -2,6 +2,9 @@
 import React, { useState } from 'react';
 import { Plus, MoreHorizontal, Copy, Trash2, Star } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '../components/ui/dialog';
+import { Button } from '../components/ui/button';
+import { Input } from '../components/ui/input';
 
 interface Schedule {
   id: string;
@@ -15,6 +18,8 @@ interface Schedule {
 export const Availability = () => {
   const [selectedTab, setSelectedTab] = useState('my-availability');
   const [showMoreOptions, setShowMoreOptions] = useState<string | null>(null);
+  const [isNewScheduleModalOpen, setIsNewScheduleModalOpen] = useState(false);
+  const [newScheduleName, setNewScheduleName] = useState('');
   const navigate = useNavigate();
 
   const [schedules, setSchedules] = useState<Schedule[]>([
@@ -63,6 +68,17 @@ export const Availability = () => {
     }
   };
 
+  const handleNewSchedule = () => {
+    if (newScheduleName.trim()) {
+      const newId = `schedule-${Date.now()}`;
+      navigate(`/availability/${newId}`, { 
+        state: { newScheduleName: newScheduleName.trim() } 
+      });
+      setIsNewScheduleModalOpen(false);
+      setNewScheduleName('');
+    }
+  };
+
   // Sort schedules to show default first
   const sortedSchedules = [...schedules].sort((a, b) => {
     if (a.isDefault && !b.isDefault) return -1;
@@ -97,7 +113,10 @@ export const Availability = () => {
           </button>
         </div>
 
-        <button className="inline-flex items-center px-4 py-2 bg-primary text-primary-foreground text-sm font-medium rounded-lg hover:bg-primary/90 transition-colors">
+        <button 
+          onClick={() => setIsNewScheduleModalOpen(true)}
+          className="inline-flex items-center px-4 py-2 bg-primary text-primary-foreground text-sm font-medium rounded-lg hover:bg-primary/90 transition-colors"
+        >
           <Plus className="h-4 w-4 mr-2" />
           New schedule
         </button>
@@ -119,8 +138,12 @@ export const Availability = () => {
                   </h3>
                   {schedule.isDefault && (
                     <span 
-                      className="inline-flex items-center px-2 py-1 text-xs rounded font-medium text-white"
-                      style={{ backgroundColor: '#008c44' }}
+                      className="inline-flex items-center px-2 py-1 text-xs rounded border font-medium"
+                      style={{ 
+                        borderColor: '#008c44', 
+                        color: '#008c44',
+                        backgroundColor: 'transparent'
+                      }}
                     >
                       Default
                     </span>
@@ -181,6 +204,50 @@ export const Availability = () => {
           </div>
         ))}
       </div>
+
+      {/* New Schedule Modal */}
+      <Dialog open={isNewScheduleModalOpen} onOpenChange={setIsNewScheduleModalOpen}>
+        <DialogContent className="max-w-lg">
+          <DialogHeader>
+            <DialogTitle>Add a new schedule</DialogTitle>
+          </DialogHeader>
+          
+          <div className="space-y-4">
+            <div>
+              <label htmlFor="schedule-name" className="block text-sm font-medium mb-2">
+                Name
+              </label>
+              <Input
+                id="schedule-name"
+                value={newScheduleName}
+                onChange={(e) => setNewScheduleName(e.target.value)}
+                placeholder="Working Hours"
+                className="w-full"
+              />
+              {!newScheduleName.trim() && (
+                <div className="mt-2 text-sm text-muted-foreground bg-muted px-2 py-1 rounded">
+                  Please fill in this field.
+                </div>
+              )}
+            </div>
+
+            <div className="flex justify-end space-x-3 pt-4">
+              <Button 
+                variant="outline" 
+                onClick={() => setIsNewScheduleModalOpen(false)}
+              >
+                Close
+              </Button>
+              <Button 
+                onClick={handleNewSchedule}
+                disabled={!newScheduleName.trim()}
+              >
+                Continue
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

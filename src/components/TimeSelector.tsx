@@ -54,36 +54,38 @@ export const TimeSelector = ({ value, onChange, placeholder = "Select time" }: T
   const displayValue = value ? formatTime(value) : placeholder;
 
   return (
-    <div className="relative" ref={dropdownRef}>
-      <button
-        type="button"
-        onClick={() => setIsOpen(!isOpen)}
-        className="w-full px-3 py-2 border border-border rounded-md text-sm bg-background text-left flex items-center justify-between hover:bg-muted/50 transition-colors"
-      >
-        <span className={value ? 'text-foreground' : 'text-muted-foreground'}>
-          {displayValue}
-        </span>
-        <ChevronDown className="h-4 w-4 text-muted-foreground" />
-      </button>
+    <>
+      <div className="relative" ref={dropdownRef}>
+        <button
+          type="button"
+          onClick={() => setIsOpen(!isOpen)}
+          className="w-full px-3 py-2 border border-border rounded-md text-sm bg-background text-left flex items-center justify-between hover:bg-muted/50 transition-colors"
+        >
+          <span className={value ? 'text-foreground' : 'text-muted-foreground'}>
+            {displayValue}
+          </span>
+          <ChevronDown className="h-4 w-4 text-muted-foreground" />
+        </button>
 
-      {isOpen && (
-        <div className="absolute top-full left-0 right-0 mt-1 bg-popover border border-border rounded-md shadow-lg z-50 max-h-60 overflow-y-auto custom-scrollbar">
-          {timeSlots.map((slot) => (
-            <button
-              key={slot.value}
-              type="button"
-              onClick={() => handleTimeSelect(slot.value)}
-              className={`w-full px-3 py-2 text-left text-sm hover:bg-muted transition-colors ${
-                value === slot.value ? 'bg-muted text-primary font-medium' : 'text-foreground'
-              }`}
-            >
-              {slot.display}
-            </button>
-          ))}
-        </div>
-      )}
+        {isOpen && (
+          <div className="absolute top-full left-0 right-0 mt-1 bg-popover border border-border rounded-md shadow-lg z-50 max-h-60 overflow-y-auto custom-scrollbar">
+            {timeSlots.map((slot) => (
+              <button
+                key={slot.value}
+                type="button"
+                onClick={() => handleTimeSelect(slot.value)}
+                className={`w-full px-3 py-2 text-left text-sm hover:bg-muted transition-colors ${
+                  value === slot.value ? 'bg-muted text-primary font-medium' : 'text-foreground'
+                }`}
+              >
+                {slot.display}
+              </button>
+            ))}
+          </div>
+        )}
+      </div>
       
-      <style jsx>{`
+      <style>{`
         .custom-scrollbar::-webkit-scrollbar {
           width: 4px;
         }
@@ -98,6 +100,6 @@ export const TimeSelector = ({ value, onChange, placeholder = "Select time" }: T
           background: hsl(var(--muted-foreground) / 0.5);
         }
       `}</style>
-    </div>
+    </>
   );
 };
