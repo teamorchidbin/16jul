@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useRef } from 'react';
 import { ChevronDown, Moon, HelpCircle, MapPin, LogOut, User, Bell, Copy, Eye } from 'lucide-react';
 import { NotificationDropdown } from './NotificationDropdown';
@@ -37,6 +38,8 @@ export const Header = ({ showEventTypesHeader = false, eventData }: HeaderProps)
   }, [showProfileDropdown]);
 
   const isBookingsPage = location.pathname === '/bookings';
+  const isAvailabilityPage = location.pathname === '/availability';
+  const isEditAvailabilityPage = location.pathname.startsWith('/availability/');
 
   return (
     <header className="h-20 border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-50">
@@ -52,6 +55,13 @@ export const Header = ({ showEventTypesHeader = false, eventData }: HeaderProps)
           <div className="flex-1">
             <h1 className="text-xl font-semibold text-foreground">Bookings</h1>
             <p className="text-sm text-muted-foreground mt-1">Manage all your scheduled meetings and appointments.</p>
+          </div>
+        )}
+
+        {isAvailabilityPage && (
+          <div className="flex-1">
+            <h1 className="text-xl font-semibold text-foreground">Availability</h1>
+            <p className="text-sm text-muted-foreground mt-1">Configure times when you are available for bookings.</p>
           </div>
         )}
         

@@ -1,3 +1,4 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -16,6 +17,8 @@ import { Webhooks } from "./pages/settings/Webhooks";
 import { ApiKeys } from "./pages/settings/ApiKeys";
 import { EventTypes } from "./pages/EventTypes";
 import { EditEvent } from "./pages/EditEvent";
+import { Availability } from "./pages/Availability";
+import { EditAvailability } from "./pages/EditAvailability";
 import NotFound from "./pages/NotFound";
 import Bookings from "./pages/Bookings";
 import { Password } from "./pages/settings/Password";
@@ -37,8 +40,9 @@ const App = () => (
             <Route index element={<EventTypes />} />
             <Route path="event/:eventId/:tab" element={<EditEvent />} />
             <Route path="bookings" element={<Bookings />} />
+            <Route path="availability" element={<Availability />} />
+            <Route path="availability/:scheduleId" element={<EditAvailability />} />
             <Route path="scheduling-coming-soon" element={<SchedulingComingSoon />} />
-            <Route path="availability" element={<div className="p-8">Availability page coming soon</div>} />
             <Route path="teams" element={<div className="p-8">Teams page coming soon</div>} />
             <Route path="apps" element={<div className="p-8">Apps page coming soon</div>} />
             <Route path="routing-forms" element={<div className="p-8">Routing Forms page coming soon</div>} />
