@@ -507,14 +507,10 @@ export default function Bookings() {
                     {meeting.isToday ? 'Today' : meeting.date} • {meeting.time} - {meeting.endTime}
                   </div>
                 </div>
-                <div className="flex items-center gap-2 text-sm text-gray-500">
-                  <span>Details</span>
-                  {isExpanded ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
-                </div>
               </div>
 
               <div className="flex items-center gap-2 mb-3">
-                <h3 className={`text-base font-medium ${meeting.status === 'canceled' ? 'line-through text-gray-500' : 'text-gray-900'}`}>
+                <h3 className={`text-lg font-medium ${meeting.status === 'canceled' ? 'line-through text-gray-500' : 'text-gray-900'}`}>
                   {meeting.title}
                 </h3>
                 <span className="text-gray-400">•</span>
@@ -525,7 +521,7 @@ export default function Bookings() {
                         <div className="flex items-center gap-1">
                           <span className="text-sm text-gray-600">{attendeeDisplay.display}</span>
                           <button
-                            className="text-sm text-blue-600 hover:text-blue-800 font-medium"
+                            className="text-sm text-gray-600 hover:text-gray-800 font-medium"
                             onClick={(e) => {
                               e.stopPropagation();
                               setShowAttendeesDropdown(showAttendeesDropdown === meeting.id ? null : meeting.id);
@@ -536,7 +532,7 @@ export default function Bookings() {
                         </div>
                       ) : (
                         <button
-                          className="text-sm text-blue-600 hover:text-blue-800 font-medium"
+                          className="text-sm text-gray-600 hover:text-gray-800 font-medium"
                           onClick={(e) => {
                             e.stopPropagation();
                             copyToClipboard(meeting.attendees[0].email);
@@ -553,7 +549,7 @@ export default function Bookings() {
                             {meeting.attendees.map((attendee, index) => (
                               <button
                                 key={index}
-                                className="w-full text-left text-sm text-blue-600 hover:text-blue-800 hover:bg-gray-50 py-1 px-2 rounded"
+                                className="w-full text-left text-sm text-gray-600 hover:text-gray-800 hover:bg-gray-50 py-1 px-2 rounded"
                                 onClick={(e) => {
                                   e.stopPropagation();
                                   copyToClipboard(attendee.email);
@@ -572,18 +568,26 @@ export default function Bookings() {
               </div>
 
               {/* Location */}
-              <div className="flex items-center space-x-2">
-                {meeting.location.type === 'online' ? (
-                  <button className="flex items-center space-x-2 text-sm text-blue-600 hover:text-blue-800 transition-colors">
-                    <Video className="h-4 w-4" />
-                    <span>Join {meeting.location.name}</span>
-                  </button>
-                ) : (
-                  <div className="flex items-center space-x-2 text-sm text-gray-600">
-                    <MapPin className="h-4 w-4" />
-                    <span>{meeting.location.address}</span>
-                  </div>
-                )}
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-2">
+                  {meeting.location.type === 'online' ? (
+                    <button className="flex items-center space-x-2 text-sm text-blue-600 hover:text-blue-800 transition-colors">
+                      <Video className="h-4 w-4" />
+                      <span>Join {meeting.location.name}</span>
+                    </button>
+                  ) : (
+                    <div className="flex items-center space-x-2 text-sm text-gray-600">
+                      <MapPin className="h-4 w-4" />
+                      <span>{meeting.location.address}</span>
+                    </div>
+                  )}
+                </div>
+                
+                {/* Details button moved to bottom right */}
+                <div className="flex items-center gap-2 text-sm text-gray-500">
+                  <span>Details</span>
+                  {isExpanded ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+                </div>
               </div>
             </div>
 
@@ -648,23 +652,30 @@ export default function Bookings() {
               <div className="grid grid-cols-2 gap-8">
                 <div className="space-y-4">
                   <div>
+                    <div className="text-sm font-medium text-gray-900 mb-1">Event Type</div>
+                    <div className="text-sm text-gray-600">{meeting.eventType}</div>
+                  </div>
+                  
+                  <div>
                     <div className="text-sm font-medium text-gray-900 mb-1">Duration</div>
                     <div className="text-sm text-gray-600">{meeting.duration}</div>
                   </div>
                   
                   <div>
-                    <div className="text-sm font-medium text-gray-900 mb-1">Invitee Name</div>
-                    <div className="text-sm text-gray-600">{meeting.attendees[0]?.name}</div>
-                  </div>
-                  
-                  <div>
-                    <div className="text-sm font-medium text-gray-900 mb-1">Invitee Email</div>
-                    <div className="text-sm text-gray-600">{meeting.attendees[0]?.email}</div>
-                  </div>
-                  
-                  <div>
-                    <div className="text-sm font-medium text-gray-900 mb-1">Invitee Time Zone</div>
-                    <div className="text-sm text-gray-600">{meeting.attendees[0]?.timezone}</div>
+                    <div className="text-sm font-medium text-gray-900 mb-2">Invitee Details</div>
+                    <div className="flex items-center gap-2 text-sm text-gray-600">
+                      <span>{meeting.attendees[0]?.name}</span>
+                      <span>•</span>
+                      <span>{meeting.attendees[0]?.timezone}</span>
+                      <span>•</span>
+                      <span>{meeting.attendees[0]?.email}</span>
+                      <button
+                        onClick={() => copyToClipboard(meeting.attendees[0]?.email)}
+                        className="ml-1 text-gray-400 hover:text-gray-600"
+                      >
+                        <Copy className="h-3 w-3" />
+                      </button>
+                    </div>
                   </div>
 
                   {meeting.attendees.length > 1 && (
@@ -704,6 +715,7 @@ export default function Bookings() {
                 {showExpandedActions && (
                   <div className="flex flex-col items-end space-y-2">
                     <Button 
+                      variant="outline"
                       size="sm" 
                       className="w-32"
                       onClick={(e) => {
@@ -893,7 +905,7 @@ export default function Bookings() {
                 mode="range"
                 selected={dateRange}
                 onSelect={setDateRange}
-                className="rounded-md border"
+                className="rounded-md border pointer-events-auto"
               />
             </PopoverContent>
           </Popover>
@@ -918,16 +930,24 @@ export default function Bookings() {
         {otherMeetings.length > 0 && (
           <div className={`space-y-3 ${todayMeetings.length > 0 ? 'mt-6' : ''}`}>
             {activeTab === 'recurring' && otherMeetings.length > 0 && (
-              <h3 className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-2">RECURRING</h3>
+              <h3 className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-2">
+                {otherMeetings.some(m => m.isToday) ? 'TODAY' : 'RECURRING'}
+              </h3>
             )}
             {activeTab === 'past' && otherMeetings.length > 0 && (
-              <h3 className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-2">PAST</h3>
+              <h3 className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-2">
+                {otherMeetings.some(m => m.isToday) ? 'TODAY' : 'PAST'}
+              </h3>
             )}
             {activeTab === 'canceled' && otherMeetings.length > 0 && (
-              <h3 className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-2">CANCELED</h3>
+              <h3 className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-2">
+                {otherMeetings.some(m => m.isToday) ? 'TODAY' : 'CANCELED'}
+              </h3>
             )}
             {activeTab === 'unconfirmed' && otherMeetings.length > 0 && (
-              <h3 className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-2">UNCONFIRMED</h3>
+              <h3 className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-2">
+                {otherMeetings.some(m => m.isToday) ? 'TODAY' : 'UNCONFIRMED'}
+              </h3>
             )}
             <div className="space-y-3">
               {otherMeetings.map((meeting) => (
