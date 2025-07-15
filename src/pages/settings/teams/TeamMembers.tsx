@@ -7,7 +7,7 @@ import { Switch } from '../../../components/ui/switch';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../../../components/ui/table';
 import { Popover, PopoverContent, PopoverTrigger } from '../../../components/ui/popover';
 import { Checkbox } from '../../../components/ui/checkbox';
-import { Filter, LayoutGrid, Plus, ExternalLink } from 'lucide-react';
+import { LayoutGrid, Plus, ExternalLink } from 'lucide-react';
 import { InviteTeamMemberModal } from '../../../components/InviteTeamMemberModal';
 
 export const TeamMembers = () => {
@@ -30,8 +30,13 @@ export const TeamMembers = () => {
     }
   ];
 
+  const handleMemberAdded = (memberData: any) => {
+    console.log('Member added:', memberData);
+    // Add logic to handle new member
+  };
+
   return (
-    <div className="min-h-screen bg-background flex justify-center">
+    <div className="min-h-screen bg-background flex justify-center animate-fade-in">
       <div className="p-8 max-w-6xl w-full">
         <div className="mb-8 text-center">
           <h1 className="text-2xl font-semibold mb-2">Members</h1>
@@ -45,45 +50,16 @@ export const TeamMembers = () => {
               placeholder="Search"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-64"
+              className="w-64 transition-all duration-200 focus:ring-2 focus:ring-primary/20"
             />
-            
-            <Popover>
-              <PopoverTrigger asChild>
-                <Button variant="outline" size="sm">
-                  <Filter className="h-4 w-4 mr-2" />
-                  Add filter
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-48">
-                <div className="space-y-2">
-                  <div className="flex items-center space-x-2">
-                    <Checkbox 
-                      id="role-filter" 
-                      checked={showRoleColumn}
-                      onCheckedChange={(checked) => setShowRoleColumn(checked === true)}
-                    />
-                    <label htmlFor="role-filter" className="text-sm">Role</label>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <Checkbox 
-                      id="last-active-filter" 
-                      checked={showLastActiveColumn}
-                      onCheckedChange={(checked) => setShowLastActiveColumn(checked === true)}
-                    />
-                    <label htmlFor="last-active-filter" className="text-sm">Last Active</label>
-                  </div>
-                </div>
-              </PopoverContent>
-            </Popover>
 
             <Popover>
               <PopoverTrigger asChild>
-                <Button variant="outline" size="sm">
+                <Button variant="outline" size="sm" className="hover:scale-105 transition-transform duration-200">
                   View <LayoutGrid className="h-4 w-4 ml-2" />
                 </Button>
               </PopoverTrigger>
-              <PopoverContent className="w-48">
+              <PopoverContent className="w-48 animate-scale-in">
                 <div className="space-y-3">
                   <Input placeholder="Search" className="h-8" />
                   <div className="text-sm text-muted-foreground">Toggle columns</div>
@@ -113,17 +89,20 @@ export const TeamMembers = () => {
             </Popover>
           </div>
 
-          <Button onClick={() => setShowInviteModal(true)}>
+          <Button 
+            onClick={() => setShowInviteModal(true)}
+            className="hover:scale-105 transition-transform duration-200"
+          >
             <Plus className="h-4 w-4 mr-2" />
             Add
           </Button>
         </div>
 
         {/* Members Table */}
-        <div className="border rounded-lg">
+        <div className="border rounded-lg overflow-hidden animate-fade-in">
           <Table>
             <TableHeader>
-              <TableRow>
+              <TableRow className="hover:bg-muted/50 transition-colors">
                 <TableHead>Member (1)</TableHead>
                 {showRoleColumn && <TableHead>Role</TableHead>}
                 {showLastActiveColumn && <TableHead>Last Active</TableHead>}
@@ -132,13 +111,13 @@ export const TeamMembers = () => {
             </TableHeader>
             <TableBody>
               {members.map((member) => (
-                <TableRow key={member.id}>
+                <TableRow key={member.id} className="hover:bg-muted/50 transition-colors duration-200">
                   <TableCell>
                     <div className="flex items-center space-x-3">
                       <img 
                         src={member.avatar} 
                         alt={member.name}
-                        className="w-8 h-8 rounded-full"
+                        className="w-8 h-8 rounded-full transition-transform duration-200 hover:scale-110"
                       />
                       <div>
                         <div className="font-medium">{member.name}</div>
@@ -155,7 +134,11 @@ export const TeamMembers = () => {
                     <TableCell>{member.lastActive}</TableCell>
                   )}
                   <TableCell>
-                    <Button variant="ghost" size="sm">
+                    <Button 
+                      variant="ghost" 
+                      size="sm"
+                      className="hover:scale-110 transition-transform duration-200"
+                    >
                       <ExternalLink className="h-4 w-4" />
                     </Button>
                   </TableCell>
@@ -166,8 +149,8 @@ export const TeamMembers = () => {
         </div>
 
         {/* Settings */}
-        <div className="mt-12 space-y-8">
-          <div className="flex items-center justify-between">
+        <div className="mt-12 space-y-8 animate-fade-in">
+          <div className="flex items-center justify-between p-4 border rounded-lg hover:bg-muted/20 transition-colors duration-200">
             <div>
               <h3 className="text-base font-medium">User Impersonation</h3>
               <p className="text-sm text-muted-foreground">Allows your team Owners/Admins to temporarily sign in as you.</p>
@@ -175,10 +158,11 @@ export const TeamMembers = () => {
             <Switch 
               checked={userImpersonation}
               onCheckedChange={setUserImpersonation}
+              className="transition-all duration-200"
             />
           </div>
 
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between p-4 border rounded-lg hover:bg-muted/20 transition-colors duration-200">
             <div>
               <h3 className="text-base font-medium">Make team private</h3>
               <p className="text-sm text-muted-foreground">Your team members won't be able to see other team members when this is turned on.</p>
@@ -186,6 +170,7 @@ export const TeamMembers = () => {
             <Switch 
               checked={makeTeamPrivate}
               onCheckedChange={setMakeTeamPrivate}
+              className="transition-all duration-200"
             />
           </div>
         </div>
@@ -193,6 +178,7 @@ export const TeamMembers = () => {
         <InviteTeamMemberModal 
           open={showInviteModal}
           onClose={() => setShowInviteModal(false)}
+          onMemberAdded={handleMemberAdded}
         />
       </div>
     </div>

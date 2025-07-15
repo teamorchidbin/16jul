@@ -3,148 +3,175 @@ import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { Button } from '../../../components/ui/button';
 import { Input } from '../../../components/ui/input';
-import { Label } from '../../../components/ui/label';
 import { Textarea } from '../../../components/ui/textarea';
-import { Popover, PopoverContent, PopoverTrigger } from '../../../components/ui/popover';
-import { Bold, Italic, Link, Strikethrough, Trash2 } from 'lucide-react';
+import { Label } from '../../../components/ui/label';
+import { Separator } from '../../../components/ui/separator';
+import { Trash2, Bold, Italic, Strikethrough } from 'lucide-react';
+import { mockTeams } from '../../../data/mockData';
 
 export const TeamProfile = () => {
   const { teamId } = useParams();
-  const [teamName, setTeamName] = useState('Testing Cal ID');
-  const [teamUrl, setTeamUrl] = useState('testing-cal-id');
-  const [about, setAbout] = useState('');
-  const [showLinkDialog, setShowLinkDialog] = useState(false);
-  const [linkUrl, setLinkUrl] = useState('');
+  const [teamName, setTeamName] = useState('');
+  const [teamUrl, setTeamUrl] = useState('');
+  const [teamBio, setTeamBio] = useState('');
+  const [isDescriptionBold, setIsDescriptionBold] = useState(false);
+  const [isDescriptionItalic, setIsDescriptionItalic] = useState(false);
+  const [isDescriptionStrike, setIsDescriptionStrike] = useState(false);
 
-  const insertMarkdown = (before: string, after: string = '') => {
-    const textarea = document.getElementById('team-about') as HTMLTextAreaElement;
-    if (textarea) {
-      const start = textarea.selectionStart;
-      const end = textarea.selectionEnd;
-      const selectedText = textarea.value.substring(start, end);
-      const newText = textarea.value.substring(0, start) + before + selectedText + after + textarea.value.substring(end);
-      setAbout(newText);
-      
-      setTimeout(() => {
-        textarea.focus();
-        textarea.setSelectionRange(start + before.length, end + before.length);
-      }, 0);
+  // Find current team data
+  const currentTeam = mockTeams.find(team => team.id === teamId);
+
+  React.useEffect(() => {
+    if (currentTeam) {
+      setTeamName(currentTeam.name);
+      setTeamUrl(currentTeam.url);
     }
+  }, [currentTeam]);
+
+  const handleSave = () => {
+    console.log('Saving team profile:', { teamName, teamUrl, teamBio });
   };
 
-  const handleAddLink = () => {
-    if (linkUrl) {
-      insertMarkdown('[', `](${linkUrl})`);
-      setLinkUrl('');
-      setShowLinkDialog(false);
-    }
+  const handleDelete = () => {
+    console.log('Deleting team');
+  };
+
+  const toggleBold = () => setIsDescriptionBold(!isDescriptionBold);
+  const toggleItalic = () => setIsDescriptionItalic(!isDescriptionItalic);
+  const toggleStrike = () => setIsDescriptionStrike(!isDescriptionStrike);
+
+  const getDescriptionClasses = () => {
+    let classes = 'min-h-[120px] resize-none transition-all duration-200 focus:ring-2 focus:ring-primary/20';
+    if (isDescriptionBold) classes += ' font-bold';
+    if (isDescriptionItalic) classes += ' italic';
+    if (isDescriptionStrike) classes += ' line-through';
+    return classes;
   };
 
   return (
-    <div className="min-h-screen bg-background flex justify-center">
-      <div className="p-8 max-w-4xl w-full">
+    <div className="min-h-screen bg-background flex justify-center animate-fade-in">
+      <div className="p-8 max-w-2xl w-full">
         <div className="mb-8 text-center">
-          <h1 className="text-2xl font-semibold mb-2">Profile</h1>
-          <p className="text-muted-foreground">Manage settings for your team profile</p>
+          <h1 className="text-2xl font-semibold mb-2">Team Profile</h1>
+          <p className="text-muted-foreground">Manage your team's basic information and settings</p>
         </div>
 
-        <div className="space-y-8 mb-12">
-          {/* Team Logo */}
-          <div className="space-y-4">
-            <Label className="text-base font-medium">Team Logo</Label>
-            <div className="flex items-center space-x-4">
-              <div className="w-16 h-16 rounded-full bg-black flex items-center justify-center text-white font-bold text-xl">
-                TI
-              </div>
-              <Button variant="outline">Upload logo</Button>
+        <div className="space-y-6">
+          {/* Team Avatar */}
+          <div className="flex items-center space-x-4 p-4 border rounded-lg hover:bg-muted/20 transition-colors duration-200">
+            <div className="h-16 w-16 rounded-full bg-primary flex items-center justify-center text-primary-foreground text-xl font-bold transition-transform duration-200 hover:scale-105">
+              {currentTeam?.avatar || 'T'}
+            </div>
+            <div>
+              <h3 className="font-medium">Team Avatar</h3>
+              <p className="text-sm text-muted-foreground">This will be shown as your team's avatar</p>
             </div>
           </div>
 
           {/* Team Name */}
           <div className="space-y-2">
-            <Label htmlFor="teamName">Team Name</Label>
-            <Input 
-              id="teamName" 
-              value={teamName} 
-              onChange={(e) => setTeamName(e.target.value)} 
+            <Label htmlFor="team-name">Team Name</Label>
+            <Input
+              id="team-name"
+              value={teamName}
+              onChange={(e) => setTeamName(e.target.value)}
+              placeholder="Enter team name"
+              className="transition-all duration-200 focus:ring-2 focus:ring-primary/20"
             />
           </div>
 
           {/* Team URL */}
           <div className="space-y-2">
-            <Label htmlFor="teamUrl">Team URL</Label>
-            <div className="flex">
-              <div className="flex items-center px-3 bg-muted border border-r-0 rounded-l-md text-sm text-muted-foreground">
-                cal.id/team/
-              </div>
-              <Input 
-                id="teamUrl" 
-                value={teamUrl} 
+            <Label htmlFor="team-url">Team URL</Label>
+            <div className="flex items-center space-x-2">
+              <span className="text-sm text-muted-foreground">cal.id/</span>
+              <Input
+                id="team-url"
+                value={teamUrl}
                 onChange={(e) => setTeamUrl(e.target.value)}
-                className="rounded-l-none" 
+                placeholder="team-url"
+                className="transition-all duration-200 focus:ring-2 focus:ring-primary/20"
               />
             </div>
+            <p className="text-xs text-muted-foreground">This is your team's public URL</p>
           </div>
 
-          {/* About */}
+          {/* Team Bio */}
           <div className="space-y-2">
-            <Label htmlFor="team-about">About</Label>
-            <div className="border rounded-md">
-              <div className="flex items-center space-x-2 p-2 border-b">
-                <Button variant="ghost" size="sm" onClick={() => insertMarkdown('**', '**')}>
+            <Label htmlFor="team-bio">Team Bio</Label>
+            <div className="border rounded-lg">
+              {/* Rich text toolbar */}
+              <div className="flex items-center space-x-1 p-2 border-b bg-muted/20">
+                <Button
+                  type="button"
+                  variant={isDescriptionBold ? "default" : "ghost"}
+                  size="sm"
+                  onClick={toggleBold}
+                  className="h-8 w-8 p-0 transition-all duration-200"
+                >
                   <Bold className="h-4 w-4" />
                 </Button>
-                <Button variant="ghost" size="sm" onClick={() => insertMarkdown('*', '*')}>
+                <Button
+                  type="button"
+                  variant={isDescriptionItalic ? "default" : "ghost"}
+                  size="sm"
+                  onClick={toggleItalic}
+                  className="h-8 w-8 p-0 transition-all duration-200"
+                >
                   <Italic className="h-4 w-4" />
                 </Button>
-                <Button variant="ghost" size="sm" onClick={() => insertMarkdown('~~', '~~')}>
+                <Button
+                  type="button"
+                  variant={isDescriptionStrike ? "default" : "ghost"}
+                  size="sm"
+                  onClick={toggleStrike}
+                  className="h-8 w-8 p-0 transition-all duration-200"
+                >
                   <Strikethrough className="h-4 w-4" />
                 </Button>
-                <Popover open={showLinkDialog} onOpenChange={setShowLinkDialog}>
-                  <PopoverTrigger asChild>
-                    <Button variant="ghost" size="sm">
-                      <Link className="h-4 w-4" />
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-80">
-                    <div className="space-y-2">
-                      <Label htmlFor="linkUrl">Enter URL:</Label>
-                      <Input
-                        id="linkUrl"
-                        value={linkUrl}
-                        onChange={(e) => setLinkUrl(e.target.value)}
-                        placeholder="https://example.com"
-                      />
-                      <div className="flex space-x-2">
-                        <Button size="sm" onClick={handleAddLink}>Add Link</Button>
-                        <Button size="sm" variant="outline" onClick={() => setShowLinkDialog(false)}>Cancel</Button>
-                      </div>
-                    </div>
-                  </PopoverContent>
-                </Popover>
               </div>
               <Textarea
-                id="team-about"
-                value={about}
-                onChange={(e) => setAbout(e.target.value)}
-                className="border-none resize-none"
-                rows={4}
-                placeholder="A few sentences about your team. This will appear on your team's url page."
+                id="team-bio"
+                value={teamBio}
+                onChange={(e) => setTeamBio(e.target.value)}
+                placeholder="Tell people about your team..."
+                className={getDescriptionClasses()}
               />
             </div>
           </div>
-        </div>
 
-        {/* Danger Zone */}
-        <div className="border border-destructive/30 rounded-lg p-6 bg-destructive/5">
-          <div className="mb-4">
-            <h2 className="text-lg font-medium mb-2 text-destructive">Danger zone</h2>
-            <p className="text-sm text-muted-foreground">Be careful. Team deletion cannot be undone.</p>
+          {/* Action Buttons */}
+          <div className="flex justify-between pt-6">
+            <Button 
+              onClick={handleSave} 
+              className="hover:scale-105 transition-transform duration-200"
+            >
+              Save Changes
+            </Button>
           </div>
-          <Button variant="outline" className="text-destructive border-destructive hover:bg-destructive hover:text-destructive-foreground">
-            <Trash2 className="h-4 w-4 mr-2" />
-            Disband Team
-          </Button>
+
+          <Separator className="my-8" />
+
+          {/* Danger Zone */}
+          <div className="space-y-4 p-4 border border-destructive/20 rounded-lg bg-destructive/5 animate-fade-in">
+            <h3 className="text-lg font-semibold text-destructive">Danger Zone</h3>
+            <div className="flex items-center justify-between">
+              <div>
+                <h4 className="font-medium">Delete Team</h4>
+                <p className="text-sm text-muted-foreground">
+                  Permanently delete this team and all its data. This action cannot be undone.
+                </p>
+              </div>
+              <Button 
+                variant="destructive" 
+                onClick={handleDelete}
+                className="hover:scale-105 transition-transform duration-200"
+              >
+                <Trash2 className="h-4 w-4 mr-2" />
+                Delete Team
+              </Button>
+            </div>
+          </div>
         </div>
       </div>
     </div>
