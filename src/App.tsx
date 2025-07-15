@@ -25,6 +25,11 @@ import { Password } from "./pages/settings/Password";
 import { Impersonation } from "./pages/settings/Impersonation";
 import { TeamNew } from "./pages/settings/TeamNew";
 import { TeamDetail } from "./pages/settings/TeamDetail";
+import { TeamProfile } from "./pages/settings/teams/TeamProfile";
+import { TeamMembers } from "./pages/settings/teams/TeamMembers";
+import { TeamEventTypes } from "./pages/settings/teams/TeamEventTypes";
+import { TeamAppearance } from "./pages/settings/teams/TeamAppearance";
+import { TeamBookingLimits } from "./pages/settings/teams/TeamBookingLimits";
 import SchedulingComingSoon from "./pages/SchedulingComingSoon";
 import { Teams } from "./pages/Teams";
 
@@ -66,6 +71,11 @@ const App = () => (
             <Route path="teams/new" element={<TeamNew />} />
             <Route path="teams/:teamId" element={<TeamDetail />} />
             <Route path="teams/:teamId/:section" element={<TeamDetail />} />
+            <Route path="teams/:teamId/profile" element={<TeamProfile />} />
+            <Route path="teams/:teamId/members" element={<TeamMembers />} />
+            <Route path="teams/:teamId/event-types" element={<TeamEventTypes />} />
+            <Route path="teams/:teamId/appearance" element={<TeamAppearance />} />
+            <Route path="teams/:teamId/booking-limits" element={<TeamBookingLimits />} />
           </Route>
           
           <Route path="*" element={<NotFound />} />
