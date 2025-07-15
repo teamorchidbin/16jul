@@ -1,6 +1,5 @@
-
 import React, { useState, useRef, useEffect } from 'react';
-import { Filter, Download, Search, Calendar, MapPin, Video, MoreHorizontal, Edit, UserPlus, Clock, X, Bold, Italic, Underline, Strikethrough, List, ListOrdered, Undo, Redo, Check, Copy, Eye, ChevronDown, ChevronUp } from 'lucide-react';
+import { Filter, Download, Search, Calendar, MapPin, Video, MoreHorizontal, Edit, UserPlus, Clock, X, Bold, Italic, Underline, Strikethrough, List, ListOrdered, Undo, Redo, Check, Copy, Eye, ChevronDown, ChevronUp, Mail, Globe } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { Switch } from '../components/ui/switch';
 import { Button } from '../components/ui/button';
@@ -35,13 +34,14 @@ interface Meeting {
   recurringInfo?: string;
   isToday?: boolean;
   duration?: string;
+  recurringDates?: string[];
 }
 
 const mockMeetings: Meeting[] = [
   // Upcoming meetings - 15 total
   {
     id: '1',
-    title: '30 Minute Meeting',
+    title: 'Product Hunt Chats',
     date: 'Mon, 14 Jul',
     time: '9:00am',
     endTime: '9:30am',
@@ -54,13 +54,13 @@ const mockMeetings: Meeting[] = [
       name: 'Google Meet',
       logo: '📹'
     },
-    eventType: '30 Min Meeting',
+    eventType: 'Product Hunt Chats',
     status: 'upcoming',
     isToday: true
   },
   {
     id: '2',
-    title: 'Product Hunt Chats',
+    title: 'Discovery Call',
     date: 'Mon, 14 Jul',
     time: '2:00pm',
     endTime: '2:15pm',
@@ -73,7 +73,7 @@ const mockMeetings: Meeting[] = [
       name: 'Zoom',  
       logo: '📹'
     },
-    eventType: '15 Min Meeting',
+    eventType: 'Discovery Call',
     status: 'upcoming',
     isToday: true
   },
@@ -93,27 +93,28 @@ const mockMeetings: Meeting[] = [
       name: 'Teams',
       logo: '📹'
     },
-    eventType: '30 Min Meeting',
+    eventType: 'Strategy Session',
     status: 'upcoming',
     isToday: false
   },
   {
     id: '4',
-    title: 'Client Review',
+    title: 'Product Demo',
     date: 'Wed, 16 Jul',
     time: '3:00pm',
     endTime: '4:00pm',
     duration: '60 minutes',
     attendees: [
       { name: 'David Kim', email: 'david.kim@enterprise.com', timezone: 'Asia/Seoul' },
-      { name: 'Sarah Wilson', email: 'sarah.w@agency.co', timezone: 'America/Los_Angeles' }
+      { name: 'Sarah Wilson', email: 'sarah.w@agency.co', timezone: 'America/Los_Angeles' },
+      { name: 'Jennifer Lee', email: 'jennifer.lee@sales.com', timezone: 'America/Los_Angeles' }
     ],
     location: {
       type: 'online',
       name: 'Google Meet',
       logo: '📹'
     },
-    eventType: '60 Min Meeting',
+    eventType: 'Product Demo',
     status: 'upcoming',
     isToday: false
   },
@@ -126,14 +127,15 @@ const mockMeetings: Meeting[] = [
     duration: '60 minutes',
     attendees: [
       { name: 'James Thompson', email: 'james.t@design.studio', timezone: 'Europe/London' },
-      { name: 'Lisa Park', email: 'lisa.park@creative.com', timezone: 'America/Chicago' }
+      { name: 'Lisa Park', email: 'lisa.park@creative.com', timezone: 'America/Chicago' },
+      { name: 'Carlos Rodriguez', email: 'carlos.r@marketing.co', timezone: 'America/Mexico_City' }
     ],
     location: {
       type: 'online',
       name: 'Zoom',
       logo: '📹'
     },
-    eventType: '60 Min Meeting',
+    eventType: 'Design Review',
     status: 'upcoming',
     isToday: false
   },
@@ -147,36 +149,37 @@ const mockMeetings: Meeting[] = [
     attendees: [
       { name: 'Robert Johnson', email: 'robert.j@techteam.com', timezone: 'America/New_York' },
       { name: 'Anna Martinez', email: 'anna.m@devops.io', timezone: 'Europe/Berlin' },
-      { name: 'Michael Wong', email: 'michael.wong@cloud.net', timezone: 'Asia/Hong_Kong' }
+      { name: 'Michael Wong', email: 'michael.wong@cloud.net', timezone: 'Asia/Hong_Kong' },
+      { name: 'Sophie Brown', email: 'sophie.brown@remote.com', timezone: 'Europe/Paris' }
     ],
     location: {
       type: 'online',
       name: 'Teams',
       logo: '📹'
     },
-    eventType: '15 Min Meeting',
+    eventType: 'Team Standup',
     status: 'upcoming',
     isToday: false
   },
   {
     id: '7',
-    title: 'Product Demo',
+    title: 'Client Presentation',
     date: 'Mon, 21 Jul',
     time: '2:00pm',
     endTime: '3:00pm',
     duration: '60 minutes',
     attendees: [
-      { name: 'Jennifer Lee', email: 'jennifer.lee@sales.com', timezone: 'America/Los_Angeles' },
-      { name: 'Carlos Rodriguez', email: 'carlos.r@marketing.co', timezone: 'America/Mexico_City' },
-      { name: 'Priya Patel', email: 'priya.patel@product.io', timezone: 'Asia/Mumbai' },
-      { name: 'Tom Anderson', email: 'tom.anderson@growth.com', timezone: 'America/Denver' }
+      { name: 'Kevin Wu', email: 'kevin.wu@distributed.io', timezone: 'Asia/Shanghai' },
+      { name: 'Rachel Green', email: 'rachel.green@global.net', timezone: 'Australia/Sydney' },
+      { name: 'Ahmed Hassan', email: 'ahmed.hassan@mena.co', timezone: 'Africa/Cairo' },
+      { name: 'Elena Volkov', email: 'elena.volkov@eastern.com', timezone: 'Europe/Moscow' }
     ],
     location: {
       type: 'online',
       name: 'Google Meet',
       logo: '📹'
     },
-    eventType: '60 Min Meeting',
+    eventType: 'Client Presentation',
     status: 'upcoming',
     isToday: false
   },
@@ -188,18 +191,18 @@ const mockMeetings: Meeting[] = [
     endTime: '5:00pm',
     duration: '60 minutes',
     attendees: [
-      { name: 'Sophie Brown', email: 'sophie.brown@remote.com', timezone: 'Europe/Paris' },
-      { name: 'Kevin Wu', email: 'kevin.wu@distributed.io', timezone: 'Asia/Shanghai' },
-      { name: 'Rachel Green', email: 'rachel.green@global.net', timezone: 'Australia/Sydney' },
-      { name: 'Ahmed Hassan', email: 'ahmed.hassan@mena.co', timezone: 'Africa/Cairo' },
-      { name: 'Elena Volkov', email: 'elena.volkov@eastern.com', timezone: 'Europe/Moscow' }
+      { name: 'Mark Davis', email: 'mark.davis@tech.com', timezone: 'America/New_York' },
+      { name: 'Julia Schmidt', email: 'julia.schmidt@engineering.de', timezone: 'Europe/Berlin' },
+      { name: 'Yuki Tanaka', email: 'yuki.tanaka@innovation.jp', timezone: 'Asia/Tokyo' },
+      { name: 'Lucas Silva', email: 'lucas.silva@startup.br', timezone: 'America/Sao_Paulo' },
+      { name: 'Fatima Al-Zahra', email: 'fatima.alzahra@tech.ae', timezone: 'Asia/Dubai' }
     ],
     location: {
       type: 'online',
       name: 'Zoom',
       logo: '📹'
     },
-    eventType: '60 Min Meeting',
+    eventType: 'Weekly Sync',
     status: 'upcoming',
     isToday: false
   },
@@ -211,19 +214,18 @@ const mockMeetings: Meeting[] = [
     endTime: '2:00pm',
     duration: '60 minutes',
     attendees: [
-      { name: 'Mark Davis', email: 'mark.davis@tech.com', timezone: 'America/New_York' },
-      { name: 'Julia Schmidt', email: 'julia.schmidt@engineering.de', timezone: 'Europe/Berlin' },
-      { name: 'Yuki Tanaka', email: 'yuki.tanaka@innovation.jp', timezone: 'Asia/Tokyo' },
-      { name: 'Lucas Silva', email: 'lucas.silva@startup.br', timezone: 'America/Sao_Paulo' },
-      { name: 'Fatima Al-Zahra', email: 'fatima.alzahra@tech.ae', timezone: 'Asia/Dubai' },
-      { name: 'Chris Miller', email: 'chris.miller@software.ca', timezone: 'America/Toronto' }
+      { name: 'Chris Miller', email: 'chris.miller@software.ca', timezone: 'America/Toronto' },
+      { name: 'Isabella Rossi', email: 'isabella.rossi@strategy.it', timezone: 'Europe/Rome' },
+      { name: 'Oliver Smith', email: 'oliver.smith@consulting.uk', timezone: 'Europe/London' },
+      { name: 'Nina Petrov', email: 'nina.petrov@advisory.ru', timezone: 'Europe/Moscow' },
+      { name: 'Diego Lopez', email: 'diego.lopez@planning.es', timezone: 'Europe/Madrid' }
     ],
     location: {
       type: 'online',
       name: 'Teams',
       logo: '📹'
     },
-    eventType: '60 Min Meeting',
+    eventType: 'Tech Discussion',
     status: 'upcoming',
     isToday: false
   },
@@ -235,29 +237,7 @@ const mockMeetings: Meeting[] = [
     endTime: '11:30am',
     duration: '90 minutes',
     attendees: [
-      { name: 'Isabella Rossi', email: 'isabella.rossi@strategy.it', timezone: 'Europe/Rome' },
-      { name: 'Oliver Smith', email: 'oliver.smith@consulting.uk', timezone: 'Europe/London' },
-      { name: 'Nina Petrov', email: 'nina.petrov@advisory.ru', timezone: 'Europe/Moscow' },
-      { name: 'Diego Lopez', email: 'diego.lopez@planning.es', timezone: 'Europe/Madrid' },
-      { name: 'Amara Johnson', email: 'amara.johnson@insights.us', timezone: 'America/Chicago' }
-    ],
-    location: {
-      type: 'online',
-      name: 'Google Meet',
-      logo: '📹'
-    },
-    eventType: '90 Min Meeting',
-    status: 'upcoming',
-    isToday: false
-  },
-  {
-    id: '11',
-    title: 'Client Presentation',
-    date: 'Fri, 25 Jul',
-    time: '3:00pm',
-    endTime: '4:00pm',
-    duration: '60 minutes',
-    attendees: [
+      { name: 'Amara Johnson', email: 'amara.johnson@insights.us', timezone: 'America/Chicago' },
       { name: 'Victoria Chang', email: 'victoria.chang@corp.com', timezone: 'Asia/Hong_Kong' },
       { name: 'Gabriel Santos', email: 'gabriel.santos@enterprise.br', timezone: 'America/Sao_Paulo' },
       { name: 'Zara Ahmed', email: 'zara.ahmed@business.ae', timezone: 'Asia/Dubai' },
@@ -265,96 +245,114 @@ const mockMeetings: Meeting[] = [
     ],
     location: {
       type: 'online',
-      name: 'Zoom',
+      name: 'Google Meet',
       logo: '📹'
     },
-    eventType: '60 Min Meeting',
+    eventType: 'Strategy Planning',
     status: 'upcoming',
     isToday: false
   },
   {
-    id: '12',
+    id: '11',
     title: 'Product Roadmap',
-    date: 'Mon, 28 Jul',
-    time: '11:00am',
-    endTime: '12:30pm',
-    duration: '90 minutes',
+    date: 'Fri, 25 Jul',
+    time: '3:00pm',
+    endTime: '4:00pm',
+    duration: '60 minutes',
     attendees: [
       { name: 'Harrison Ford', email: 'harrison.ford@product.com', timezone: 'America/Los_Angeles' },
       { name: 'Mei Zhang', email: 'mei.zhang@roadmap.cn', timezone: 'Asia/Shanghai' },
       { name: 'Sebastian Mueller', email: 'sebastian.mueller@planning.de', timezone: 'Europe/Berlin' },
       { name: 'Aria Nakamura', email: 'aria.nakamura@strategy.jp', timezone: 'Asia/Tokyo' },
-      { name: 'Phoenix Williams', email: 'phoenix.williams@vision.ca', timezone: 'America/Vancouver' },
+      { name: 'Phoenix Williams', email: 'phoenix.williams@vision.ca', timezone: 'America/Vancouver' }
+    ],
+    location: {
+      type: 'online',
+      name: 'Zoom',
+      logo: '📹'
+    },
+    eventType: 'Product Roadmap',
+    status: 'upcoming',
+    isToday: false
+  },
+  {
+    id: '12',
+    title: 'Marketing Review',
+    date: 'Mon, 28 Jul',
+    time: '11:00am',
+    endTime: '12:30pm',
+    duration: '90 minutes',
+    attendees: [
       { name: 'Luna Martinez', email: 'luna.martinez@future.mx', timezone: 'America/Mexico_City' },
-      { name: 'River Johnson', email: 'river.johnson@innovation.us', timezone: 'America/Denver' }
+      { name: 'River Johnson', email: 'river.johnson@innovation.us', timezone: 'America/Denver' },
+      { name: 'Skyler Davis', email: 'skyler.davis@marketing.com', timezone: 'America/Chicago' },
+      { name: 'Ravi Sharma', email: 'ravi.sharma@growth.in', timezone: 'Asia/Mumbai' },
+      { name: 'Chloe Brown', email: 'chloe.brown@brand.uk', timezone: 'Europe/London' }
     ],
     location: {
       type: 'online',
       name: 'Teams',
       logo: '📹'
     },
-    eventType: '90 Min Meeting',
+    eventType: 'Marketing Review',
     status: 'upcoming',
     isToday: false
   },
   {
     id: '13',
-    title: 'Marketing Review',
+    title: 'Engineering Sync',
     date: 'Tue, 29 Jul',
     time: '2:00pm',
     endTime: '3:30pm',
     duration: '90 minutes',
     attendees: [
-      { name: 'Skyler Davis', email: 'skyler.davis@marketing.com', timezone: 'America/Chicago' },
-      { name: 'Ravi Sharma', email: 'ravi.sharma@growth.in', timezone: 'Asia/Mumbai' },
-      { name: 'Chloe Brown', email: 'chloe.brown@brand.uk', timezone: 'Europe/London' },
       { name: 'Mason Lee', email: 'mason.lee@campaign.kr', timezone: 'Asia/Seoul' },
-      { name: 'Zoe Taylor', email: 'zoe.taylor@digital.au', timezone: 'Australia/Sydney' }
+      { name: 'Zoe Taylor', email: 'zoe.taylor@digital.au', timezone: 'Australia/Sydney' },
+      { name: 'Atlas Rodriguez', email: 'atlas.rodriguez@engineering.com', timezone: 'America/Los_Angeles' },
+      { name: 'Nova Kim', email: 'nova.kim@development.kr', timezone: 'Asia/Seoul' },
+      { name: 'Sage Wilson', email: 'sage.wilson@code.ca', timezone: 'America/Toronto' }
     ],
     location: {
       type: 'online',
       name: 'Google Meet',
       logo: '📹'
     },
-    eventType: '90 Min Meeting',
+    eventType: 'Engineering Sync',
     status: 'upcoming',
     isToday: false
   },
   {
     id: '14',
-    title: 'Engineering Sync',
+    title: 'Design Workshop',
     date: 'Wed, 30 Jul',
     time: '4:00pm',
     endTime: '5:00pm',
     duration: '60 minutes',
     attendees: [
-      { name: 'Atlas Rodriguez', email: 'atlas.rodriguez@engineering.com', timezone: 'America/Los_Angeles' },
-      { name: 'Nova Kim', email: 'nova.kim@development.kr', timezone: 'Asia/Seoul' },
-      { name: 'Sage Wilson', email: 'sage.wilson@code.ca', timezone: 'America/Toronto' },
       { name: 'Echo Martinez', email: 'echo.martinez@software.mx', timezone: 'America/Mexico_City' },
       { name: 'Orion Chen', email: 'orion.chen@tech.tw', timezone: 'Asia/Taipei' },
-      { name: 'Indigo Patel', email: 'indigo.patel@systems.in', timezone: 'Asia/Mumbai' }
+      { name: 'Indigo Patel', email: 'indigo.patel@systems.in', timezone: 'Asia/Mumbai' },
+      { name: 'Sterling Thompson', email: 'sterling.thompson@design.com', timezone: 'America/New_York' },
+      { name: 'Jade Wang', email: 'jade.wang@creative.cn', timezone: 'Asia/Shanghai' },
+      { name: 'Rowan Anderson', email: 'rowan.anderson@studio.se', timezone: 'Europe/Stockholm' }
     ],
     location: {
       type: 'online',
       name: 'Zoom',
       logo: '📹'
     },
-    eventType: '60 Min Meeting',
+    eventType: 'Design Workshop',
     status: 'upcoming',
     isToday: false
   },
   {
     id: '15',
-    title: 'Design Workshop',
+    title: 'Final Review',
     date: 'Thu, 31 Jul',
     time: '1:00pm',
     endTime: '3:00pm',
     duration: '120 minutes',
     attendees: [
-      { name: 'Sterling Thompson', email: 'sterling.thompson@design.com', timezone: 'America/New_York' },
-      { name: 'Jade Wang', email: 'jade.wang@creative.cn', timezone: 'Asia/Shanghai' },
-      { name: 'Rowan Anderson', email: 'rowan.anderson@studio.se', timezone: 'Europe/Stockholm' },
       { name: 'Sage Murphy', email: 'sage.murphy@visual.ie', timezone: 'Europe/Dublin' },
       { name: 'Cedar Jones', email: 'cedar.jones@ux.nz', timezone: 'Pacific/Auckland' },
       { name: 'Aspen Garcia', email: 'aspen.garcia@interface.es', timezone: 'Europe/Madrid' },
@@ -366,7 +364,7 @@ const mockMeetings: Meeting[] = [
       name: 'Teams',
       logo: '📹'
     },
-    eventType: '120 Min Meeting',
+    eventType: 'Final Review',
     status: 'upcoming',
     isToday: false
   }
@@ -380,6 +378,13 @@ const generateMeetingsForStatus = (status: Meeting['status'], count: number = 15
     status,
     isToday: status === 'upcoming' && i < 2,
     title: status === 'canceled' ? mockMeetings[i % mockMeetings.length].title : mockMeetings[i % mockMeetings.length].title,
+    recurringDates: status === 'recurring' ? [
+      'Mon, 14 Jul • 9:00am - 9:30am',
+      'Tue, 15 Jul • 9:00am - 9:30am',
+      'Wed, 16 Jul • 9:00am - 9:30am',
+      'Thu, 17 Jul • 9:00am - 9:30am',
+      'Fri, 18 Jul • 9:00am - 9:30am'
+    ] : undefined
   }));
 };
 
@@ -389,6 +394,17 @@ const allMeetings = [
   ...generateMeetingsForStatus('recurring'),
   ...generateMeetingsForStatus('past'),
   ...generateMeetingsForStatus('canceled')
+];
+
+const teamNames = [
+  'Personal',
+  'Development Team',
+  'Design Team',
+  'Marketing Team',
+  'Sales Team',
+  'Engineering Team',
+  'Product Team',
+  'Customer Success'
 ];
 
 export default function Bookings() {
@@ -406,6 +422,8 @@ export default function Bookings() {
   const [dateRange, setDateRange] = useState<DateRange | undefined>();
   const [showEditDropdown, setShowEditDropdown] = useState<string | null>(null);
   const [showAttendeesDropdown, setShowAttendeesDropdown] = useState<string | null>(null);
+  const [showAttendeeDetails, setShowAttendeeDetails] = useState<string | null>(null);
+  const [selectedRecurringDates, setSelectedRecurringDates] = useState<string[]>([]);
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -443,7 +461,7 @@ export default function Bookings() {
     const attendees = meeting.attendees;
     if (attendees.length === 0) return null;
     if (attendees.length === 1) return attendees[0].name.split(' ')[0];
-    if (attendees.length === 2) return `${attendees[0].name.split(' ')[0]} & ${attendees[1].name.split(' ')[0]}`;
+    if (attendees.length === 2) return `${attendees[0].name.split(' ')[0]}, ${attendees[1].name.split(' ')[0]}`;
     return { 
       display: `${attendees[0].name.split(' ')[0]}, ${attendees[1].name.split(' ')[0]}`,
       moreCount: attendees.length - 2 
@@ -460,6 +478,14 @@ export default function Bookings() {
     return Array.from(allAttendees);
   };
 
+  const copyToClipboard = (text: string) => {
+    navigator.clipboard.writeText(text);
+    toast({
+      description: "Email copied to clipboard",
+      duration: 2000,
+    });
+  };
+
   const MeetingCard = ({ meeting }: { meeting: Meeting }) => {
     const isExpanded = expandedMeeting === meeting.id;
     const attendeeDisplay = getAttendeeDisplay(meeting);
@@ -467,7 +493,7 @@ export default function Bookings() {
     const showExpandedActions = meeting.status !== 'past' && meeting.status !== 'canceled';
     
     return (
-      <div className="bg-white border border-gray-200 rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-all duration-200">
+      <div className="bg-white border border-gray-200 rounded-lg overflow-visible shadow-sm hover:shadow-md transition-all duration-200">
         <div className="p-4">
           {/* Default Card View */}
           <div className="flex justify-between items-start">
@@ -475,49 +501,71 @@ export default function Bookings() {
               className="flex-1 cursor-pointer"
               onClick={() => setExpandedMeeting(isExpanded ? null : meeting.id)}
             >
-              {/* Date and Time */}
-              <div className="flex items-start gap-4 mb-3">
-                <div className="text-sm text-gray-600">
-                  {meeting.isToday ? 'Today' : meeting.date} • {meeting.time} - {meeting.endTime}
+              <div className="flex items-start justify-between mb-3">
+                <div className="flex items-start gap-3">
+                  <div className="text-sm text-gray-600">
+                    {meeting.isToday ? 'Today' : meeting.date} • {meeting.time} - {meeting.endTime}
+                  </div>
                 </div>
-                <div>
-                  <h3 className={`text-sm font-medium ${meeting.status === 'canceled' ? 'line-through text-gray-500' : 'text-gray-900'}`}>
-                    {meeting.title}
-                  </h3>
+                <div className="flex items-center gap-2 text-sm text-gray-500">
+                  <span>Details</span>
+                  {isExpanded ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+                </div>
+              </div>
+
+              <div className="flex items-center gap-2 mb-3">
+                <h3 className={`text-base font-medium ${meeting.status === 'canceled' ? 'line-through text-gray-500' : 'text-gray-900'}`}>
+                  {meeting.title}
+                </h3>
+                <span className="text-gray-400">•</span>
+                <div className="flex items-center gap-1">
                   {attendeeDisplay && (
-                    <div className="flex items-center gap-1 mt-1">
-                      <span className="text-gray-400">•</span>
-                      <div className="relative">
-                        {typeof attendeeDisplay === 'object' ? (
-                          <div className="flex items-center gap-1">
-                            <span className="text-sm text-gray-600">{attendeeDisplay.display}</span>
-                            <button
-                              className="text-sm text-blue-600 hover:text-blue-800 font-medium"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                setShowAttendeesDropdown(showAttendeesDropdown === meeting.id ? null : meeting.id);
-                              }}
-                            >
-                              + {attendeeDisplay.moreCount} More
-                            </button>
+                    <div className="relative">
+                      {typeof attendeeDisplay === 'object' ? (
+                        <div className="flex items-center gap-1">
+                          <span className="text-sm text-gray-600">{attendeeDisplay.display}</span>
+                          <button
+                            className="text-sm text-blue-600 hover:text-blue-800 font-medium"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setShowAttendeesDropdown(showAttendeesDropdown === meeting.id ? null : meeting.id);
+                            }}
+                          >
+                            + {attendeeDisplay.moreCount} More
+                          </button>
+                        </div>
+                      ) : (
+                        <button
+                          className="text-sm text-blue-600 hover:text-blue-800 font-medium"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            copyToClipboard(meeting.attendees[0].email);
+                          }}
+                        >
+                          {attendeeDisplay}
+                        </button>
+                      )}
+                      
+                      {showAttendeesDropdown === meeting.id && typeof attendeeDisplay === 'object' && (
+                        <div className="absolute top-full left-0 mt-1 bg-white border border-gray-200 rounded-md shadow-lg z-50 min-w-48">
+                          <div className="p-2">
+                            <div className="text-xs font-medium text-gray-500 mb-2">All Attendees</div>
+                            {meeting.attendees.map((attendee, index) => (
+                              <button
+                                key={index}
+                                className="w-full text-left text-sm text-blue-600 hover:text-blue-800 hover:bg-gray-50 py-1 px-2 rounded"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  copyToClipboard(attendee.email);
+                                  setShowAttendeesDropdown(null);
+                                }}
+                              >
+                                {attendee.name}
+                              </button>
+                            ))}
                           </div>
-                        ) : (
-                          <span className="text-sm text-gray-600">{attendeeDisplay}</span>
-                        )}
-                        
-                        {showAttendeesDropdown === meeting.id && typeof attendeeDisplay === 'object' && (
-                          <div className="absolute top-full left-0 mt-1 bg-white border border-gray-200 rounded-md shadow-lg z-20 min-w-48">
-                            <div className="p-2">
-                              <div className="text-xs font-medium text-gray-500 mb-2">All Attendees</div>
-                              {meeting.attendees.map((attendee, index) => (
-                                <div key={index} className="text-sm text-gray-700 py-1">
-                                  {attendee.name}
-                                </div>
-                              ))}
-                            </div>
-                          </div>
-                        )}
-                      </div>
+                        </div>
+                      )}
                     </div>
                   )}
                 </div>
@@ -559,10 +607,9 @@ export default function Bookings() {
                       }}
                     >
                       Edit
-                      <ChevronDown className="h-4 w-4 ml-1" />
                     </Button>
                     {showEditDropdown === meeting.id && (
-                      <div className="absolute top-full right-0 mt-1 bg-white border border-gray-200 rounded-md shadow-lg z-20 min-w-48">
+                      <div className="absolute top-full right-0 mt-1 bg-white border border-gray-200 rounded-md shadow-lg z-50 min-w-48">
                         <button 
                           className="w-full px-3 py-2 text-left text-sm hover:bg-gray-50 flex items-center gap-2"
                           onClick={(e) => {
@@ -598,48 +645,67 @@ export default function Bookings() {
           {/* Expanded Details */}
           {isExpanded && (
             <div className="mt-4 pt-4 border-t border-gray-200 animate-fade-in">
-              <div className="flex justify-between">
-                <div className="flex-1 space-y-4">
-                  <div className="grid grid-cols-2 gap-x-8 gap-y-4">
-                    <div>
-                      <div className="text-sm font-medium text-gray-900 mb-1">Event Type</div>
-                      <div className="text-sm text-gray-600">{meeting.eventType}</div>
-                    </div>
-                    <div>
-                      <div className="text-sm font-medium text-gray-900 mb-1">Duration</div>
-                      <div className="text-sm text-gray-600">{meeting.duration}</div>
-                    </div>
+              <div className="grid grid-cols-2 gap-8">
+                <div className="space-y-4">
+                  <div>
+                    <div className="text-sm font-medium text-gray-900 mb-1">Duration</div>
+                    <div className="text-sm text-gray-600">{meeting.duration}</div>
+                  </div>
+                  
+                  <div>
+                    <div className="text-sm font-medium text-gray-900 mb-1">Invitee Name</div>
+                    <div className="text-sm text-gray-600">{meeting.attendees[0]?.name}</div>
+                  </div>
+                  
+                  <div>
+                    <div className="text-sm font-medium text-gray-900 mb-1">Invitee Email</div>
+                    <div className="text-sm text-gray-600">{meeting.attendees[0]?.email}</div>
+                  </div>
+                  
+                  <div>
+                    <div className="text-sm font-medium text-gray-900 mb-1">Invitee Time Zone</div>
+                    <div className="text-sm text-gray-600">{meeting.attendees[0]?.timezone}</div>
                   </div>
 
-                  {/* Invitees */}
-                  <div>
-                    <div className="text-sm font-medium text-gray-900 mb-2">Invitee Details</div>
-                    <div className="space-y-3">
-                      {meeting.attendees.map((attendee, index) => (
-                        <div key={index} className="grid grid-cols-3 gap-4 text-sm">
-                          <div>
-                            <span className="font-medium text-gray-700">{index === 0 ? 'Name:' : ''}</span>
-                            <div className="text-gray-600">{attendee.name}</div>
+                  {meeting.attendees.length > 1 && (
+                    <div>
+                      <div className="text-sm font-medium text-gray-900 mb-2">Attendees</div>
+                      <div className="flex flex-wrap gap-2">
+                        {meeting.attendees.slice(1).map((attendee, index) => (
+                          <div key={index} className="relative">
+                            <button
+                              className="px-3 py-1 bg-gray-100 text-gray-700 text-sm rounded-full hover:bg-gray-200 hover:shadow-sm transition-all"
+                              onClick={() => setShowAttendeeDetails(showAttendeeDetails === `${meeting.id}-${index}` ? null : `${meeting.id}-${index}`)}
+                            >
+                              {attendee.name.split(' ')[0]}
+                            </button>
+                            {showAttendeeDetails === `${meeting.id}-${index}` && (
+                              <div className="absolute top-full left-0 mt-1 bg-white border border-gray-200 rounded-md shadow-lg z-50 min-w-64">
+                                <div className="p-3 space-y-2">
+                                  <div className="flex items-center gap-2">
+                                    <Mail className="h-4 w-4 text-gray-400" />
+                                    <span className="text-sm text-gray-600">{attendee.email}</span>
+                                  </div>
+                                  <div className="flex items-center gap-2">
+                                    <Globe className="h-4 w-4 text-gray-400" />
+                                    <span className="text-sm text-gray-600">{attendee.timezone}</span>
+                                  </div>
+                                </div>
+                              </div>
+                            )}
                           </div>
-                          <div>
-                            <span className="font-medium text-gray-700">{index === 0 ? 'Email:' : ''}</span>
-                            <div className="text-gray-600">{attendee.email}</div>
-                          </div>
-                          <div>
-                            <span className="font-medium text-gray-700">{index === 0 ? 'Time Zone:' : ''}</span>
-                            <div className="text-gray-600">{attendee.timezone}</div>
-                          </div>
-                        </div>
-                      ))}
+                        ))}
+                      </div>
                     </div>
-                  </div>
+                  )}
                 </div>
 
                 {/* Action Buttons for Expanded View */}
                 {showExpandedActions && (
-                  <div className="flex flex-col items-end space-y-2 ml-6">
+                  <div className="flex flex-col items-end space-y-2">
                     <Button 
                       size="sm" 
+                      className="w-32"
                       onClick={(e) => {
                         e.stopPropagation();
                         setSelectedMeeting(meeting);
@@ -652,6 +718,7 @@ export default function Bookings() {
                       <Button 
                         variant="outline" 
                         size="sm"
+                        className="w-32"
                         onClick={(e) => {
                           e.stopPropagation();
                           handleMarkNoShow(meeting);
@@ -691,7 +758,7 @@ export default function Bookings() {
             <button
               key={tab.value}
               onClick={() => setActiveTab(tab.value)}
-              className={`px-6 py-2 text-sm font-medium transition-colors min-w-[120px] ${
+              className={`px-4 py-2 text-sm font-medium transition-colors ${
                 activeTab === tab.value
                   ? 'text-primary border-b-2 border-primary'
                   : 'text-gray-700 hover:text-gray-900'
@@ -730,7 +797,7 @@ export default function Bookings() {
             <PopoverTrigger asChild>
               <Button variant="outline" size="sm">Attendee: All</Button>
             </PopoverTrigger>
-            <PopoverContent className="w-80" align="start">
+            <PopoverContent className="w-80 max-h-60 overflow-auto scrollbar-hide" align="start">
               <div className="space-y-3">
                 <div className="relative">
                   <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -754,7 +821,7 @@ export default function Bookings() {
             <PopoverTrigger asChild>
               <Button variant="outline" size="sm">Host: All</Button>
             </PopoverTrigger>
-            <PopoverContent className="w-80" align="start">
+            <PopoverContent className="w-80 max-h-60 overflow-auto scrollbar-hide" align="start">
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
                   <span className="text-sm">All Users</span>
@@ -768,7 +835,7 @@ export default function Bookings() {
             <PopoverTrigger asChild>
               <Button variant="outline" size="sm">Event Type: All</Button>
             </PopoverTrigger>
-            <PopoverContent className="w-80" align="start">
+            <PopoverContent className="w-80 max-h-60 overflow-auto scrollbar-hide" align="start">
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
                   <span className="text-sm">All event types</span>
@@ -790,36 +857,18 @@ export default function Bookings() {
             <PopoverTrigger asChild>
               <Button variant="outline" size="sm">Teams: All</Button>
             </PopoverTrigger>
-            <PopoverContent className="w-80" align="start">
+            <PopoverContent className="w-80 max-h-60 overflow-auto scrollbar-hide" align="start">
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
                   <span className="text-sm">All</span>
                   <Checkbox />
                 </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-sm">Personal</span>
-                  <Checkbox />
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-sm">Development Team</span>
-                  <Checkbox />
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-sm">Design Team</span>
-                  <Checkbox />
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-sm">Marketing Team</span>
-                  <Checkbox />
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-sm">Sales Team</span>
-                  <Checkbox />
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-sm">Engineering Team</span>
-                  <Checkbox />
-                </div>
+                {teamNames.map((team, index) => (
+                  <div key={index} className="flex items-center justify-between">
+                    <span className="text-sm">{team}</span>
+                    <Checkbox />
+                  </div>
+                ))}
               </div>
             </PopoverContent>
           </Popover>
@@ -946,24 +995,60 @@ export default function Bookings() {
           <div className="bg-white rounded-lg p-6 w-full max-w-lg shadow-xl">
             <h2 className="text-xl font-semibold mb-6 text-gray-900">Cancel Event</h2>
             
-            <div className="space-y-3 mb-6 p-4 bg-gray-50 rounded-lg">
-              <div className="flex gap-3">
-                <span className="font-medium text-gray-600 min-w-16">Event:</span>
-                <span className="text-gray-900">{selectedMeeting.eventType}</span>
+            {selectedMeeting.status === 'recurring' && selectedMeeting.recurringDates ? (
+              <div className="mb-6">
+                <label className="block text-sm font-medium mb-3 text-gray-900">Select the meetings you want to cancel</label>
+                <div className="space-y-2 max-h-48 overflow-y-auto">
+                  <div className="flex items-center justify-between p-2 bg-gray-50 rounded">
+                    <span className="text-sm font-medium">Select All</span>
+                    <Checkbox 
+                      checked={selectedRecurringDates.length === selectedMeeting.recurringDates.length}
+                      onCheckedChange={(checked) => {
+                        if (checked) {
+                          setSelectedRecurringDates(selectedMeeting.recurringDates || []);
+                        } else {
+                          setSelectedRecurringDates([]);
+                        }
+                      }}
+                    />
+                  </div>
+                  {selectedMeeting.recurringDates.map((date, index) => (
+                    <div key={index} className="flex items-center justify-between p-2 hover:bg-gray-50 rounded">
+                      <span className="text-sm">{date}</span>
+                      <Checkbox 
+                        checked={selectedRecurringDates.includes(date)}
+                        onCheckedChange={(checked) => {
+                          if (checked) {
+                            setSelectedRecurringDates([...selectedRecurringDates, date]);
+                          } else {
+                            setSelectedRecurringDates(selectedRecurringDates.filter(d => d !== date));
+                          }
+                        }}
+                      />
+                    </div>
+                  ))}
+                </div>
               </div>
-              <div className="flex gap-3">
-                <span className="font-medium text-gray-600 min-w-16">When:</span>
-                <span className="text-gray-900">{selectedMeeting.date} {selectedMeeting.time} - {selectedMeeting.endTime}</span>
+            ) : (
+              <div className="space-y-3 mb-6 p-4 bg-gray-50 rounded-lg">
+                <div className="flex gap-3">
+                  <span className="font-medium text-gray-600 min-w-16">Event:</span>
+                  <span className="text-gray-900">{selectedMeeting.eventType}</span>
+                </div>
+                <div className="flex gap-3">
+                  <span className="font-medium text-gray-600 min-w-16">When:</span>
+                  <span className="text-gray-900">{selectedMeeting.date} {selectedMeeting.time} - {selectedMeeting.endTime}</span>
+                </div>
+                <div className="flex gap-3">
+                  <span className="font-medium text-gray-600 min-w-16">With:</span>
+                  <span className="text-gray-900">{selectedMeeting.attendees.map(a => a.name).join(', ')}</span>
+                </div>
+                <div className="flex gap-3">
+                  <span className="font-medium text-gray-600 min-w-16">Where:</span>
+                  <span className="text-gray-900">{selectedMeeting.location.name}</span>
+                </div>
               </div>
-              <div className="flex gap-3">
-                <span className="font-medium text-gray-600 min-w-16">With:</span>
-                <span className="text-gray-900">{selectedMeeting.attendees.map(a => a.name).join(', ')}</span>
-              </div>
-              <div className="flex gap-3">
-                <span className="font-medium text-gray-600 min-w-16">Where:</span>
-                <span className="text-gray-900">{selectedMeeting.location.name}</span>
-              </div>
-            </div>
+            )}
 
             <div className="mb-6">
               <label className="block text-sm font-medium mb-3 text-gray-900">Reason for cancellation (optional)</label>
@@ -980,6 +1065,7 @@ export default function Bookings() {
                 setShowCancelConfirm(false);
                 setSelectedMeeting(null);
                 setCancelReason('');
+                setSelectedRecurringDates([]);
               }}>
                 Keep Event
               </Button>
@@ -989,6 +1075,7 @@ export default function Bookings() {
                   setShowCancelConfirm(false);
                   setSelectedMeeting(null);
                   setCancelReason('');
+                  setSelectedRecurringDates([]);
                   toast({
                     description: "Event cancelled successfully.",
                     duration: 3000,
