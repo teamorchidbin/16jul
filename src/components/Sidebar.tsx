@@ -1,62 +1,117 @@
-
 import React from 'react';
-import { NavLink, useLocation } from 'react-router-dom';
-import { Calendar, CalendarCheck, Clock, Settings, Zap } from 'lucide-react';
+import { NavLink } from 'react-router-dom';
+import { Calendar, Clock, Users, Settings, BarChart3, Workflow, FileText, Zap, Moon, Sun } from 'lucide-react';
 
-const navigation = [
-  { name: 'Event Types', href: '/event-types', icon: Calendar },
-  { name: 'Bookings', href: '/bookings', icon: CalendarCheck },
-  { name: 'Availability', href: '/availability', icon: Clock },
-  { name: 'Workflows', href: '/workflows', icon: Zap },
-];
+interface SidebarProps {
+  darkMode: boolean;
+  setDarkMode: (value: boolean) => void;
+}
 
-export const Sidebar = () => {
-  const location = useLocation();
+export const Sidebar = ({
+  darkMode,
+  setDarkMode
+}: SidebarProps) => {
+  const navigation = [
+    {
+      name: 'Event Types',
+      href: '/',
+      icon: Calendar
+    },
+    {
+      name: 'Bookings',
+      href: '/bookings',
+      icon: Clock
+    },
+    {
+      name: 'Availability',
+      href: '/availability',
+      icon: BarChart3
+    },
+    {
+      name: 'Teams',
+      href: '/teams',
+      icon: Users
+    },
+    {
+      name: 'Apps',
+      href: '/apps',
+      icon: Zap
+    },
+    {
+      name: 'Routing Forms',
+      href: '/routing-forms',
+      icon: FileText
+    },
+    {
+      name: 'Workflows',
+      href: '/workflows',
+      icon: Workflow
+    },
+    {
+      name: 'Insights',
+      href: '/insights',
+      icon: BarChart3
+    }
+  ];
+
+  const handleDarkModeToggle = () => {
+    setDarkMode(!darkMode);
+  };
 
   return (
-    <div className="flex h-full w-64 flex-col bg-card border-r border-border">
-      <div className="flex flex-1 flex-col overflow-y-auto">
-        <nav className="flex-1 space-y-1 px-2 py-4">
-          {navigation.map((item) => {
-            const isActive = location.pathname.startsWith(item.href);
-            return (
-              <NavLink
-                key={item.name}
-                to={item.href}
-                className={({ isActive: linkActive }) =>
-                  `group flex items-center px-2 py-2 text-sm font-medium rounded-md transition-colors ${
-                    linkActive || isActive
-                      ? 'bg-primary text-primary-foreground'
-                      : 'text-muted-foreground hover:bg-muted hover:text-foreground'
-                  }`
-                }
-              >
-                <item.icon
-                  className="mr-3 h-5 w-5 flex-shrink-0"
-                  aria-hidden="true"
-                />
-                {item.name}
-              </NavLink>
-            );
-          })}
-        </nav>
-        
-        <div className="flex-shrink-0 px-2 py-4 border-t border-border">
+    <div className="fixed inset-y-0 left-0 z-50 w-64 bg-card border-r border-border flex flex-col">
+      <div className="flex h-20 items-center px-6 border-b border-border">
+        <img 
+          src="https://cdn.prod.website-files.com/5e53d34464688e6f5960a338/682f1bb36cedcb0cd39a7027_Onehash-CalId-logo%20icon.svg" 
+          alt="Cal ID" 
+          className="h-8 w-8" 
+        />
+        <span className="ml-3 text-xl font-semibold">Cal ID</span>
+      </div>
+      
+      <nav className="flex-1 px-4 py-6 space-y-1">
+        {navigation.map((item) => (
           <NavLink
-            to="/settings"
+            key={item.name}
+            to={item.href}
             className={({ isActive }) =>
-              `group flex items-center px-2 py-2 text-sm font-medium rounded-md transition-colors ${
+              `group flex items-center px-3 py-2.5 text-sm font-medium rounded-lg transition-all duration-200 ${
                 isActive
-                  ? 'bg-primary text-primary-foreground'
+                  ? 'bg-primary text-primary-foreground shadow-sm'
                   : 'text-muted-foreground hover:bg-muted hover:text-foreground'
               }`
             }
           >
-            <Settings
-              className="mr-3 h-5 w-5 flex-shrink-0"
-              aria-hidden="true"
-            />
-            Settings
+            <item.icon className="mr-3 h-5 w-5 flex-shrink-0" />
+            {item.name}
+          </NavLink>
+        ))}
+      </nav>
+      
+      {/* Dark mode toggle and settings at bottom */}
+      <div className="p-4 border-t border-border">
+        <div className="flex items-center space-x-2">
+          <button
+            onClick={handleDarkModeToggle}
+            className="flex-1 p-2.5 bg-muted/50 hover:bg-muted rounded-lg transition-all duration-200 flex items-center justify-center"
+          >
+            {darkMode ? (
+              <Sun className="h-5 w-5 text-muted-foreground" />
+            ) : (
+              <Moon className="h-5 w-5 text-muted-foreground" />
+            )}
+          </button>
+          <NavLink
+            to="/settings"
+            className={({ isActive }) =>
+              `flex-1 p-2.5 rounded-lg transition-all duration-200 flex items-center justify-center ${
+                isActive
+                  ? 'bg-primary text-primary-foreground'
+                  : 'bg-muted/50 hover:bg-muted'
+              }`
+            }
+          >
+            <Settings className="h-5 w-5 text-muted-foreground" />
           </NavLink>
         </div>
       </div>
