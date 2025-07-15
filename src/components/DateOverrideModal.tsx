@@ -42,6 +42,10 @@ export const DateOverrideModal = ({ isOpen, onClose, onSave }: DateOverrideModal
         timeSlots: isUnavailable ? [] : timeSlots
       });
       onClose();
+      // Reset form
+      setSelectedDate(undefined);
+      setIsUnavailable(false);
+      setTimeSlots([{ startTime: '09:00', endTime: '17:00' }]);
     }
   };
 

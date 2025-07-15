@@ -149,135 +149,124 @@ export const EditAvailability = () => {
 
       {/* Content */}
       <div className="px-6 py-8">
-        <div className="max-w-4xl mx-auto">
-          <div className="bg-card border border-border rounded-lg">
-            <div className="p-8 space-y-8">
-              {/* Days Schedule */}
-              <div className="space-y-6">
-                {weekDays.map((daySchedule, dayIndex) => (
-                  <div key={dayIndex} className="space-y-3">
-                    <div className="flex items-center space-x-4">
-                      <div className="w-6">
-                        <Switch 
-                          checked={daySchedule.enabled} 
-                          onCheckedChange={() => handleDayToggle(dayIndex)}
-                        />
-                      </div>
-                      <div className="w-24 text-sm font-medium">
-                        {daySchedule.day}
-                      </div>
-                      {!daySchedule.enabled ? (
-                        <div className="text-sm text-muted-foreground">Unavailable</div>
-                      ) : (
-                        <div className="flex-1 space-y-2">
-                          {daySchedule.timeSlots.map((timeSlot, slotIndex) => (
-                            <div key={slotIndex} className="flex items-center space-x-3">
-                              <div className="w-32">
-                                <TimeSelector
-                                  value={timeSlot.startTime}
-                                  onChange={(time) => handleTimeSlotChange(dayIndex, slotIndex, 'startTime', time)}
-                                />
-                              </div>
-                              <span className="text-muted-foreground">-</span>
-                              <div className="w-32">
-                                <TimeSelector
-                                  value={timeSlot.endTime}
-                                  onChange={(time) => handleTimeSlotChange(dayIndex, slotIndex, 'endTime', time)}
-                                />
-                              </div>
-                              <Button
-                                type="button"
-                                variant="ghost"
-                                size="icon"
-                                onClick={() => handleAddTimeSlot(dayIndex)}
-                                className="h-8 w-8"
-                              >
-                                <Plus className="h-4 w-4" />
-                              </Button>
-                              <Button
-                                type="button"
-                                variant="ghost"
-                                size="icon"
-                                onClick={() => handleCopyTimes(daySchedule.day)}
-                                className="h-8 w-8"
-                              >
-                                <Copy className="h-4 w-4" />
-                              </Button>
-                              {daySchedule.timeSlots.length > 1 && (
-                                <Button
-                                  type="button"
-                                  variant="ghost"
-                                  size="icon"
-                                  onClick={() => handleRemoveTimeSlot(dayIndex, slotIndex)}
-                                  className="h-8 w-8"
-                                >
-                                  <Trash2 className="h-4 w-4" />
-                                </Button>
-                              )}
-                            </div>
-                          ))}
-                        </div>
-                      )}
+        <div className="max-w-4xl mx-auto space-y-8">
+          {/* Days Schedule */}
+          <div className="space-y-6">
+            {weekDays.map((daySchedule, dayIndex) => (
+              <div key={dayIndex} className="space-y-3">
+                <div className="flex items-start space-x-4">
+                  <div className="flex items-center space-x-4 min-w-0 flex-shrink-0">
+                    <Switch 
+                      checked={daySchedule.enabled} 
+                      onCheckedChange={() => handleDayToggle(dayIndex)}
+                    />
+                    <div className="w-20 text-sm font-medium">
+                      {daySchedule.day}
                     </div>
                   </div>
-                ))}
-              </div>
-
-              {/* Timezone Section */}
-              <div className="pt-8 border-t border-border space-y-8">
-                <div>
-                  <h3 className="text-lg font-semibold mb-4">Timezone</h3>
-                  <div className="relative max-w-md">
-                    <select
-                      value={timezone}
-                      onChange={(e) => setTimezone(e.target.value)}
-                      className="w-full px-4 py-3 border border-border rounded-lg focus:ring-2 focus:ring-ring focus:border-transparent appearance-none bg-background"
-                    >
-                      <option value="Asia/Kolkata">Asia/Kolkata</option>
-                      <option value="America/New_York">America/New_York</option>
-                      <option value="Europe/London">Europe/London</option>
-                      <option value="Asia/Tokyo">Asia/Tokyo</option>
-                    </select>
-                    <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-muted-foreground pointer-events-none" />
-                  </div>
-                </div>
-
-                {/* Date Overrides Section */}
-                <div>
-                  <div className="flex items-center space-x-2 mb-4">
-                    <h3 className="text-lg font-semibold">Date overrides</h3>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <button className="p-1 hover:bg-muted rounded-full transition-colors">
-                          <Info className="h-4 w-4 text-muted-foreground" />
-                        </button>
-                      </TooltipTrigger>
-                      <TooltipContent>
-                        <p><strong>Date overrides are archived automatically after the date has passed</strong></p>
-                      </TooltipContent>
-                    </Tooltip>
-                  </div>
-                  <p className="text-sm text-muted-foreground mb-6">
-                    Add dates when your availability changes from your daily hours.
-                  </p>
-                  <Button
-                    variant="outline"
-                    onClick={() => setIsOverrideModalOpen(true)}
-                    className="flex items-center"
-                  >
-                    <Plus className="h-4 w-4 mr-2" />
-                    Add an override
-                  </Button>
-                </div>
-
-                {/* Troubleshooter Section */}
-                <div className="p-6 bg-muted/50 rounded-lg">
-                  <h4 className="font-medium mb-3">Something doesn't look right?</h4>
-                  <Button variant="outline" size="sm">
-                    Launch Troubleshooter
-                  </Button>
+                  
+                  {!daySchedule.enabled ? (
+                    <div className="text-sm text-muted-foreground">Unavailable</div>
+                  ) : (
+                    <div className="flex-1 space-y-3">
+                      {daySchedule.timeSlots.map((timeSlot, slotIndex) => (
+                        <div key={slotIndex} className="flex items-center space-x-3">
+                          <div className="w-32">
+                            <TimeSelector
+                              value={timeSlot.startTime}
+                              onChange={(time) => handleTimeSlotChange(dayIndex, slotIndex, 'startTime', time)}
+                            />
+                          </div>
+                          <span className="text-muted-foreground">-</span>
+                          <div className="w-32">
+                            <TimeSelector
+                              value={timeSlot.endTime}
+                              onChange={(time) => handleTimeSlotChange(dayIndex, slotIndex, 'endTime', time)}
+                            />
+                          </div>
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => handleAddTimeSlot(dayIndex)}
+                            className="h-8 w-8"
+                          >
+                            <Plus className="h-4 w-4" />
+                          </Button>
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => handleCopyTimes(daySchedule.day)}
+                            className="h-8 w-8"
+                          >
+                            <Copy className="h-4 w-4" />
+                          </Button>
+                          {daySchedule.timeSlots.length > 1 && (
+                            <Button
+                              type="button"
+                              variant="ghost"
+                              size="icon"
+                              onClick={() => handleRemoveTimeSlot(dayIndex, slotIndex)}
+                              className="h-8 w-8"
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
               </div>
+            ))}
+          </div>
+
+          {/* Timezone Section */}
+          <div className="space-y-6">
+            <div>
+              <h3 className="text-lg font-semibold mb-4">Timezone</h3>
+              <div className="relative max-w-md">
+                <select
+                  value={timezone}
+                  onChange={(e) => setTimezone(e.target.value)}
+                  className="w-full px-4 py-3 border border-border rounded-lg focus:ring-2 focus:ring-ring focus:border-transparent appearance-none bg-background"
+                >
+                  <option value="Asia/Kolkata">Asia/Kolkata</option>
+                  <option value="America/New_York">America/New_York</option>
+                  <option value="Europe/London">Europe/London</option>
+                  <option value="Asia/Tokyo">Asia/Tokyo</option>
+                </select>
+                <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-muted-foreground pointer-events-none" />
+              </div>
+            </div>
+
+            {/* Date Overrides Section */}
+            <div>
+              <div className="flex items-center space-x-2 mb-4">
+                <h3 className="text-lg font-semibold">Date overrides</h3>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <button className="p-1 hover:bg-muted rounded-full transition-colors">
+                      <Info className="h-4 w-4 text-muted-foreground" />
+                    </button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p><strong>Date overrides are archived automatically after the date has passed</strong></p>
+                  </TooltipContent>
+                </Tooltip>
+              </div>
+              <p className="text-sm text-muted-foreground mb-6">
+                Add dates when your availability changes from your daily hours.
+              </p>
+              <Button
+                variant="outline"
+                onClick={() => setIsOverrideModalOpen(true)}
+                className="flex items-center"
+              >
+                <Plus className="h-4 w-4 mr-2" />
+                Add an override
+              </Button>
             </div>
           </div>
         </div>

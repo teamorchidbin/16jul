@@ -44,7 +44,7 @@ export const CopyTimesModal = ({ isOpen, onClose, onCopy, sourceDay }: CopyTimes
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-md">
+      <DialogContent className="max-w-sm">
         <DialogHeader>
           <DialogTitle>Copy times to</DialogTitle>
         </DialogHeader>
