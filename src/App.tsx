@@ -23,8 +23,6 @@ import { Impersonation } from "./pages/settings/Impersonation";
 import { TeamNew } from "./pages/settings/TeamNew";
 import { TeamDetail } from "./pages/settings/TeamDetail";
 import SchedulingComingSoon from "./pages/SchedulingComingSoon";
-import { Availability } from "./pages/Availability";
-import EditAvailability from "./pages/EditAvailability";
 
 const queryClient = new QueryClient();
 
@@ -40,8 +38,7 @@ const App = () => (
             <Route path="event/:eventId/:tab" element={<EditEvent />} />
             <Route path="bookings" element={<Bookings />} />
             <Route path="scheduling-coming-soon" element={<SchedulingComingSoon />} />
-            <Route path="availability" element={<Availability />} />
-            <Route path="availability/:scheduleId" element={<EditAvailability />} />
+            <Route path="availability" element={<div className="p-8">Availability page coming soon</div>} />
             <Route path="teams" element={<div className="p-8">Teams page coming soon</div>} />
             <Route path="apps" element={<div className="p-8">Apps page coming soon</div>} />
             <Route path="routing-forms" element={<div className="p-8">Routing Forms page coming soon</div>} />
