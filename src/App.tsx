@@ -32,6 +32,8 @@ import { TeamAppearance } from "./pages/settings/teams/TeamAppearance";
 import { TeamBookingLimits } from "./pages/settings/teams/TeamBookingLimits";
 import SchedulingComingSoon from "./pages/SchedulingComingSoon";
 import { Teams } from "./pages/Teams";
+import { RoutingForms } from "./pages/RoutingForms";
+import { EditRoutingForm } from "./pages/EditRoutingForm";
 
 const queryClient = new QueryClient();
 
@@ -51,7 +53,8 @@ const App = () => (
             <Route path="scheduling-coming-soon" element={<SchedulingComingSoon />} />
             <Route path="teams" element={<Teams />} />
             <Route path="apps" element={<div className="p-8">Apps page coming soon</div>} />
-            <Route path="routing-forms" element={<div className="p-8">Routing Forms page coming soon</div>} />
+            <Route path="routing-forms" element={<RoutingForms />} />
+            <Route path="routing-forms/:formId/edit" element={<EditRoutingForm />} />
             <Route path="workflows" element={<div className="p-8">Workflows page coming soon</div>} />
             <Route path="insights" element={<div className="p-8">Insights page coming soon</div>} />
           </Route>
