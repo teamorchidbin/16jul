@@ -7,8 +7,9 @@ import { Switch } from '../../../components/ui/switch';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../../../components/ui/table';
 import { Popover, PopoverContent, PopoverTrigger } from '../../../components/ui/popover';
 import { Checkbox } from '../../../components/ui/checkbox';
-import { LayoutGrid, Plus, ExternalLink } from 'lucide-react';
+import { LayoutGrid, Plus, ExternalLink, MoreHorizontal, Edit, Send, UserX } from 'lucide-react';
 import { InviteTeamMemberModal } from '../../../components/InviteTeamMemberModal';
+import { useToast } from '../../../hooks/use-toast';
 
 export const TeamMembers = () => {
   const { teamId } = useParams();
@@ -18,27 +19,44 @@ export const TeamMembers = () => {
   const [showLastActiveColumn, setShowLastActiveColumn] = useState(true);
   const [userImpersonation, setUserImpersonation] = useState(true);
   const [makeTeamPrivate, setMakeTeamPrivate] = useState(false);
+  const { toast } = useToast();
 
-  const members = [
+  const [members, setMembers] = useState([
     {
       id: 1,
       name: 'Sanskar Yadav',
       email: 'sanskarix@gmail.com',
       role: 'OWNER',
-      lastActive: '7/15/2025',
-      avatar: '/lovable-uploads/b849b475-852b-4552-92f1-185302b164ba.png'
+      lastActive: '7/16/2025',
+      avatar: '/lovable-uploads/b849b475-852b-4552-92f1-185302b164ba.png',
+      status: 'active'
     }
-  ];
+  ]);
 
   const handleMemberAdded = (memberData: any) => {
     console.log('Member added:', memberData);
-    // Add logic to handle new member
+    const newMember = {
+      id: members.length + 1,
+      name: memberData.name || memberData.email.split('@')[0],
+      email: memberData.email,
+      role: 'MEMBER',
+      lastActive: '-',
+      avatar: '/lovable-uploads/b849b475-852b-4552-92f1-185302b164ba.png',
+      status: 'pending'
+    };
+    setMembers([...members, newMember]);
+    setShowInviteModal(false);
+    
+    toast({
+      title: "Invite sent successfully",
+      description: `Invitation has been sent to ${memberData.email}`,
+    });
   };
 
   return (
     <div className="min-h-screen bg-background flex justify-center animate-fade-in">
       <div className="p-8 max-w-6xl w-full">
-        <div className="mb-8 text-center">
+        <div className="mb-8">
           <h1 className="text-2xl font-semibold mb-2">Members</h1>
           <p className="text-muted-foreground">Manage your team members and their permissions</p>
         </div>
@@ -103,7 +121,7 @@ export const TeamMembers = () => {
           <Table>
             <TableHeader>
               <TableRow className="hover:bg-muted/50 transition-colors">
-                <TableHead>Member (1)</TableHead>
+                <TableHead>Member ({members.length})</TableHead>
                 {showRoleColumn && <TableHead>Role</TableHead>}
                 {showLastActiveColumn && <TableHead>Last Active</TableHead>}
                 <TableHead className="w-12"></TableHead>
@@ -127,20 +145,49 @@ export const TeamMembers = () => {
                   </TableCell>
                   {showRoleColumn && (
                     <TableCell>
-                      <span className="text-blue-600 font-medium">{member.role}</span>
+                      <div className="flex items-center space-x-2">
+                        <span className="font-medium">{member.role}</span>
+                        {member.status === 'pending' && (
+                          <span className="bg-yellow-100 text-yellow-800 text-xs px-2 py-1 rounded-full">
+                            Pending
+                          </span>
+                        )}
+                      </div>
                     </TableCell>
                   )}
                   {showLastActiveColumn && (
                     <TableCell>{member.lastActive}</TableCell>
                   )}
                   <TableCell>
-                    <Button 
-                      variant="ghost" 
-                      size="sm"
-                      className="hover:scale-110 transition-transform duration-200"
-                    >
-                      <ExternalLink className="h-4 w-4" />
-                    </Button>
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <Button 
+                          variant="ghost" 
+                          size="sm"
+                          className="hover:scale-110 transition-transform duration-200"
+                        >
+                          <MoreHorizontal className="h-4 w-4" />
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-48" align="end">
+                        <div className="space-y-1">
+                          <Button variant="ghost" size="sm" className="w-full justify-start">
+                            <Edit className="h-4 w-4 mr-2" />
+                            Edit
+                          </Button>
+                          {member.status === 'pending' && (
+                            <Button variant="ghost" size="sm" className="w-full justify-start">
+                              <Send className="h-4 w-4 mr-2" />
+                              Resend Invitation
+                            </Button>
+                          )}
+                          <Button variant="ghost" size="sm" className="w-full justify-start text-destructive">
+                            <UserX className="h-4 w-4 mr-2" />
+                            Remove
+                          </Button>
+                        </div>
+                      </PopoverContent>
+                    </Popover>
                   </TableCell>
                 </TableRow>
               ))}

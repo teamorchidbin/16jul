@@ -8,6 +8,7 @@ import { ArrowRight, Plus, User, Users } from 'lucide-react';
 import { InviteTeamMemberModal } from './InviteTeamMemberModal';
 import { CreateTeamEventModal } from './CreateTeamEventModal';
 import { useNavigate } from 'react-router-dom';
+import { useToast } from '../hooks/use-toast';
 
 interface CreateTeamModalProps {
   open: boolean;
@@ -31,10 +32,11 @@ export const CreateTeamModal = ({ open, onClose, onTeamCreated }: CreateTeamModa
   ]);
   const [showEventModal, setShowEventModal] = useState(false);
   const navigate = useNavigate();
+  const { toast } = useToast();
 
   const handleStep1Continue = () => {
     if (teamName.trim()) {
-      setTeamUrl(teamName.toLowerCase().replace(/\s+/g, ''));
+      setTeamUrl(teamName.toLowerCase().replace(/\s+/g, '-'));
       setStep(2);
     }
   };
@@ -48,10 +50,24 @@ export const CreateTeamModal = ({ open, onClose, onTeamCreated }: CreateTeamModa
       id: teamUrl,
       name: teamName,
       url: teamUrl,
-      members: teamMembers
+      members: teamMembers,
+      avatar: teamName.charAt(0).toUpperCase()
     };
+    
+    // Create the team and sync it immediately
     onTeamCreated(team);
+    
+    // Show success toast
+    toast({
+      title: "Team created successfully",
+      description: `${teamName} has been created and synced to your workspace.`,
+    });
+    
+    // Navigate to the team's profile page
     navigate(`/settings/teams/${teamUrl}/profile`);
+    
+    // Close modal and reset
+    resetModal();
     onClose();
   };
 
@@ -60,10 +76,24 @@ export const CreateTeamModal = ({ open, onClose, onTeamCreated }: CreateTeamModa
       id: teamUrl,
       name: teamName,
       url: teamUrl,
-      members: teamMembers
+      members: teamMembers,
+      avatar: teamName.charAt(0).toUpperCase()
     };
+    
+    // Create the team and sync it immediately
     onTeamCreated(team);
+    
+    // Show success toast
+    toast({
+      title: "Team created successfully",
+      description: `${teamName} has been created and synced to your workspace.`,
+    });
+    
+    // Navigate to the team's profile page
     navigate(`/settings/teams/${teamUrl}/profile`);
+    
+    // Close modal and reset
+    resetModal();
     onClose();
   };
 

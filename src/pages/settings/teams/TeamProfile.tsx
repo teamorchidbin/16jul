@@ -51,20 +51,22 @@ export const TeamProfile = () => {
   return (
     <div className="min-h-screen bg-background flex justify-center animate-fade-in">
       <div className="p-8 max-w-2xl w-full">
-        <div className="mb-8 text-center">
+        <div className="mb-8">
           <h1 className="text-2xl font-semibold mb-2">Team Profile</h1>
           <p className="text-muted-foreground">Manage your team's basic information and settings</p>
         </div>
 
         <div className="space-y-6">
           {/* Team Avatar */}
-          <div className="flex items-center space-x-4 p-4 border rounded-lg hover:bg-muted/20 transition-colors duration-200">
-            <div className="h-16 w-16 rounded-full bg-primary flex items-center justify-center text-primary-foreground text-xl font-bold transition-transform duration-200 hover:scale-105">
-              {currentTeam?.avatar || 'T'}
-            </div>
-            <div>
-              <h3 className="font-medium">Team Avatar</h3>
-              <p className="text-sm text-muted-foreground">This will be shown as your team's avatar</p>
+          <div className="space-y-2">
+            <Label>Team Avatar</Label>
+            <div className="flex items-center space-x-4 p-4 border rounded-lg hover:bg-muted/20 transition-colors duration-200">
+              <div className="h-16 w-16 rounded-full bg-primary flex items-center justify-center text-primary-foreground text-xl font-bold transition-transform duration-200 hover:scale-105">
+                {currentTeam?.avatar || 'T'}
+              </div>
+              <div>
+                <p className="text-sm text-muted-foreground">This will be shown as your team's avatar</p>
+              </div>
             </div>
           </div>
 
@@ -83,14 +85,16 @@ export const TeamProfile = () => {
           {/* Team URL */}
           <div className="space-y-2">
             <Label htmlFor="team-url">Team URL</Label>
-            <div className="flex items-center space-x-2">
-              <span className="text-sm text-muted-foreground">cal.id/</span>
+            <div className="flex">
+              <span className="inline-flex items-center px-3 border border-r-0 border-input bg-muted text-muted-foreground text-sm rounded-l-md">
+                cal.id/team/
+              </span>
               <Input
                 id="team-url"
                 value={teamUrl}
                 onChange={(e) => setTeamUrl(e.target.value)}
                 placeholder="team-url"
-                className="transition-all duration-200 focus:ring-2 focus:ring-primary/20"
+                className="rounded-l-none transition-all duration-200 focus:ring-2 focus:ring-primary/20"
               />
             </div>
             <p className="text-xs text-muted-foreground">This is your team's public URL</p>
@@ -98,7 +102,7 @@ export const TeamProfile = () => {
 
           {/* Team Bio */}
           <div className="space-y-2">
-            <Label htmlFor="team-bio">Team Bio</Label>
+            <Label htmlFor="team-bio">About</Label>
             <div className="border rounded-lg">
               {/* Rich text toolbar */}
               <div className="flex items-center space-x-1 p-2 border-b bg-muted/20">
@@ -141,7 +145,7 @@ export const TeamProfile = () => {
           </div>
 
           {/* Action Buttons */}
-          <div className="flex justify-between pt-6">
+          <div className="flex justify-end pt-6">
             <Button 
               onClick={handleSave} 
               className="hover:scale-105 transition-transform duration-200"
