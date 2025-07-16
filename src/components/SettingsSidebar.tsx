@@ -1,26 +1,54 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 import { ArrowLeft, User, Settings, Calendar, Video, Palette, Clock, Shield, Lock, Users, Download, Code, Webhook, Key, ChevronDown, ChevronRight } from 'lucide-react';
-import { mockTeams } from '../data/mockData';
 
 export const SettingsSidebar = () => {
   const location = useLocation();
   const [expandedTeam, setExpandedTeam] = useState<string | null>(null);
+  const [teams, setTeams] = useState<any[]>([]);
   
-  // Get teams from mockData to sync with EventTypes page
-  const teams = mockTeams.slice(1).map(team => ({
-    id: team.id,
-    name: team.name,
-    href: `/settings/teams/${team.id}`,
-    subItems: [
-      { name: 'Profile', href: `/settings/teams/${team.id}/profile` },
-      { name: 'Members', href: `/settings/teams/${team.id}/members` },
-      { name: 'Event Types', href: `/settings/teams/${team.id}/event-types` },
-      { name: 'Appearance', href: `/settings/teams/${team.id}/appearance` },
-      { name: 'Booking Limits', href: `/settings/teams/${team.id}/booking-limits` },
-    ]
-  }));
+  // Load teams from localStorage on component mount
+  useEffect(() => {
+    const loadTeams = () => {
+      const savedTeams = localStorage.getItem('teams');
+      if (savedTeams) {
+        try {
+          const parsedTeams = JSON.parse(savedTeams);
+          setTeams(parsedTeams.map((team: any) => ({
+            id: team.id,
+            name: team.name,
+            href: `/settings/teams/${team.id}`,
+            subItems: [
+              { name: 'Profile', href: `/settings/teams/${team.id}/profile` },
+              { name: 'Members', href: `/settings/teams/${team.id}/members` },
+              { name: 'Event Types', href: `/settings/teams/${team.id}/event-types` },
+              { name: 'Appearance', href: `/settings/teams/${team.id}/appearance` },
+              { name: 'Booking Limits', href: `/settings/teams/${team.id}/booking-limits` },
+            ]
+          })));
+        } catch (error) {
+          console.error('Error loading teams:', error);
+        }
+      }
+    };
+
+    loadTeams();
+
+    // Listen for storage changes to update teams in real-time
+    const handleStorageChange = () => {
+      loadTeams();
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+    // Also listen for custom event when teams are updated
+    window.addEventListener('teamsUpdated', handleStorageChange);
+
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+      window.removeEventListener('teamsUpdated', handleStorageChange);
+    };
+  }, []);
 
   const navigation = [
     {

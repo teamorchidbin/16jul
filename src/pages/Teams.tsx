@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from '../components/ui/button';
 import { Users } from 'lucide-react';
 import { CreateTeamModal } from '../components/CreateTeamModal';
@@ -9,16 +9,69 @@ export const Teams = () => {
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [teams, setTeams] = useState<any[]>([]);
 
+  // Load teams from localStorage on component mount
+  useEffect(() => {
+    const loadTeams = () => {
+      const savedTeams = localStorage.getItem('teams');
+      if (savedTeams) {
+        try {
+          const parsedTeams = JSON.parse(savedTeams);
+          setTeams(parsedTeams);
+        } catch (error) {
+          console.error('Error loading teams:', error);
+        }
+      }
+    };
+
+    loadTeams();
+
+    // Listen for storage changes to update teams in real-time
+    const handleStorageChange = () => {
+      loadTeams();
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+    window.addEventListener('teamsUpdated', handleStorageChange);
+
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+      window.removeEventListener('teamsUpdated', handleStorageChange);
+    };
+  }, []);
+
   const handleTeamUpdate = (teamId: string, completedActions: string[]) => {
-    setTeams(teams.map(team => 
+    const updatedTeams = teams.map(team => 
       team.id === teamId 
         ? { ...team, completedActions }
         : team
-    ));
+    );
+    setTeams(updatedTeams);
+    
+    // Save to localStorage
+    localStorage.setItem('teams', JSON.stringify(updatedTeams));
+    // Dispatch custom event to notify other components
+    window.dispatchEvent(new Event('teamsUpdated'));
   };
 
   const handleTeamDelete = (teamId: string) => {
-    setTeams(teams.filter(team => team.id !== teamId));
+    const updatedTeams = teams.filter(team => team.id !== teamId);
+    setTeams(updatedTeams);
+    
+    // Save to localStorage
+    localStorage.setItem('teams', JSON.stringify(updatedTeams));
+    // Dispatch custom event to notify other components
+    window.dispatchEvent(new Event('teamsUpdated'));
+  };
+
+  const handleTeamCreated = (team: any) => {
+    const newTeam = { ...team, completedActions: [] };
+    const updatedTeams = [...teams, newTeam];
+    setTeams(updatedTeams);
+    
+    // Save to localStorage
+    localStorage.setItem('teams', JSON.stringify(updatedTeams));
+    // Dispatch custom event to notify other components
+    window.dispatchEvent(new Event('teamsUpdated'));
   };
 
   return (
@@ -71,10 +124,7 @@ export const Teams = () => {
       <CreateTeamModal 
         open={showCreateModal} 
         onClose={() => setShowCreateModal(false)}
-        onTeamCreated={(team) => {
-          setTeams([...teams, { ...team, completedActions: [] }]);
-          setShowCreateModal(false);
-        }}
+        onTeamCreated={handleTeamCreated}
       />
     </div>
   );

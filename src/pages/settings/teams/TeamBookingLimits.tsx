@@ -2,101 +2,116 @@
 import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { Button } from '../../../components/ui/button';
-import { Switch } from '../../../components/ui/switch';
 import { Input } from '../../../components/ui/input';
 import { Label } from '../../../components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../../components/ui/select';
-import { Plus } from 'lucide-react';
+import { Separator } from '../../../components/ui/separator';
+import { Plus, Trash2 } from 'lucide-react';
 
 export const TeamBookingLimits = () => {
   const { teamId } = useParams();
-  const [enableLimits, setEnableLimits] = useState(false);
+  const [limits, setLimits] = useState<Array<{ id: string; value: string; period: string }>>([]);
 
   const handleSave = () => {
-    console.log('Saving booking limits:', { enableLimits });
+    console.log('Saving booking limits:', { limits });
+  };
+
+  const addLimit = () => {
+    const newLimit = {
+      id: Date.now().toString(),
+      value: '5',
+      period: 'day'
+    };
+    setLimits([...limits, newLimit]);
+  };
+
+  const removeLimit = (id: string) => {
+    setLimits(limits.filter(limit => limit.id !== id));
+  };
+
+  const updateLimit = (id: string, field: 'value' | 'period', value: string) => {
+    setLimits(limits.map(limit => 
+      limit.id === id ? { ...limit, [field]: value } : limit
+    ));
   };
 
   return (
-    <div className="min-h-screen bg-background flex justify-center animate-fade-in">
-      <div className="p-8 max-w-2xl w-full">
-        <div className="mb-8">
-          <h1 className="text-2xl font-semibold mb-2">Booking Limits</h1>
-          <p className="text-muted-foreground">Control how many bookings can be made for your team</p>
+    <div className="space-y-6">
+      <div>
+        <h3 className="text-lg font-medium">Booking Limits</h3>
+        <p className="text-sm text-muted-foreground">
+          Control how many bookings can be made for your team
+        </p>
+      </div>
+
+      <Separator />
+
+      <div className="space-y-4">
+        <div className="flex items-center justify-between">
+          <div>
+            <h4 className="text-base font-medium">Add booking limits</h4>
+            <p className="text-sm text-muted-foreground">Set limits on the number of bookings</p>
+          </div>
+          <Button onClick={addLimit} variant="outline" size="sm">
+            <Plus className="h-4 w-4 mr-2" />
+            Add limit
+          </Button>
         </div>
 
-        <div className="space-y-6">
-          {/* Enable Booking Limits */}
-          <div className="flex items-center justify-between p-4 border rounded-lg hover:bg-muted/20 transition-colors duration-200">
-            <div>
-              <Label htmlFor="enable-limits" className="text-base font-medium">Enable booking limits</Label>
-              <p className="text-sm text-muted-foreground">Limit the number of bookings that can be made</p>
-            </div>
-            <Switch
-              id="enable-limits"
-              checked={enableLimits}
-              onCheckedChange={setEnableLimits}
-              className="transition-all duration-200"
-            />
-          </div>
+        {limits.length > 0 && (
+          <div className="space-y-3">
+            {limits.map((limit) => (
+              <div key={limit.id} className="flex items-center space-x-3 p-3 border rounded-lg">
+                <div className="flex-1">
+                  <Label className="text-sm">Limit</Label>
+                  <Input
+                    type="number"
+                    value={limit.value}
+                    onChange={(e) => updateLimit(limit.id, 'value', e.target.value)}
+                    className="mt-1"
+                  />
+                </div>
+                
+                <div className="flex-1">
+                  <Label className="text-sm">Per</Label>
+                  <Select value={limit.period} onValueChange={(value) => updateLimit(limit.id, 'period', value)}>
+                    <SelectTrigger className="mt-1">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="hour">Hour</SelectItem>
+                      <SelectItem value="day">Day</SelectItem>
+                      <SelectItem value="week">Week</SelectItem>
+                      <SelectItem value="month">Month</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
 
-          {/* Booking Limits Configuration */}
-          {enableLimits && (
-            <div className="space-y-6 p-4 border rounded-lg bg-muted/10 animate-scale-in">
-              <div className="flex items-center justify-between">
-                <h3 className="text-lg font-semibold">Booking Limits</h3>
-                <Button variant="outline" size="sm" className="hover:scale-105 transition-transform duration-200">
-                  <Plus className="h-4 w-4 mr-2" />
-                  Add limit
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => removeLimit(limit.id)}
+                  className="mt-6 text-destructive hover:text-destructive"
+                >
+                  <Trash2 className="h-4 w-4" />
                 </Button>
               </div>
-              
-              <div className="space-y-4">
-                <div className="grid grid-cols-3 gap-4 p-4 border rounded-lg">
-                  <div className="space-y-2">
-                    <Label>Limit</Label>
-                    <Input
-                      type="number"
-                      defaultValue="5"
-                      className="transition-all duration-200 focus:ring-2 focus:ring-primary/20"
-                    />
-                  </div>
-                  
-                  <div className="space-y-2">
-                    <Label>Per</Label>
-                    <Select defaultValue="day">
-                      <SelectTrigger className="transition-all duration-200 focus:ring-2 focus:ring-primary/20">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="hour">Hour</SelectItem>
-                        <SelectItem value="day">Day</SelectItem>
-                        <SelectItem value="week">Week</SelectItem>
-                        <SelectItem value="month">Month</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label>Action</Label>
-                    <Button variant="ghost" size="sm" className="w-full justify-start text-destructive hover:text-destructive">
-                      Remove
-                    </Button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* Action Buttons */}
-          <div className="flex justify-end pt-6">
-            <Button 
-              onClick={handleSave}
-              className="hover:scale-105 transition-transform duration-200"
-            >
-              Save Changes
-            </Button>
+            ))}
           </div>
-        </div>
+        )}
+
+        {limits.length === 0 && (
+          <div className="text-center py-8 text-muted-foreground">
+            <p className="text-sm">No booking limits set. Click "Add limit" to create one.</p>
+          </div>
+        )}
+      </div>
+
+      {/* Action Buttons */}
+      <div className="flex justify-end">
+        <Button onClick={handleSave}>
+          Save Changes
+        </Button>
       </div>
     </div>
   );

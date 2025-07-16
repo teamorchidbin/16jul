@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Dialog, DialogContent } from './ui/dialog';
 import { Button } from './ui/button';
@@ -145,6 +144,14 @@ export const CreateTeamModal = ({ open, onClose, onTeamCreated }: CreateTeamModa
           </div>
 
           <div className="p-8">
+            {
+              
+            
+              
+            
+              
+            }
+
             {step === 1 && (
               <div className="space-y-6">
                 <div className="space-y-2">
