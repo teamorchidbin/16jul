@@ -4,16 +4,42 @@ import { Dialog, DialogContent } from './ui/dialog';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Label } from './ui/label';
+import { useNavigate } from 'react-router-dom';
+import { useToast } from '../hooks/use-toast';
 
 interface CreateTeamEventModalProps {
   open: boolean;
   onClose: () => void;
-  teamUrl: string;
+  teamId?: string;
+  teamName?: string;
 }
 
-export const CreateTeamEventModal = ({ open, onClose, teamUrl }: CreateTeamEventModalProps) => {
-  const [title, setTitle] = useState('Quick Chat');
+export const CreateTeamEventModal = ({ open, onClose, teamId, teamName }: CreateTeamEventModalProps) => {
+  const [title, setTitle] = useState('');
   const [assignment, setAssignment] = useState('collective');
+  const navigate = useNavigate();
+  const { toast } = useToast();
+
+  const handleContinue = () => {
+    if (!title.trim()) {
+      toast({
+        title: "Please fill in this field",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    // Generate a random event ID (in real app, this would come from backend)
+    const eventId = Math.floor(Math.random() * 1000) + 1;
+    
+    toast({
+      title: "Event created successfully",
+      description: `${title} has been created for ${teamName || 'the team'}.`,
+    });
+    
+    onClose();
+    navigate(`/event/${eventId}/setup`);
+  };
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
@@ -32,14 +58,18 @@ export const CreateTeamEventModal = ({ open, onClose, teamUrl }: CreateTeamEvent
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
                 placeholder="Quick Chat"
+                className={!title.trim() && title !== '' ? 'border-red-500' : ''}
               />
+              {!title.trim() && title !== '' && (
+                <p className="text-sm text-red-500">Please fill in this field.</p>
+              )}
             </div>
             
             <div className="space-y-2">
               <Label htmlFor="url">URL</Label>
               <Input
                 id="url"
-                value={`https://cal.id/team/${teamUrl}/`}
+                value={`https://cal.id/team/${teamId || 'team'}/`}
                 readOnly
                 className="bg-muted"
               />
@@ -105,10 +135,10 @@ export const CreateTeamEventModal = ({ open, onClose, teamUrl }: CreateTeamEvent
 
           <div className="flex space-x-3 pt-4">
             <Button variant="outline" onClick={onClose} className="flex-1">
-              Cancel
+              Close
             </Button>
-            <Button onClick={onClose} className="flex-1">
-              Finish
+            <Button onClick={handleContinue} className="flex-1">
+              Continue
             </Button>
           </div>
         </div>
