@@ -4,7 +4,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { Layout } from './components/Layout';
 import { Home } from './pages/Home';
 import { EventTypes } from './pages/EventTypes';
-import { Bookings } from './pages/Bookings';
+import Bookings from './pages/Bookings';
 import { Availability } from './pages/Availability';
 import { EditAvailability } from './pages/EditAvailability';
 import { Teams } from './pages/Teams';
@@ -12,8 +12,8 @@ import { RoutingForms } from './pages/RoutingForms';
 import { EditRoutingForm } from './pages/EditRoutingForm';
 import { EditEvent } from './pages/EditEvent';
 import { Settings } from './pages/Settings';
-import { NotFound } from './pages/NotFound';
-import { SchedulingComingSoon } from './pages/SchedulingComingSoon';
+import NotFound from './pages/NotFound';
+import SchedulingComingSoon from './pages/SchedulingComingSoon';
 
 // Settings pages
 import { Profile } from './pages/settings/Profile';
