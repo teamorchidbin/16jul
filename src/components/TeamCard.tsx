@@ -91,11 +91,11 @@ export const TeamCard = ({ team, isOnlyTeam = false, onTeamUpdate, onTeamDelete 
       <div className="border rounded-lg p-6 hover:shadow-md transition-all duration-200">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-4">
-            <div className="w-12 h-12 bg-blue-500 rounded-lg flex items-center justify-center text-white font-semibold">
+            <div className="w-12 h-12 bg-blue-500 rounded-lg flex items-center justify-center text-white font-semibold text-lg">
               {team.avatar}
             </div>
             <div>
-              <h3 className="font-medium">{team.name}</h3>
+              <h3 className="text-lg font-semibold">{team.name}</h3>
               <p className="text-sm text-muted-foreground">https://cal.id/team/{team.url}</p>
             </div>
           </div>
@@ -148,15 +148,15 @@ export const TeamCard = ({ team, isOnlyTeam = false, onTeamUpdate, onTeamDelete 
 
   // Full card with recommended next steps for single team
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       {/* Team Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-4">
-          <div className="w-12 h-12 bg-black rounded-lg flex items-center justify-center text-white font-semibold">
+          <div className="w-16 h-16 bg-black rounded-lg flex items-center justify-center text-white font-semibold text-xl">
             {team.avatar}
           </div>
           <div>
-            <h2 className="text-xl font-semibold">{team.name}</h2>
+            <h1 className="text-2xl font-bold">{team.name}</h1>
             <p className="text-muted-foreground">https://cal.id/team/{team.url}</p>
           </div>
         </div>
@@ -196,7 +196,7 @@ export const TeamCard = ({ team, isOnlyTeam = false, onTeamUpdate, onTeamDelete 
 
       {/* Recommended Next Steps */}
       <div>
-        <h3 className="text-lg font-medium mb-4">Recommended next steps</h3>
+        <h2 className="text-xl font-semibold mb-6">Recommended next steps</h2>
         
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {actions.map((action) => {
@@ -204,12 +204,12 @@ export const TeamCard = ({ team, isOnlyTeam = false, onTeamUpdate, onTeamDelete 
             const completed = isActionCompleted(action.id);
             
             return (
-              <div key={action.id} className={`border rounded-lg p-6 space-y-4 transition-all duration-200 ${completed ? 'opacity-60 bg-green-50' : 'hover:shadow-md'}`}>
-                <div className="flex items-start space-x-3">
-                  <Icon className={`h-5 w-5 mt-1 ${completed ? 'text-green-600' : 'text-orange-500'}`} />
+              <div key={action.id} className={`border rounded-lg p-6 space-y-4 transition-all duration-200 h-full flex flex-col ${completed ? 'opacity-60 bg-green-50' : 'hover:shadow-md'}`}>
+                <div className="flex items-start space-x-3 flex-1">
+                  <Icon className={`h-5 w-5 mt-1 flex-shrink-0 ${completed ? 'text-green-600' : 'text-orange-500'}`} />
                   <div className="flex-1">
-                    <h4 className={`font-medium ${completed ? 'line-through' : ''}`}>{action.title}</h4>
-                    <p className={`text-sm text-muted-foreground mt-1 ${completed ? 'line-through' : ''}`}>
+                    <h3 className={`font-semibold text-base mb-2 ${completed ? 'line-through' : ''}`}>{action.title}</h3>
+                    <p className={`text-sm text-muted-foreground ${completed ? 'line-through' : ''}`}>
                       {action.description}
                     </p>
                   </div>
@@ -217,9 +217,10 @@ export const TeamCard = ({ team, isOnlyTeam = false, onTeamUpdate, onTeamDelete 
                 
                 <Button
                   onClick={action.onClick}
-                  className={`w-full ${completed ? 'bg-green-100 text-green-700 hover:bg-green-200' : ''}`}
+                  className={`w-full mt-auto ${completed ? 'bg-green-100 text-green-700 hover:bg-green-200' : ''}`}
                   variant={completed ? 'outline' : 'default'}
                   disabled={completed}
+                  size="sm"
                 >
                   {completed ? (
                     <>

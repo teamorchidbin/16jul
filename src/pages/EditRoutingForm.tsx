@@ -7,7 +7,9 @@ import { Textarea } from '../components/ui/textarea';
 import { Label } from '../components/ui/label';
 import { Switch } from '../components/ui/switch';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../components/ui/tabs';
-import { ArrowLeft, FileText, AlertTriangle, BarChart3 } from 'lucide-react';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../components/ui/select';
+import { ArrowLeft, FileText, AlertTriangle, BarChart3, Plus, ChevronDown, ChevronUp } from 'lucide-react';
+import { FormFieldModal, FormField } from '../components/FormFieldModal';
 
 export const EditRoutingForm = () => {
   const { formId } = useParams();
@@ -15,6 +17,58 @@ export const EditRoutingForm = () => {
   const [formName, setFormName] = useState('RFFFF');
   const [formDescription, setFormDescription] = useState('hwllUGELBVWufl');
   const [sendEmailToOwner, setSendEmailToOwner] = useState(true);
+  const [showFieldModal, setShowFieldModal] = useState(false);
+  const [editingField, setEditingField] = useState<FormField | undefined>();
+  const [formFields, setFormFields] = useState<FormField[]>([]);
+  const [routes, setRoutes] = useState<any[]>([]);
+
+  const handleCreateField = () => {
+    setEditingField(undefined);
+    setShowFieldModal(true);
+  };
+
+  const handleEditField = (field: FormField) => {
+    setEditingField(field);
+    setShowFieldModal(true);
+  };
+
+  const handleSaveField = (field: FormField) => {
+    if (editingField) {
+      setFormFields(prev => prev.map(f => f.id === field.id ? field : f));
+    } else {
+      setFormFields(prev => [...prev, field]);
+    }
+    setShowFieldModal(false);
+    setEditingField(undefined);
+  };
+
+  const handleDeleteField = (fieldId: string) => {
+    setFormFields(prev => prev.filter(f => f.id !== fieldId));
+  };
+
+  const toggleFieldCollapse = (fieldId: string) => {
+    setFormFields(prev => prev.map(f => 
+      f.id === fieldId ? { ...f, collapsed: !f.collapsed } : f
+    ));
+  };
+
+  const handleAddRoute = () => {
+    const newRoute = {
+      id: `route-${Date.now()}`,
+      name: `Route ${routes.length + 1}`,
+      conditions: []
+    };
+    setRoutes(prev => [...prev, newRoute]);
+  };
+
+  const comparisonOptions = [
+    'Equals',
+    'Does not equal',
+    'Contains',
+    'Not contains',
+    'Is empty',
+    'Is not empty'
+  ];
 
   return (
     <div className="min-h-screen bg-background">
@@ -145,25 +199,169 @@ export const EditRoutingForm = () => {
             </div>
             
             <TabsContent value="form" className="mt-0 p-0">
-              <div className="flex-1 flex items-center justify-center min-h-[600px]">
-                <div className="text-center space-y-4">
-                  <div className="w-24 h-24 bg-muted rounded-full flex items-center justify-center mx-auto">
-                    <FileText className="h-12 w-12 text-muted-foreground" />
+              <div className="p-6">
+                {formFields.length === 0 ? (
+                  <div className="flex-1 flex items-center justify-center min-h-[600px]">
+                    <div className="text-center space-y-4">
+                      <div className="w-24 h-24 bg-muted rounded-full flex items-center justify-center mx-auto">
+                        <FileText className="h-12 w-12 text-muted-foreground" />
+                      </div>
+                      <div>
+                        <h3 className="text-lg font-semibold mb-2">Create your first field</h3>
+                        <p className="text-muted-foreground mb-6">
+                          Fields are the form fields that the booker would see.
+                        </p>
+                        <Button onClick={handleCreateField}>Create Field</Button>
+                      </div>
+                    </div>
                   </div>
-                  <div>
-                    <h3 className="text-lg font-semibold mb-2">Create your first field</h3>
-                    <p className="text-muted-foreground mb-6">
-                      Fields are the form fields that the booker would see.
-                    </p>
-                    <Button>Create Field</Button>
+                ) : (
+                  <div className="space-y-4">
+                    {formFields.map((field) => (
+                      <div key={field.id} className="border rounded-lg p-4">
+                        <div className="flex items-center justify-between">
+                          <div className="flex-1">
+                            {field.collapsed ? (
+                              <div className="flex items-center space-x-4">
+                                <span className="font-medium">{field.label || 'Untitled Field'}</span>
+                                <span className="text-sm text-muted-foreground">({field.type})</span>
+                                {field.required && (
+                                  <span className="text-xs bg-red-100 text-red-600 px-2 py-1 rounded">Required</span>
+                                )}
+                              </div>
+                            ) : (
+                              <div className="space-y-4">
+                                <div className="space-y-2">
+                                  <Label>Label</Label>
+                                  <Input value={field.label} readOnly />
+                                </div>
+                                <div className="space-y-2">
+                                  <Label>Identifier</Label>
+                                  <Input value={field.identifier} readOnly />
+                                </div>
+                                <div className="space-y-2">
+                                  <Label>Type</Label>
+                                  <Input value={field.type} readOnly />
+                                </div>
+                                {field.options && (
+                                  <div className="space-y-2">
+                                    <Label>Options</Label>
+                                    <div className="space-y-1">
+                                      {field.options.map((option, index) => (
+                                        <div key={index} className="text-sm p-2 bg-muted rounded">
+                                          {option}
+                                        </div>
+                                      ))}
+                                    </div>
+                                  </div>
+                                )}
+                              </div>
+                            )}
+                          </div>
+                          <div className="flex items-center space-x-2">
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              onClick={() => toggleFieldCollapse(field.id)}
+                            >
+                              {field.collapsed ? (
+                                <ChevronDown className="h-4 w-4" />
+                              ) : (
+                                <ChevronUp className="h-4 w-4" />
+                              )}
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => handleEditField(field)}
+                            >
+                              Edit
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => handleDeleteField(field.id)}
+                              className="text-red-600 hover:text-red-700"
+                            >
+                              Delete
+                            </Button>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                    <Button variant="outline" onClick={handleCreateField} className="w-full">
+                      <Plus className="h-4 w-4 mr-2" />
+                      Add field
+                    </Button>
                   </div>
-                </div>
+                )}
               </div>
             </TabsContent>
             
             <TabsContent value="routing" className="mt-0 p-6">
-              <div className="text-center py-12">
-                <p className="text-muted-foreground">Routing configuration will go here</p>
+              <div className="space-y-6">
+                {routes.length === 0 ? (
+                  <div className="text-center py-12">
+                    <p className="text-muted-foreground mb-4">No routes defined yet</p>
+                    <Button onClick={handleAddRoute}>Add Route</Button>
+                  </div>
+                ) : (
+                  <div className="space-y-4">
+                    {routes.map((route, index) => (
+                      <div key={route.id} className="border rounded-lg p-4 space-y-4">
+                        <div className="space-y-2">
+                          <Label>Route Name</Label>
+                          <Input 
+                            value={route.name}
+                            onChange={(e) => {
+                              const newRoutes = [...routes];
+                              newRoutes[index].name = e.target.value;
+                              setRoutes(newRoutes);
+                            }}
+                            placeholder="Enter route name"
+                          />
+                        </div>
+                        
+                        <div className="space-y-2">
+                          <Label>For responses matching the following criteria (matches all by default)</Label>
+                          <div className="flex space-x-2">
+                            <Select>
+                              <SelectTrigger className="w-40">
+                                <SelectValue placeholder="Select field" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {formFields.map(field => (
+                                  <SelectItem key={field.id} value={field.identifier}>
+                                    {field.label || field.identifier}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                            
+                            <Select defaultValue="Equals">
+                              <SelectTrigger className="w-40">
+                                <SelectValue />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {comparisonOptions.map(option => (
+                                  <SelectItem key={option} value={option}>
+                                    {option}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                            
+                            <Input placeholder="Enter string" className="flex-1" />
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                    <Button variant="outline" onClick={handleAddRoute} className="w-full">
+                      <Plus className="h-4 w-4 mr-2" />
+                      Add Route
+                    </Button>
+                  </div>
+                )}
               </div>
             </TabsContent>
             
@@ -175,6 +373,16 @@ export const EditRoutingForm = () => {
           </Tabs>
         </div>
       </div>
+
+      <FormFieldModal
+        open={showFieldModal}
+        onClose={() => {
+          setShowFieldModal(false);
+          setEditingField(undefined);
+        }}
+        onSave={handleSaveField}
+        field={editingField}
+      />
     </div>
   );
 };
