@@ -12,6 +12,7 @@ import { EventWebhooks } from '../components/EventWebhooks';
 import { RecurringEvent } from '../components/RecurringEvent';
 import { Header } from '../components/Header';
 import { mockTeams } from '../data/mockData';
+import { Tabs, TabsList, TabsTrigger, TabsContent } from '../components/ui/tabs';
 
 const tabs = [
   { id: 'setup', name: 'Event Setup', icon: Settings },
@@ -30,11 +31,10 @@ export const EditEvent = () => {
   const [eventEnabled, setEventEnabled] = useState(true);
   const navigate = useNavigate();
 
-  // Find the actual event from mockData using the eventId from URL
   const currentEvent = mockTeams.flatMap(team => team.eventTypes).find(event => event.id === eventId);
 
   const handleBack = () => {
-    navigate('/');
+    navigate('/event-types');
   };
 
   const renderTabContent = () => {
@@ -71,39 +71,42 @@ export const EditEvent = () => {
         }}
       />
 
-      <div className="flex w-full">
-        {/* Sidebar */}
-        <div className="w-56 bg-card border-r border-border min-h-screen sticky top-0">
-          <div className="p-4">
-            <button 
-              onClick={handleBack} 
-              className="flex items-center text-sm text-muted-foreground hover:text-foreground transition-colors mb-4"
-            >
-              <ArrowLeft className="h-4 w-4 mr-2" />
-              Back to Event Types
-            </button>
-          </div>
-          <nav className="px-4 pb-4 space-y-1">
-            {tabs.map((tabItem) => (
-              <button
-                key={tabItem.id}
-                onClick={() => setActiveTab(tabItem.id)}
-                className={`w-full flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-colors ${
-                  activeTab === tabItem.id
-                    ? 'bg-primary text-primary-foreground'
-                    : 'text-muted-foreground hover:bg-muted hover:text-foreground'
-                }`}
-              >
-                <tabItem.icon className="mr-2 h-4 w-4" />
-                {tabItem.name}
-              </button>
-            ))}
-          </nav>
+      <div className="w-full">
+        {/* Back button and Event Title */}
+        <div className="px-8 py-4 bg-background">
+          <button 
+            onClick={handleBack} 
+            className="flex items-center text-sm text-muted-foreground hover:text-foreground transition-colors mb-4"
+          >
+            <ArrowLeft className="h-4 w-4 mr-2" />
+            Back to Event Types
+          </button>
+          <h1 className="text-2xl font-bold text-foreground">{currentEvent?.title || 'Event Not Found'}</h1>
         </div>
 
-        {/* Main Content */}
-        <div className="flex-1 bg-background">
-          {renderTabContent()}
+        {/* Horizontal Tabs */}
+        <div className="px-8">
+          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+            <TabsList className="grid w-full grid-cols-8 mb-6">
+              {tabs.map((tabItem) => (
+                <TabsTrigger 
+                  key={tabItem.id} 
+                  value={tabItem.id} 
+                  className="flex items-center space-x-2"
+                >
+                  <tabItem.icon className="h-4 w-4" />
+                  <span className="hidden sm:inline">{tabItem.name}</span>
+                </TabsTrigger>
+              ))}
+            </TabsList>
+
+            {/* Tab Content */}
+            {tabs.map((tabItem) => (
+              <TabsContent key={tabItem.id} value={tabItem.id}>
+                {renderTabContent()}
+              </TabsContent>
+            ))}
+          </Tabs>
         </div>
       </div>
     </div>
